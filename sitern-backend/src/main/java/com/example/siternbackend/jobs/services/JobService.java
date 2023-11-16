@@ -1,7 +1,6 @@
 package com.example.siternbackend.jobs.services;
 
 import com.example.siternbackend.jobs.entities.JobPost;
-import com.example.siternbackend.jobs.entities.JobPostId;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +27,7 @@ public class JobService {
         return jobPostRepository.findAll(pageable);
     }
 
-    public Optional<JobPost> getJobById(JobPostId id) {
+    public Optional<JobPost> getJobById(int id) {
         return jobPostRepository.findById(id);
     }
 }

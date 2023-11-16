@@ -1,7 +1,6 @@
 package com.example.siternbackend.jobs.controllers;
 
 import com.example.siternbackend.jobs.entities.JobPost;
-import com.example.siternbackend.jobs.entities.JobPostId;
 import com.example.siternbackend.jobs.services.JobService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,7 +50,7 @@ public class JobController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JobPost> getJobById(@PathVariable JobPostId id) {
+    public ResponseEntity<JobPost> getJobById(@PathVariable int id) {
         try {
             Optional<JobPost> jobPostOptional = jobService.getJobById(id);
 

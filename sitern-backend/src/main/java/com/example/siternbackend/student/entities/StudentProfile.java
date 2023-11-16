@@ -11,8 +11,9 @@ import java.util.Set;
 @Entity
 @Table(name = "student_profile", schema = "sitern")
 public class StudentProfile {
-    @EmbeddedId
-    private StudentProfileId id;
+    @Id
+    @Column(name = "ID", nullable = false)
+    private Integer id;
 
     @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -64,11 +65,11 @@ public class StudentProfile {
     @OneToMany(mappedBy = "studentProfile")
     private Set<JobAppliedByStudent> jobAppliedByStudents = new LinkedHashSet<>();
 
-    public StudentProfileId getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(StudentProfileId id) {
+    public void setId(int id) {
         this.id = id;
     }
 
