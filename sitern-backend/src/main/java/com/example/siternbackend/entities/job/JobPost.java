@@ -1,6 +1,6 @@
-package com.example.siternbackend.jobs.entities;
+package com.example.siternbackend.entities.job;
 
-import com.example.siternbackend.company.entities.Company;
+import com.example.siternbackend.entities.company.Company;
 import jakarta.persistence.*;
 
 import java.time.Instant;

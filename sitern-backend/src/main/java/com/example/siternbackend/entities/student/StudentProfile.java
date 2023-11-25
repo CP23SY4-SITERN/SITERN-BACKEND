@@ -1,8 +1,8 @@
-package com.example.siternbackend.student.entities;
+package com.example.siternbackend.entities.student;
 
-import com.example.siternbackend.internshipstatus.entities.Internshipapplicationstatus;
-import com.example.siternbackend.jobs.entities.JobAppliedByStudent;
-import com.example.siternbackend.user.entities.User;
+import com.example.siternbackend.entities.internship.Internshipapplicationstatus;
+import com.example.siternbackend.entities.job.JobAppliedByStudent;
+import com.example.siternbackend.entities.user.User;
 import jakarta.persistence.*;
 
 import java.util.LinkedHashSet;

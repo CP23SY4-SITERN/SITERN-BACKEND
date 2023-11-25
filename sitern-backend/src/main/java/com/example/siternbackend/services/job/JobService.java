@@ -1,7 +1,7 @@
-package com.example.siternbackend.jobs.services;
+package com.example.siternbackend.services.job;
 
-import com.example.siternbackend.jobs.entities.JobPost;
-import com.example.siternbackend.jobs.repositories.JobPostRepository;
+import com.example.siternbackend.entities.job.JobPost;
+import com.example.siternbackend.repositories.job.JobPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

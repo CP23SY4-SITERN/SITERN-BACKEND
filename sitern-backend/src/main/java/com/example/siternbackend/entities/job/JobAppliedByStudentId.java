@@ -1,4 +1,4 @@
-package com.example.siternbackend.jobs.entities;
+package com.example.siternbackend.entities.job;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

@@ -1,4 +1,4 @@
-package com.example.siternbackend.internshipstatus.entities;
+package com.example.siternbackend.entities.internship;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

@@ -1,6 +1,6 @@
-package com.example.siternbackend.user.repositories;
+package com.example.siternbackend.repositories.user;
 
-import com.example.siternbackend.user.entities.User;
+import com.example.siternbackend.entities.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Integer> {

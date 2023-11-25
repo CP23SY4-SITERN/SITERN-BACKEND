@@ -1,6 +1,6 @@
-package com.example.siternbackend.user.entities;
+package com.example.siternbackend.entities.user;
 
-import com.example.siternbackend.student.entities.StudentProfile;
+import com.example.siternbackend.entities.student.StudentProfile;
 import jakarta.persistence.*;
 
 import java.time.Instant;
