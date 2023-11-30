@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "internshipapplicationstatus", schema = "sitern")
+@Table(name = "internshipapplicationstatus", schema = "SITern")
 public class Internshipapplicationstatus {
     @EmbeddedId
     private InternshipapplicationstatusId id;

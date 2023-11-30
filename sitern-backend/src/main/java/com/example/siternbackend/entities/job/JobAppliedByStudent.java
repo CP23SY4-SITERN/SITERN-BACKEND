@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "job_applied_by_student", schema = "sitern")
+@Table(name = "job_applied_by_student", schema = "SITern")
 public class JobAppliedByStudent {
     @EmbeddedId
     private JobAppliedByStudentId id;

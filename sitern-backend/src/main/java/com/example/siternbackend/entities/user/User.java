@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "user", schema = "sitern")
+@Table(name = "user", schema = "SITern")
 public class User {
     @Id
     @Column(name = "ID", nullable = false)
