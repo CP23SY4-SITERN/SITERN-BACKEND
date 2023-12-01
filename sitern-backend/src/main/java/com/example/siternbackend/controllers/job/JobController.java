@@ -53,11 +53,7 @@ public class JobController {
         try {
             Optional<JobPost> jobPostOptional = jobService.getJobById(id);
 
-            if (jobPostOptional.isPresent()) {
-                return new ResponseEntity<>(jobPostOptional.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            return jobPostOptional.map(jobPost -> new ResponseEntity<>(jobPost, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
         } catch (Exception e) {
             // Handle exceptions, log the error, and return an appropriate response
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
