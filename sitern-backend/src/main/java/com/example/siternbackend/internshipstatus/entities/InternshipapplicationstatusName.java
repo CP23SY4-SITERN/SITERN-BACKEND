@@ -1,12 +1,16 @@
 package com.example.siternbackend.internshipstatus.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
+@Getter
+@Setter
 @Entity
-@Table(name = "internshipapplicationstatus_name", schema = "sitern")
+@Table(name = "InternshipApplicationStatus_name", schema = "SITern")
 public class InternshipapplicationstatusName {
     @Id
     @Column(name = "ID", nullable = false)
@@ -14,32 +18,5 @@ public class InternshipapplicationstatusName {
 
     @Column(name = "status_name", nullable = false, length = 45)
     private String statusName;
-
-    @OneToMany(mappedBy = "internshipapplicationstatusName")
-    private Set<Internshipapplicationstatus> internshipapplicationstatuses = new LinkedHashSet<>();
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getStatusName() {
-        return statusName;
-    }
-
-    public void setStatusName(String statusName) {
-        this.statusName = statusName;
-    }
-
-    public Set<Internshipapplicationstatus> getInternshipapplicationstatuses() {
-        return internshipapplicationstatuses;
-    }
-
-    public void setInternshipapplicationstatuses(Set<Internshipapplicationstatus> internshipapplicationstatuses) {
-        this.internshipapplicationstatuses = internshipapplicationstatuses;
-    }
 
 }

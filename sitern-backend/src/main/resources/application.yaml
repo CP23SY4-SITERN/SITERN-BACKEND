@@ -1,8 +1,15 @@
 spring:
+#  ssh:
+#    tunnel:
+#      host: 10.4.85.44
+#      port: 22
+#      username: sysadmin
+#      password: sitern007
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: sitern007
+    password: Jubby4400
+    url: jdbc:mysql://localhost:3306/sitern
   jpa:
     hibernate:
       naming:

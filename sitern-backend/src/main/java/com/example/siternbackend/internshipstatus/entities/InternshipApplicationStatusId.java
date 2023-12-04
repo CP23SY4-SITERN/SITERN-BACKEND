@@ -2,14 +2,18 @@ package com.example.siternbackend.internshipstatus.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@Getter
+@Setter
 @Embeddable
-public class InternshipapplicationstatusId implements Serializable {
-    private static final long serialVersionUID = 5457430311440027283L;
+public class InternshipApplicationStatusId implements Serializable {
+    private static final long serialVersionUID = 8618539372661640789L;
     @Column(name = "ID", nullable = false)
     private Integer id;
 
@@ -19,35 +23,11 @@ public class InternshipapplicationstatusId implements Serializable {
     @Column(name = "InternshipApplicationStatus_name_ID", nullable = false)
     private Integer internshipapplicationstatusNameId;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getCompanyId() {
-        return companyId;
-    }
-
-    public void setCompanyId(Integer companyId) {
-        this.companyId = companyId;
-    }
-
-    public Integer getInternshipapplicationstatusNameId() {
-        return internshipapplicationstatusNameId;
-    }
-
-    public void setInternshipapplicationstatusNameId(Integer internshipapplicationstatusNameId) {
-        this.internshipapplicationstatusNameId = internshipapplicationstatusNameId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        InternshipapplicationstatusId entity = (InternshipapplicationstatusId) o;
+        InternshipApplicationStatusId entity = (InternshipApplicationStatusId) o;
         return Objects.equals(this.companyId, entity.companyId) &&
                 Objects.equals(this.internshipapplicationstatusNameId, entity.internshipapplicationstatusNameId) &&
                 Objects.equals(this.id, entity.id);

@@ -2,11 +2,15 @@ package com.example.siternbackend.jobs.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@Getter
+@Setter
 @Embeddable
 public class JobAppliedByStudentId implements Serializable {
     private static final long serialVersionUID = 7810743170125039876L;
@@ -21,38 +25,6 @@ public class JobAppliedByStudentId implements Serializable {
 
     @Column(name = "job_post_job_location_ID", nullable = false)
     private Integer jobPostJobLocationId;
-
-    public Integer getStudentProfileId() {
-        return studentProfileId;
-    }
-
-    public void setStudentProfileId(Integer studentProfileId) {
-        this.studentProfileId = studentProfileId;
-    }
-
-    public Integer getJobPostId() {
-        return jobPostId;
-    }
-
-    public void setJobPostId(Integer jobPostId) {
-        this.jobPostId = jobPostId;
-    }
-
-    public Integer getJobPostCompanyId() {
-        return jobPostCompanyId;
-    }
-
-    public void setJobPostCompanyId(Integer jobPostCompanyId) {
-        this.jobPostCompanyId = jobPostCompanyId;
-    }
-
-    public Integer getJobPostJobLocationId() {
-        return jobPostJobLocationId;
-    }
-
-    public void setJobPostJobLocationId(Integer jobPostJobLocationId) {
-        this.jobPostJobLocationId = jobPostJobLocationId;
-    }
 
     @Override
     public boolean equals(Object o) {

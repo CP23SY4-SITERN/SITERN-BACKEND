@@ -1,6 +1,6 @@
 package com.example.siternbackend.company.entities;
 
-import com.example.siternbackend.internshipstatus.entities.Internshipapplicationstatus;
+import com.example.siternbackend.internshipstatus.entities.InternshipApplicationStatus;
 import com.example.siternbackend.jobs.entities.JobPost;
 import jakarta.persistence.*;
 
@@ -33,7 +33,7 @@ public class Company {
     private Integer companyEmployee;
 
     @OneToMany(mappedBy = "company")
-    private Set<Internshipapplicationstatus> internshipapplicationstatuses = new LinkedHashSet<>();
+    private Set<InternshipApplicationStatus> internshipapplicationstatuses = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "company")
     private Set<JobPost> jobPosts = new LinkedHashSet<>();
@@ -94,11 +94,11 @@ public class Company {
         this.companyEmployee = companyEmployee;
     }
 
-    public Set<Internshipapplicationstatus> getInternshipapplicationstatuses() {
+    public Set<InternshipApplicationStatus> getInternshipapplicationstatuses() {
         return internshipapplicationstatuses;
     }
 
-    public void setInternshipapplicationstatuses(Set<Internshipapplicationstatus> internshipapplicationstatuses) {
+    public void setInternshipapplicationstatuses(Set<InternshipApplicationStatus> internshipapplicationstatuses) {
         this.internshipapplicationstatuses = internshipapplicationstatuses;
     }
 

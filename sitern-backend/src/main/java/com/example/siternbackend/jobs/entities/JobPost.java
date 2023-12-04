@@ -19,6 +19,10 @@ public class JobPost {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "company_ID", nullable = false)
     private Company company;
+    @Column(name = "company_ID")
+    private Long company_ID;
+
+
 
     @MapsId("jobLocationId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
