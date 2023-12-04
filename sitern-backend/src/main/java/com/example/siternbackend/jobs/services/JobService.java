@@ -23,11 +23,12 @@ public class JobService {
         return jobPostRepository.findAll();
     }
 
-    public Page<JobPost> getAllJobs(Pageable pageable) {
-        return jobPostRepository.findAll(pageable);
-    }
+//    public Page<JobPost> getAllJobs(Pageable pageable) {
+//        return jobPostRepository.findAll(pageable);
+//    }
 
     public Optional<JobPost> getJobById(int id) {
         return jobPostRepository.findById(id);
     }
+
 }

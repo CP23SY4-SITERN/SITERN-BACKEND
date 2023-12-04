@@ -1,13 +1,18 @@
 package com.example.siternbackend.jobs.entities;
 
 import com.example.siternbackend.company.entities.Company;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "job_post", schema = "sitern")
 public class JobPost {
@@ -16,23 +21,29 @@ public class JobPost {
     private Integer id;
 
     @MapsId("companyId")
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "company_ID", nullable = false)
     private Company company;
+
     @Column(name = "company_ID")
+    @JsonIgnore
     private Long company_ID;
 
 
 
     @MapsId("jobLocationId")
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "job_location_ID", nullable = false)
     private JobLocation jobLocation;
 
+    @JsonIgnore
     @Column(name = "created_date", nullable = false)
     private Instant createdDate;
 
     @Column(name = "applicationDeadline")
+    @JsonIgnore
     private LocalDate applicationDeadline;
 
     @Column(name = "position", nullable = false, length = 1000)
@@ -52,14 +63,15 @@ public class JobPost {
 
     @Column(name = "link", length = 300)
     private String link;
-
+    @JsonIgnore
     @Column(name = "salary", nullable = false)
     private Byte salary;
-
+    @JsonIgnore
     @Column(name = "is_active")
     private Byte isActive;
 
     @OneToMany(mappedBy = "jobPost")
+    @JsonIgnore
     private Set<JobAppliedByStudent> jobAppliedByStudents = new LinkedHashSet<>();
 
     public int getId() {
