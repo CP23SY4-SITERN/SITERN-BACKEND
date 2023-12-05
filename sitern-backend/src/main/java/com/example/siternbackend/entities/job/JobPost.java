@@ -1,6 +1,10 @@
 package com.example.siternbackend.entities.job;
 
+
 import com.example.siternbackend.entities.company.Company;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -26,6 +30,7 @@ public class JobPost {
     private JobLocation jobLocation;
 
     @Column(name = "created_date", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "UTC")
     private Instant createdDate;
 
     @Column(name = "applicationDeadline")

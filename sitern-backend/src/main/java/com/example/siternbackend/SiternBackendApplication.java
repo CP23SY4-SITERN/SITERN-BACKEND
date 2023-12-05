@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SiternBackendApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(SiternBackendApplication.class, args);
     }
 

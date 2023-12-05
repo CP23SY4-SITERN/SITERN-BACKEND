@@ -3,10 +3,14 @@ package com.example.siternbackend.entities.company;
 import com.example.siternbackend.entities.internship.Internshipapplicationstatus;
 import com.example.siternbackend.entities.job.JobPost;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "company", schema = "SITern")
 public class Company {
