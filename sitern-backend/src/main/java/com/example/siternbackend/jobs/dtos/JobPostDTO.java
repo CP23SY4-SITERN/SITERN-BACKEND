@@ -30,8 +30,4 @@ public class JobPostDTO {
     private String position;
     private String skillNeededList;
     private byte isActive;
-//    public LocalDate getApplicationDeadline() {
-//        return LocalDate.parse(applicationDeadline);
-//    }
-
 }

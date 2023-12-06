@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/jobs")
+@RequestMapping("/api/jobs")
 public class JobController {
     @Autowired
     private final JobService jobService;
