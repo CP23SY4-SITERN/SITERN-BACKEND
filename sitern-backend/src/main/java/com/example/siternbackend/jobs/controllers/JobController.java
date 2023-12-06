@@ -45,7 +45,7 @@ public class JobController {
     }
 
     private static final Logger log = LoggerFactory.getLogger(JobController.class);
-    @GetMapping("/getJobById/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<JobPostDTO> getJobById(@PathVariable int id) {
         try {
             JobPostDTO jobPostDTO = jobService.getJobPostById(id);

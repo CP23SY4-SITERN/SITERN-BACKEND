@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,8 +44,12 @@ public class JobService {
 
     //GET JOB BY ID
     public JobPostDTO getJobPostById(Integer id) {
-        JobPost jobPostEntity = jobPostRepository.findById(id).orElse(null);
-        return jobPostEntity != null ? convertToDTO(jobPostEntity) : null;
+        JobPost jobPost = jobPostRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, " id " + id +
+                "Does Not Exist !!!"
+        ));
+        return modelMapper.map(jobPost, JobPostDTO.class);
     }
 
     private JobPost convertToEntity(JobPostDTO jobPostDTO) {
