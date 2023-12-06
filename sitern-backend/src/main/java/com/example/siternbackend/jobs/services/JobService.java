@@ -3,9 +3,12 @@ package com.example.siternbackend.jobs.services;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
+import com.example.siternbackend.util.ListMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,19 +17,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class JobService {
-    private final JobPostRepository jobPostRepository;
-
     @Autowired
-    public JobService(JobPostRepository jobPostRepository) {
-        this.jobPostRepository = jobPostRepository;
+    private JobPostRepository jobPostRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private ListMapper listMapper;
+
+    public JobService() {
     }
 
     //get ALL JOB
     public List<JobPostDTO> getAllJobs() {
-        List<JobPost> jobPost = jobPostRepository.findAll();
-        return jobPost.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        List<JobPost> jobPost = jobPostRepository.findAll(Sort.by("createdDate").descending());
+        return listMapper.mapList(jobPost,JobPostDTO.class,modelMapper);
     }
     private JobPostDTO convertToDTO(JobPost jobPost) {
         JobPostDTO jobPostDTO = new JobPostDTO();

@@ -19,7 +19,7 @@ public class JobPostDTO {
     private Integer id;
     private Long company_ID;
     private String companyName;
-//    private Instant createdDate;
+    private Instant createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private String applicationDeadline;
     private String jobRequirement;
