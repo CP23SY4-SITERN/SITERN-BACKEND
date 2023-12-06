@@ -10,27 +10,28 @@ import com.example.siternbackend.util.ListMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class CompanyService {
-//    @Autowired
-//    private CompanyRepository companyRepository;
-//    @Autowired
-//    private ModelMapper modelMapper;
-//    @Autowired
-//    private ListMapper listMapper;
-//
-//    public CompanyService() {
-//    }
-//
-//    //get ALL JOB
-//    public List<CompanyDTO> getAllCompanies() {
-//        List<Company> companyList = companyRepository.findAll();
-//        return listMapper.mapList(companyList,CompanyDTO.class,modelMapper);
-//    }
-//
-//
+    @Autowired
+    private CompanyRepository companyRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private ListMapper listMapper;
+
+    public CompanyService() {
+    }
+
+    //get ALL JOB
+    public List<CompanyDTO> getAllCompanies() {
+        List<Company> companyList = companyRepository.findAll();
+        return listMapper.mapList(companyList,CompanyDTO.class,modelMapper);
+    }
+
+
 //    //GET JOB BY ID
 //    public CompanyDTO getCompanyListById(Integer id) {
 //        Company companyList = companyRepository.findById(id).orElse(null);
