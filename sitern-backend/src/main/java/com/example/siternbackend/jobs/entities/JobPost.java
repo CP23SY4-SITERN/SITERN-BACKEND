@@ -65,10 +65,10 @@ public class JobPost {
     private String link;
     @JsonIgnore
     @Column(name = "salary", nullable = false)
-    private Byte salary;
+    private int salary;
     @JsonIgnore
     @Column(name = "is_active")
-    private Byte isActive;
+    private byte isActive;
 
     @OneToMany(mappedBy = "jobPost")
     @JsonIgnore
@@ -162,11 +162,11 @@ public class JobPost {
         this.link = link;
     }
 
-    public Byte getSalary() {
+    public Integer getSalary() {
         return salary;
     }
 
-    public void setSalary(Byte salary) {
+    public void setSalary(Integer salary) {
         this.salary = salary;
     }
 

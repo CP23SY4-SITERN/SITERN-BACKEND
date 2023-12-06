@@ -1,5 +1,6 @@
 package com.example.siternbackend.jobs.controllers;
 
+import com.example.siternbackend.jobs.dtos.JobPostDTO;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import com.example.siternbackend.jobs.services.JobService;
@@ -32,25 +33,25 @@ public class JobController {
     }
 
     @GetMapping
-    public List<JobPost> getAllJobs() {
+    public List<JobPostDTO> getAllJobPosts() {
         try {
-            List<JobPost> jobPosts = jobPostRepository.findAll();
-            log.info("Retrieved {} job posts", jobPosts.size());
-            return jobPosts;
+            List<JobPostDTO> jobPostDTOs = jobService.getAllJobs();
+            log.info("Retrieved {} job posts", jobPostDTOs.size());
+            return jobPostDTOs;
         } catch (Exception e) {
             log.error("Error while retrieving job posts", e);
-            throw e; // rethrow the exception or handle it appropriately
+            throw e; // Rethrow the exception or handle it appropriately
         }
     }
 
     private static final Logger log = LoggerFactory.getLogger(JobController.class);
-    @GetMapping("/{id}")
-    public ResponseEntity<JobPost> getJobById(@PathVariable int id) {
+    @GetMapping("/getJobById/{id}")
+    public ResponseEntity<JobPostDTO> getJobById(@PathVariable int id) {
         try {
-            Optional<JobPost> jobPostOptional = jobService.getJobById(id);
+            JobPostDTO jobPostDTO = jobService.getJobPostById(id);
 
-            if (jobPostOptional.isPresent()) {
-                return new ResponseEntity<>(jobPostOptional.get(), HttpStatus.OK);
+            if (jobPostDTO != null) {
+                return new ResponseEntity<>(jobPostDTO, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -59,5 +60,6 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 }
