@@ -1,19 +1,26 @@
 package com.example.siternbackend.company.controllers;
 
 import com.example.siternbackend.company.DTOS.CompanyDTO;
+import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.company.repositories.CompanyRepository;
 import com.example.siternbackend.company.services.CompanyService;
 import com.example.siternbackend.jobs.controllers.JobController;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import com.example.siternbackend.jobs.services.JobService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+
+import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 @RestController
 @RequestMapping("/api/companies")
@@ -40,4 +47,14 @@ public class CompanyController {
         }
     }
     private static final Logger log = LoggerFactory.getLogger(CompanyController.class);
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Company> createCompany(@RequestBody @Valid CompanyDTO newCompany, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException {
+//        return EventService.save(newEvent)
+//        return ResponseEntity.ok("User is valid");
+        log.info("POST mapping for creating a company");
+        System.out.println("postmapping");
+        return companyService.create(newCompany, request);
+    }
+
 }
