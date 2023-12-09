@@ -1,9 +1,13 @@
 package com.example.siternbackend.company.DTOS;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.Id;
 import javax.validation.constraints.*;
 
 @Getter
@@ -11,8 +15,9 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompanyDTO {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotNull(message = "must not be null")
     @Size(min=1,max = 100 , message = "Company Name must be between 1 to 100 characters")
     private String companyName;
     @Size(max = 1000 , message = "Company Description must lower than 1000 characters")

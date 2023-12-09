@@ -3,14 +3,18 @@ package com.example.siternbackend.company.entities;
 import com.example.siternbackend.internshipstatus.entities.InternshipApplicationStatus;
 import com.example.siternbackend.jobs.entities.JobPost;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-
+@Getter
+@Setter
 @Entity
 @Table(name = "company", schema = "sitern")
 public class Company {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
@@ -31,6 +35,8 @@ public class Company {
 
     @Column(name = "company_employee")
     private Integer companyEmployee;
+
+
 
     @OneToMany(mappedBy = "company")
     private Set<InternshipApplicationStatus> internshipapplicationstatuses = new LinkedHashSet<>();

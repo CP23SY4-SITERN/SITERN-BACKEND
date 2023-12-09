@@ -16,7 +16,8 @@ import java.util.Set;
 @Entity
 @Table(name = "job_post", schema = "sitern")
 public class JobPost {
-    @Id
+
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
@@ -30,7 +31,15 @@ public class JobPost {
     @JsonIgnore
     private Long company_ID;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "work_type", nullable = false, length = 10)
+    private WorkType workType;
 
+    public enum WorkType {
+        Hybrid,
+        Remote,
+        Onsite
+    }
 
     @MapsId("jobLocationId")
     @JsonIgnore
