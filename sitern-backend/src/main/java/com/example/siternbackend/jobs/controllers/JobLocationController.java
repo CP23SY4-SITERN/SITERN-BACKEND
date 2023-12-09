@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/jobLocation")
 public class JobLocationController {
     @Autowired
