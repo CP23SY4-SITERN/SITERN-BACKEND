@@ -37,7 +37,7 @@ public class CompanyController {
     }
 
     @GetMapping
-    public List<CompanyDTO> getAllJobPosts() {
+    public List<CompanyDTO> getAllCompanyList() {
         try {
             List<CompanyDTO> companyDTOS = companyService.getAllCompanies();
             log.info("Retrieved {} company list", companyDTOS.size());
@@ -48,7 +48,7 @@ public class CompanyController {
         }
     }
     private static final Logger log = LoggerFactory.getLogger(CompanyController.class);
-    @PostMapping
+    @PostMapping("/adding")
     @Validated
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity createCompany(@Valid @RequestBody CompanyDTO newCompany, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException {
@@ -58,5 +58,8 @@ public class CompanyController {
         System.out.println("postmapping");
         return companyService.create(newCompany, request);
     }
-
+    @DeleteMapping("/{id}")
+    public void deleteCompanyById(@PathVariable Integer id, HttpServletRequest request){
+        companyService.deleteCompanyById(id, request);
+    }
 }

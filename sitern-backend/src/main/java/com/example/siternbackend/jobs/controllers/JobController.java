@@ -77,5 +77,9 @@ public class JobController {
         System.out.println("postmapping");
         return jobService.create(newJob, request);
     }
+    @DeleteMapping("/{id}")
+    public void deleteJobPostById(@PathVariable Integer id, HttpServletRequest request){
+        jobService.deleteJobPostById(id, request);
+    }
 
 }

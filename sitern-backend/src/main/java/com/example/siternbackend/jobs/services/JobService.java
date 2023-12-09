@@ -81,5 +81,11 @@ public class JobService {
         System.out.println("Created");
         return ResponseEntity.status(HttpStatus.CREATED).body(j);
     }
+    public void deleteJobPostById(Integer id,HttpServletRequest  request) {
+                jobPostRepository.findById(id).orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Can't Found This Job Post"));
+                jobPostRepository.deleteById(id);
 
+    }
 }

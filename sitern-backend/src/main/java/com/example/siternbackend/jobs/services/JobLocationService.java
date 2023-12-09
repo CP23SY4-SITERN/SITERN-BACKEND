@@ -63,4 +63,12 @@ public class JobLocationService {
         System.out.println("Created");
         return ResponseEntity.status(HttpStatus.CREATED).body(j);
     }
+
+    public void deleteJobLocationById(Integer id,HttpServletRequest  request) {
+        jobLocationRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Can't Found This Job Location"));
+        jobLocationRepository.deleteById(id);
+
+    }
 }

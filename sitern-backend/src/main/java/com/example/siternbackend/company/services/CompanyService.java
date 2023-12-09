@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,5 +64,13 @@ public class CompanyService {
         companyRepository.saveAndFlush(c);
         System.out.println("Created");
         return ResponseEntity.status(HttpStatus.CREATED).body(c);
+    }
+
+    public void deleteCompanyById(Integer id,HttpServletRequest  request) {
+        companyRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Can't Found This Company"));
+        companyRepository.deleteById(id);
+
     }
 }

@@ -57,4 +57,9 @@ public class JobLocationController {
         System.out.println("postmapping");
         return jobLocationService.create(newJobLocation, request);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteJobLocationById(@PathVariable Integer id, HttpServletRequest request){
+        jobLocationService.deleteJobLocationById(id, request);
+    }
 }
