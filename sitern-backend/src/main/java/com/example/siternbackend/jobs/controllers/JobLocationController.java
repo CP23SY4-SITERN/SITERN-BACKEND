@@ -1,18 +1,25 @@
 package com.example.siternbackend.jobs.controllers;
 
+import com.example.siternbackend.jobs.dtos.CreatingJobDTO;
 import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
+import com.example.siternbackend.jobs.entities.JobPost;
 import com.example.siternbackend.jobs.repositories.JobLocationRepository;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import com.example.siternbackend.jobs.services.JobLocationService;
 import com.example.siternbackend.jobs.services.JobService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -41,4 +48,12 @@ public class JobLocationController {
     }
 
     private static final Logger log = LoggerFactory.getLogger(JobController.class);
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<JobPost> createJobLocation(@Valid @RequestBody JobLocationDTO newJobLocation, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException {
+        log.info("POST mapping for creating a job location");
+        System.out.println("postmapping");
+        return jobLocationService.create(newJobLocation, request);
+    }
 }

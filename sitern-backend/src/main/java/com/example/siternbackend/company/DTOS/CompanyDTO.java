@@ -2,22 +2,23 @@ package com.example.siternbackend.company.DTOS;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Id;
-import javax.validation.constraints.*;
+
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompanyDTO {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotNull
     @Size(min=1,max = 100 , message = "Company Name must be between 1 to 100 characters")
     private String companyName;
     @Size(max = 1000 , message = "Company Description must lower than 1000 characters")

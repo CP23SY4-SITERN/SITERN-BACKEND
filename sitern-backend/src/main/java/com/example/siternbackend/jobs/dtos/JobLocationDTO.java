@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JobLocationDTO {
+
     private Integer id;
     private String road;
     private String subDistrict;

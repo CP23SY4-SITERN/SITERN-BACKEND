@@ -14,12 +14,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-
 import javax.validation.Valid;
+
 import java.io.IOException;
 import java.util.List;
 @RestController
@@ -48,8 +49,9 @@ public class CompanyController {
     }
     private static final Logger log = LoggerFactory.getLogger(CompanyController.class);
     @PostMapping
+    @Validated
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Company> createCompany(@RequestBody @Valid CompanyDTO newCompany, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException {
+    public ResponseEntity createCompany(@Valid @RequestBody CompanyDTO newCompany, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException {
 //        return EventService.save(newEvent)
 //        return ResponseEntity.ok("User is valid");
         log.info("POST mapping for creating a company");

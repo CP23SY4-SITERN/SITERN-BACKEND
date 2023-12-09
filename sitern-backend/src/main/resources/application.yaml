@@ -13,9 +13,9 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: Jubby4400
-#    url: jdbc:mysql://10.4.85.44:3306/SITern
-    url: jdbc:mysql://localhost:3306/sitern
+    password: sitern007
+    url: jdbc:mysql://10.4.85.44:3307/SITern
+#    url: jdbc:mysql://localhost:3306/sitern
 #    url: jdbc:mysql://10.4.85.44:3306/SITern
   jpa:
     hibernate:

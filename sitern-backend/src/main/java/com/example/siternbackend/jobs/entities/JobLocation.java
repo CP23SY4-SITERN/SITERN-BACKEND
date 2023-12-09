@@ -1,14 +1,17 @@
 package com.example.siternbackend.jobs.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-
+@Getter
+@Setter
 @Entity
 @Table(name = "job_location", schema = "sitern")
 public class JobLocation {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
@@ -30,60 +33,5 @@ public class JobLocation {
     @OneToMany(mappedBy = "jobLocation")
     private Set<JobPost> jobPosts = new LinkedHashSet<>();
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getRoad() {
-        return road;
-    }
-
-    public void setRoad(String road) {
-        this.road = road;
-    }
-
-    public String getSubDistrict() {
-        return subDistrict;
-    }
-
-    public void setSubDistrict(String subDistrict) {
-        this.subDistrict = subDistrict;
-    }
-
-    public String getProvince() {
-        return province;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public void setZip(String zip) {
-        this.zip = zip;
-    }
-
-    public Set<JobPost> getJobPosts() {
-        return jobPosts;
-    }
-
-    public void setJobPosts(Set<JobPost> jobPosts) {
-        this.jobPosts = jobPosts;
-    }
 
 }

@@ -1,9 +1,14 @@
 package com.example.siternbackend.jobs.controllers;
 
+import com.example.siternbackend.company.DTOS.CompanyDTO;
+import com.example.siternbackend.company.entities.Company;
+import com.example.siternbackend.jobs.dtos.CreatingJobDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import com.example.siternbackend.jobs.services.JobService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +19,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,5 +69,12 @@ public class JobController {
         }
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<JobPost> createJob(@Valid @RequestBody CreatingJobDTO newJob, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException {
+        log.info("POST mapping for creating a job posting");
+        System.out.println("postmapping");
+        return jobService.create(newJob, request);
+    }
 
 }

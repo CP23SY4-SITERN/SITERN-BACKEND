@@ -16,7 +16,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
+
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import java.io.IOException;
 import java.util.List;
 @Service
@@ -52,7 +57,7 @@ public class CompanyService {
 //        return jobPost;
 //    }
 //
-    public ResponseEntity<Company> create(CompanyDTO newCompany, HttpServletRequest request) throws MessagingException, IOException {
+    public ResponseEntity<Company> create(@RequestBody @Valid CompanyDTO newCompany, HttpServletRequest request) throws MethodArgumentNotValidException,MessagingException, IOException {
 
         Company c = modelMapper.map(newCompany, Company.class);
         companyRepository.saveAndFlush(c);
