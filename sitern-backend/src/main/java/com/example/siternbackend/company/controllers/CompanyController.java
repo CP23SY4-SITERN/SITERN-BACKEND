@@ -48,7 +48,7 @@ public class CompanyController {
         }
     }
     private static final Logger log = LoggerFactory.getLogger(CompanyController.class);
-    @PostMapping("/adding")
+    @PostMapping
     @Validated
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity createCompany(@Valid @RequestBody CompanyDTO newCompany, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException {
