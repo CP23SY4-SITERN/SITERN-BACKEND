@@ -58,7 +58,22 @@ public class JobLocationController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteJobLocationById(@PathVariable Integer id, HttpServletRequest request){
-        jobLocationService.deleteJobLocationById(id, request);
+    public ResponseEntity<String> deleteJobLocationById(@PathVariable Integer id, HttpServletRequest request){
+        try {
+            jobLocationService.deleteJobLocationById(id, request);
+            // Log success message and related information
+            log.info("Delete Job Location Successful for ID: {}", id);
+            // You can log additional information if needed, e.g., request details
+            log.debug("Request details - Method: {}, URI: {}", request.getMethod(), request.getRequestURI());
+
+            // Return a success message to the client
+            String successMessage = "Delete Job Location Successful for ID: " + id;
+            return new ResponseEntity<>(successMessage, HttpStatus.OK);
+        } catch (Exception e) {
+            // Log any exceptions that might occur during the delete operation
+            log.error("Error deleting job location with ID: {}", id, e);
+            // Return an error message to the client
+            return new ResponseEntity<>("Error deleting job location with ID: " + id, HttpStatus.NOT_FOUND);
+        }
     }
 }

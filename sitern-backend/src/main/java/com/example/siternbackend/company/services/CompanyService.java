@@ -1,6 +1,7 @@
 package com.example.siternbackend.company.services;
 
 import com.example.siternbackend.company.DTOS.CompanyDTO;
+import com.example.siternbackend.company.DTOS.EditCompanyDTO;
 import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.company.repositories.CompanyRepository;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
@@ -44,11 +45,15 @@ public class CompanyService {
     }
 
 
-    //    //GET JOB BY ID
-//    public CompanyDTO getCompanyListById(Integer id) {
-//        Company companyList = companyRepository.findById(id).orElse(null);
-//        return companyList != null ? convertToDTO(companyList) : null;
-//    }
+    //    //GET COMPANY BY ID
+    public CompanyDTO getCompanyByID(Integer id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, " id " + id +
+                        "Does Not Exist !!!"
+                ));
+        return modelMapper.map(company, CompanyDTO.class);
+    }
 //
 //    private JobPost convertToEntity(JobPostDTO jobPostDTO) {
 //        JobPost jobPost = new JobPost();
@@ -73,4 +78,21 @@ public class CompanyService {
         companyRepository.deleteById(id);
 
     }
+
+    public EditCompanyDTO editCompany(HttpServletRequest request, EditCompanyDTO editCompany, Integer id) {
+          Company company = companyRepository.findById(id).map(o->mapCompany(o, editCompany))
+                    .orElseThrow(() ->
+                            new ResponseStatusException(HttpStatus.FORBIDDEN, "No ID : " + id));
+            companyRepository.saveAndFlush(company);
+            return modelMapper.map(company, EditCompanyDTO.class);
+    }
+
+        private Company mapCompany(Company existingCompany, EditCompanyDTO updateCompany) {
+            existingCompany.setCompanyName(updateCompany.getCompanyName());
+            existingCompany.setCompanyDescription(updateCompany.getCompanyDescription());
+            existingCompany.setCompanyLocation(updateCompany.getCompanyLocation());
+            existingCompany.setCompanyWebsite(updateCompany.getCompanyWebsite());
+            existingCompany.setCompanyEmployee(updateCompany.getCompanyEmployee());
+            return existingCompany;
+        }
 }

@@ -1,8 +1,10 @@
 package com.example.siternbackend.jobs.controllers;
 
 import com.example.siternbackend.company.DTOS.CompanyDTO;
+import com.example.siternbackend.company.DTOS.EditCompanyDTO;
 import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.jobs.dtos.CreatingJobDTO;
+import com.example.siternbackend.jobs.dtos.EditJobDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
@@ -77,8 +79,29 @@ public class JobController {
         return jobService.create(newJob, request);
     }
     @DeleteMapping("/{id}")
-    public void deleteJobPostById(@PathVariable Integer id, HttpServletRequest request){
-        jobService.deleteJobPostById(id, request);
+    public ResponseEntity<String> deleteJobPostById(@PathVariable Integer id, HttpServletRequest request){
+        try {
+            jobService.deleteJobPostById(id, request);
+            // Log success message and related information
+            log.info("Delete Job Successful for ID: {}", id);
+            // You can log additional information if needed, e.g., request details
+            log.debug("Request details - Method: {}, URI: {}", request.getMethod(), request.getRequestURI());
+            // Return a success message to the client
+            String successMessage = "Delete Job Successful for ID: " + id;
+            return new ResponseEntity<>(successMessage, HttpStatus.OK);
+        } catch (Exception e) {
+            // Log any exceptions that might occur during the delete operation
+            log.error("Error deleting job with ID: {}", id, e);
+            // Return an error message to the client
+            return new ResponseEntity<>("Error deleting job with ID: " + id +"    ," + id + "Not Found", HttpStatus.NOT_FOUND);
+        }
     }
+
+//    @PatchMapping("/{id}")
+//    public EditJobDTO editJobDTO(@Valid @RequestBody EditJobDTO editJobDTO, @PathVariable int id, HttpServletRequest request) {
+//        return jobService.editJob(request,editJobDTO,id);
+//    }
+
+    
 
 }
