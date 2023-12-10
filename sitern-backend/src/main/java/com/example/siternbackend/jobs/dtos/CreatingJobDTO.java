@@ -28,7 +28,6 @@ public class CreatingJobDTO {
     private LocalDateTime createdDate;
     @NotNull(message = "must not be null")
     private Integer company_ID;
-    @Future(message = "deadline must be future")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private String applicationDeadline;
     @NotNull(message = "must not be null")

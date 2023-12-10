@@ -97,11 +97,12 @@ public class JobController {
         }
     }
 
-//    @PatchMapping("/{id}")
-//    public EditJobDTO editJobDTO(@Valid @RequestBody EditJobDTO editJobDTO, @PathVariable int id, HttpServletRequest request) {
-//        return jobService.editJob(request,editJobDTO,id);
-//    }
+    @PatchMapping("/{jobId}")
+    public ResponseEntity<EditJobDTO> editJob(@PathVariable Integer jobId,@RequestBody @Valid EditJobDTO editJobDTO) {
+        EditJobDTO updatedJob = jobService.editJob(jobId, editJobDTO);
+        return ResponseEntity.ok(updatedJob);
+    }
 
-    
+
 
 }
