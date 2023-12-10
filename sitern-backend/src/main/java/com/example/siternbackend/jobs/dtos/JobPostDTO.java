@@ -33,6 +33,6 @@ public class JobPostDTO {
     private String link;
     private Integer salary;
     private Enum workType;
-    private JobLocation jobLocation;
+    private JobLocationDTO jobLocation;
     private byte isActive;
 }
