@@ -30,7 +30,6 @@ public class JobPost {
     private LocalDateTime createdDate;
 
     @Column(name = "applicationDeadline")
-    @JsonIgnore
     private LocalDate applicationDeadline;
 
     @Column(name = "position", nullable = false, length = 1000)
@@ -74,11 +73,6 @@ public class JobPost {
     private WorkType workType;
 
 
-    public enum WorkType {
-        Hybrid,
-        Remote,
-        Onsite
-    }
 
     @MapsId("jobLocationId")
     @JsonIgnore

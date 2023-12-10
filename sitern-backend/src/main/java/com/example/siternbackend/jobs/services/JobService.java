@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,8 @@ public class JobService {
     private ModelMapper modelMapper;
     @Autowired
     private ListMapper listMapper;
+    @Autowired
+    private ConversionService conversionService;
 
     public JobService() {
     }
@@ -102,7 +105,7 @@ public class JobService {
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found with id " + jobId));
 
         // Copy non-null properties from editJobDTO to existingJob
-        BeanUtils.copyProperties(editJobDTO, existingJob, getNullPropertyNames(editJobDTO));
+        copyNonNullProperties(editJobDTO, existingJob);
 
         // Save the updated job
         JobPost updatedJob = jobPostRepository.save(existingJob);
@@ -111,20 +114,27 @@ public class JobService {
         return convertToEditDto(updatedJob);
     }
 
-    // Helper method to get null property names
-    private String[] getNullPropertyNames(Object source) {
+    private void copyNonNullProperties(Object source, Object target) {
         final BeanWrapper src = new BeanWrapperImpl(source);
+        final BeanWrapper trg = new BeanWrapperImpl(target);
+
         java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
-        Set<String> emptyNames = new HashSet<>();
         for (java.beans.PropertyDescriptor pd : pds) {
-            Object srcValue = src.getPropertyValue(pd.getName());
-            if (srcValue == null) emptyNames.add(pd.getName());
+            if (!pd.getName().equals("class")) {
+                Object srcValue = src.getPropertyValue(pd.getName());
+                if (srcValue != null) {
+                    // Use ConversionService to convert enum values
+                    if (pd.getPropertyType().isEnum()) {
+                        trg.setPropertyValue(pd.getName(), conversionService.convert(srcValue, pd.getPropertyType()));
+                    } else {
+                        trg.setPropertyValue(pd.getName(), srcValue);
+                    }
+                }
+            }
         }
-
-        String[] result = new String[emptyNames.size()];
-        return emptyNames.toArray(result);
     }
+
 
     // Convert Job entity to DTO
     private EditJobDTO convertToEditDto(JobPost job) {

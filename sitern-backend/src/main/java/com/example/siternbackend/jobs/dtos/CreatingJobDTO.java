@@ -13,6 +13,7 @@ import lombok.Setter;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -29,7 +30,7 @@ public class CreatingJobDTO {
     @NotNull(message = "must not be null")
     private Integer company_ID;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private String applicationDeadline;
+    private LocalDate applicationDeadline;
     @NotNull(message = "must not be null")
     @Size(min=1,max = 1000 , message = "Job Position must be between 1 to 1000 characters")
     private String position;

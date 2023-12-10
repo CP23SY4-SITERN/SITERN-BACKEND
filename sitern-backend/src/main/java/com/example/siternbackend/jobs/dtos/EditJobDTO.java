@@ -1,7 +1,9 @@
 package com.example.siternbackend.jobs.dtos;
 
+import com.example.siternbackend.jobs.entities.WorkType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -22,7 +25,7 @@ public class EditJobDTO {
     @Size(min=1,max = 200 , message = "Job Title must be between 1 to 200 characters")
     private String title;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private String applicationDeadline;
+    private LocalDate applicationDeadline;
     @Size(min=1,max = 2000 , message = "Job Skill must be between 1 to 2000 characters")
     private String skillNeededList;
     @Size(max = 2000 , message = "Job Requirement must be between 1 to 2000 characters")
@@ -34,14 +37,8 @@ public class EditJobDTO {
     @Size(max = 300 , message = "Job Link must lower than 300 characters")
     private String link;
     private Integer salary;
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private WorkType workType;
     private Integer job_location_ID;
 
-
-    public enum WorkType {
-        Hybrid,
-        Remote,
-        Onsite
-    }
 }
