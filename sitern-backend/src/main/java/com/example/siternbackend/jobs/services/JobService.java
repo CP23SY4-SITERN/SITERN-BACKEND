@@ -79,16 +79,27 @@ public class JobService {
         return jobPost;
     }
 
+//    public ResponseEntity create(CreatingJobDTO newJob, HttpServletRequest request) throws MessagingException, IOException {
+//        newJob.setCreatedDate(ZonedDateTime.now().toLocalDateTime());
+//        System.out.println("createdDate");
+//        Company company = companyRepository.findById(newJob.getCompany_ID())
+//                .orElseThrow(() -> new EntityNotFoundException("Company not found with ID: " + newJob.getCompany_ID()));
+//        System.out.println("company found");
+//        JobPost j = modelMapper.map(newJob, JobPost.class);
+//        j.setCompany(company);
+//        jobPostRepository.saveAndFlush(j);
+//
+//        System.out.println("Created");
+//        return ResponseEntity.status(HttpStatus.CREATED).body(j);
+//    }
+
     public ResponseEntity create(CreatingJobDTO newJob, HttpServletRequest request) throws MessagingException, IOException {
-        newJob.setCreatedDate(ZonedDateTime.now().toLocalDateTime());
-        System.out.println("createdDate");
         Company company = companyRepository.findById(newJob.getCompany_ID())
                 .orElseThrow(() -> new EntityNotFoundException("Company not found with ID: " + newJob.getCompany_ID()));
-        System.out.println("company found");
         JobPost j = modelMapper.map(newJob, JobPost.class);
+        System.out.println("company found");
         j.setCompany(company);
         jobPostRepository.saveAndFlush(j);
-
         System.out.println("Created");
         return ResponseEntity.status(HttpStatus.CREATED).body(j);
     }

@@ -1,7 +1,9 @@
 package com.example.siternbackend.jobs.dtos;
 
+import com.example.siternbackend.jobs.entities.WorkType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Future;
@@ -49,16 +51,10 @@ public class CreatingJobDTO {
     @NotNull(message = "must not be null")
     private Integer salary;
     @NotNull(message = "must not be null")
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private WorkType workType;
     @NotNull(message = "must not be null")
     private Integer job_location_ID;
-    @JsonIgnore
     private byte isActive;
 
-    public enum WorkType {
-        Hybrid,
-        Remote,
-        Onsite
-    }
 }

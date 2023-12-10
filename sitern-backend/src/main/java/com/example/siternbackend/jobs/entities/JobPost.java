@@ -1,6 +1,7 @@
 package com.example.siternbackend.jobs.entities;
 
 import com.example.siternbackend.company.entities.Company;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,8 +26,9 @@ public class JobPost {
     @Column(name = "title", nullable = false, length = 200)
     private String title;
 
-    @JsonIgnore
-    @Column(name = "created_date", nullable = false)
+
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdDate;
 
     @Column(name = "applicationDeadline")
@@ -54,9 +56,8 @@ public class JobPost {
     @Column(name = "salary", nullable = false)
     private Integer salary;
 
-    @JsonIgnore
     @Column(name = "is_active")
-    private byte isActive;
+    private byte isActive = 1;
 
     @MapsId("companyId")
     @JsonIgnore
@@ -91,6 +92,10 @@ public class JobPost {
     @JsonIgnore
     private Set<JobAppliedByStudent> jobAppliedByStudents = new LinkedHashSet<>();
 
-
+    @PrePersist
+    protected void setCreatedDate() {
+        this.createdDate = LocalDateTime.now();
+        System.out.println("Setting createdDate: " + this.createdDate);
+    }
 
 }

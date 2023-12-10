@@ -12,6 +12,7 @@ import lombok.Setter;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,7 +21,7 @@ import java.time.LocalDate;
 public class JobPostDTO {
     private Integer id;
     private String title;
-    private Instant createdDate;
+    private LocalDateTime createdDate;
     private Long company_ID;
     private String companyName;
     @JsonFormat(pattern = "yyyy-MM-dd")
