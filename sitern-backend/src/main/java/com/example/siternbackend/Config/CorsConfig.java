@@ -12,7 +12,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedOrigins("https://cp23sy4.sit.kmutt.ac.th")
                 .allowedOrigins("http://10.4.85.44:8080")
                 .allowedOrigins("https://10.4.85.44:8080")
-                .allowedOrigins("https://capstone23.sit.kmutt.ac.th/sy4")
+                .allowedOrigins("https://capstone23.sit.kmutt.ac.th")
                 .allowedOrigins("10.4.85.44:8080")
                 .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
