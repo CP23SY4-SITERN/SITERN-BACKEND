@@ -15,7 +15,7 @@ spring:
     username: root
 
     password: sitern007
-    url: jdbc:mysql://172.17.0.1:3307/siterndb
+    url: jdbc:mysql://172.17.0.1:3307/SITern
 #    url: jdbc:mysql://localhost:3306/sitern
 #    url: jdbc:mysql://10.4.85.44:3307/SITern
   jpa:
