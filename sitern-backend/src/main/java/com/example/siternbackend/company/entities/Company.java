@@ -1,7 +1,9 @@
 package com.example.siternbackend.company.entities;
 
 import com.example.siternbackend.internshipstatus.entities.InternshipApplicationStatus;
+import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.jobs.entities.JobPost;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,5 +46,19 @@ public class Company {
     @OneToMany(mappedBy = "company")
     private Set<JobPost> jobPosts = new LinkedHashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "job_location_ID", referencedColumnName = "ID")
+    private JobLocation jobLocation;
+
+
+//    @MapsId("companyId")
+//    @JsonIgnore
+//    @ManyToOne(fetch = FetchType.EAGER, cascade =CascadeType.PERSIST)
+//    @JoinColumn(name = "company_ID", nullable = false)
+//    private Company company;
+//
+//    @Column(name = "company_ID")
+//    @JsonIgnore
+//    private Long company_ID;
 
 }

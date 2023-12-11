@@ -4,12 +4,17 @@ import com.example.siternbackend.company.DTOS.CompanyDTO;
 import com.example.siternbackend.company.DTOS.EditCompanyDTO;
 import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.company.repositories.CompanyRepository;
+import com.example.siternbackend.jobs.dtos.EditJobDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
+import com.example.siternbackend.jobs.services.JobService;
 import com.example.siternbackend.util.ListMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -25,7 +30,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 @Service
 public class CompanyService {
     @Autowired
@@ -79,20 +87,58 @@ public class CompanyService {
 
     }
 
-    public EditCompanyDTO editCompany(HttpServletRequest request, EditCompanyDTO editCompany, Integer id) {
-          Company company = companyRepository.findById(id).map(o->mapCompany(o, editCompany))
-                    .orElseThrow(() ->
-                            new ResponseStatusException(HttpStatus.FORBIDDEN, "No ID : " + id));
-            companyRepository.saveAndFlush(company);
-            return modelMapper.map(company, EditCompanyDTO.class);
+//    public EditCompanyDTO editCompany(HttpServletRequest request, EditCompanyDTO editCompany, Integer id) {
+//          Company company = companyRepository.findById(id).map(o->mapCompany(o, editCompany))
+//                    .orElseThrow(() ->
+//                            new ResponseStatusException(HttpStatus.FORBIDDEN, "No ID : " + id));
+//            companyRepository.saveAndFlush(company);
+//            return modelMapper.map(company, EditCompanyDTO.class);
+//    }
+//
+//        private Company mapCompany(Company existingCompany, EditCompanyDTO updateCompany) {
+//            existingCompany.setCompanyName(updateCompany.getCompanyName());
+//            existingCompany.setCompanyDescription(updateCompany.getCompanyDescription());
+//            existingCompany.setCompanyLocation(updateCompany.getCompanyLocation());
+//            existingCompany.setCompanyWebsite(updateCompany.getCompanyWebsite());
+//            existingCompany.setCompanyEmployee(updateCompany.getCompanyEmployee());
+//            return existingCompany;
+//        }
+
+
+
+    public EditCompanyDTO editCompany(HttpServletRequest request, EditCompanyDTO editCompany, int id) {
+        Company existingCompany = companyRepository.findById(id)
+                .orElseThrow(() -> new JobService.ResourceNotFoundException("Company not found with id " + id));
+
+        // Copy non-null properties from editCompany to existingCompany
+        BeanUtils.copyProperties(editCompany, existingCompany, getNullPropertyNames(editCompany));
+
+        // Save the updated company
+        Company updatedCompany = companyRepository.save(existingCompany);
+
+        // Convert and return the updated company as DTO
+        return convertToEditDto(updatedCompany);
     }
 
-        private Company mapCompany(Company existingCompany, EditCompanyDTO updateCompany) {
-            existingCompany.setCompanyName(updateCompany.getCompanyName());
-            existingCompany.setCompanyDescription(updateCompany.getCompanyDescription());
-            existingCompany.setCompanyLocation(updateCompany.getCompanyLocation());
-            existingCompany.setCompanyWebsite(updateCompany.getCompanyWebsite());
-            existingCompany.setCompanyEmployee(updateCompany.getCompanyEmployee());
-            return existingCompany;
+    private EditCompanyDTO convertToEditDto(Company company) {
+        EditCompanyDTO editCompanyDTO = new EditCompanyDTO();
+        BeanUtils.copyProperties(company, editCompanyDTO);
+        return editCompanyDTO;
+    }
+
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+        Set<String> nullProperties = new HashSet<>();
+
+        for (java.beans.PropertyDescriptor pd : pds) {
+            if (src.getPropertyValue(pd.getName()) == null) {
+                nullProperties.add(pd.getName());
+            }
         }
+
+        return nullProperties.toArray(new String[0]);
+    }
+
+
 }

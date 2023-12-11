@@ -12,8 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EditCompanyDTO {
-    private Integer id;
-    @NotNull
     @Size(min=1,max = 100 , message = "Company Name must be between 1 to 100 characters")
     private String companyName;
     @Size(max = 1000 , message = "Company Description must lower than 1000 characters")

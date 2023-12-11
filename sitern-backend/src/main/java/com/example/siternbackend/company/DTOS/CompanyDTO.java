@@ -1,5 +1,6 @@
 package com.example.siternbackend.company.DTOS;
 
+import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotNull;
@@ -29,5 +30,6 @@ public class CompanyDTO {
     @Size(max = 200 , message = "Company Location must lower than 200 characters")
     private String companyLocation;
     private Integer companyEmployee;
+    private JobLocationDTO jobLocation;
 
 }
