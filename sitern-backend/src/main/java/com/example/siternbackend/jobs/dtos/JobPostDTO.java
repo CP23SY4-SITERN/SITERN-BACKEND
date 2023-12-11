@@ -35,5 +35,6 @@ public class JobPostDTO {
     private Integer salary;
     private Enum workType;
     private JobLocationDTO jobLocation;
+    private String zip;
     private byte isActive;
 }

@@ -5,6 +5,7 @@ import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.company.repositories.CompanyRepository;
 import com.example.siternbackend.jobs.dtos.CreatingJobDTO;
 import com.example.siternbackend.jobs.dtos.EditJobDTO;
+import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
@@ -49,17 +50,38 @@ public class JobService {
     }
 
     //get ALL JOB
+//    public List<JobPostDTO> getAllJobs() {
+//        List<JobPost> jobPost = jobPostRepository.findAll(Sort.by("createdDate").descending());
+//        return listMapper.mapList(jobPost,JobPostDTO.class,modelMapper);
+//    }
+
     public List<JobPostDTO> getAllJobs() {
-        List<JobPost> jobPost = jobPostRepository.findAll(Sort.by("createdDate").descending());
-        return listMapper.mapList(jobPost,JobPostDTO.class,modelMapper);
+        List<JobPost> jobPosts = jobPostRepository.findAll(Sort.by("createdDate").descending());
+
+        List<JobPostDTO> jobPostDTOs = listMapper.mapList(jobPosts, JobPostDTO.class, modelMapper);
+
+        // Populate the zip attribute from JobLocation
+        for (JobPostDTO jobPostDTO : jobPostDTOs) {
+            JobLocationDTO jobLocationDTO = jobPostDTO.getJobLocation();
+            if (jobLocationDTO != null) {
+                jobPostDTO.setZip(jobLocationDTO.getZip());
+            }
+        }
+
+        return jobPostDTOs;
     }
-    private JobPostDTO convertToDTO(JobPost jobPost) {
-        JobPostDTO jobPostDTO = new JobPostDTO();
-        jobPostDTO.setId(jobPost.getId());
-        jobPostDTO.setCompany_ID(jobPost.getCompany_ID());
-        // Set other properties
-        return jobPostDTO;
-    }
+
+
+
+
+
+    //    private JobPostDTO convertToDTO(JobPost jobPost) {
+//        JobPostDTO jobPostDTO = new JobPostDTO();
+//        jobPostDTO.setId(jobPost.getId());
+//        jobPostDTO.setCompany_ID(jobPost.getCompany_ID());
+//        // Set other properties
+//        return jobPostDTO;
+//    }
 
     //GET JOB BY ID
     public JobPostDTO getJobPostById(Integer id) {
