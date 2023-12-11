@@ -14,7 +14,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedOrigins("https://10.4.85.44:8080")
                 .allowedOrigins("https://capstone23.sit.kmutt.ac.th/sy4")
                 .allowedOrigins("http://localhost:3000")
-                .allowedOrigins("*")
+//                .allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowCredentials(true);
     }
