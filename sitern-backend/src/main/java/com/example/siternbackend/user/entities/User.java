@@ -1,103 +1,52 @@
 package com.example.siternbackend.user.entities;
 
-import com.example.siternbackend.student.entities.StudentProfile;
+import com.example.siternbackend.jobs.entities.WorkType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Entity
-@Table(name = "user", schema = "sitern")
+@Table(name = "user", schema = "SITern")
 public class User {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
+    @Size(max = 45)
+    @NotNull
     @Column(name = "email", nullable = false, length = 45)
     private String email;
 
+    @Size(max = 255)
+    @NotNull
     @Column(name = "password_hashed", nullable = false)
     private String passwordHashed;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private String role;
+    private Role role;
 
+    @Size(max = 45)
+    @NotNull
     @Column(name = "username", nullable = false, length = 45)
     private String username;
 
-    @Column(name = "created", nullable = false)
-    private Instant created;
+    @NotNull
+    @Column(name = "created", nullable = false, updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime created;
 
+    @NotNull
     @Column(name = "updated", nullable = false)
-    private Instant updated;
-
-    @OneToMany(mappedBy = "user")
-    private Set<StudentProfile> studentProfiles = new LinkedHashSet<>();
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPasswordHashed() {
-        return passwordHashed;
-    }
-
-    public void setPasswordHashed(String passwordHashed) {
-        this.passwordHashed = passwordHashed;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Instant getCreated() {
-        return created;
-    }
-
-    public void setCreated(Instant created) {
-        this.created = created;
-    }
-
-    public Instant getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Instant updated) {
-        this.updated = updated;
-    }
-
-    public Set<StudentProfile> getStudentProfiles() {
-        return studentProfiles;
-    }
-
-    public void setStudentProfiles(Set<StudentProfile> studentProfiles) {
-        this.studentProfiles = studentProfiles;
-    }
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime updated;
 
 }
