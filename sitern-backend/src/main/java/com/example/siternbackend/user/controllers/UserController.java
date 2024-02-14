@@ -58,4 +58,14 @@ public class UserController {
         System.out.println("postmapping");
         return userService.createUsers(newUsers, request);
     }
+    @PatchMapping("/{id}")
+    public User update(@RequestBody @javax.validation.Valid User updateUser, @PathVariable Integer id){
+        User user = userRepository.findById(id).map(o->userService.mapUser(o,updateUser))
+                .orElseGet(()->
+                {
+                    updateUser.setId(id);
+                    return updateUser;
+                });
+        return userRepository.saveAndFlush(user);
+    }
 }

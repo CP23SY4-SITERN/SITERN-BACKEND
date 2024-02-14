@@ -1,12 +1,12 @@
 package com.example.siternbackend.jobs.controllers;
 
-import com.example.siternbackend.company.DTOS.CompanyDTO;
-import com.example.siternbackend.company.DTOS.EditCompanyDTO;
-import com.example.siternbackend.company.entities.Company;
+import com.example.siternbackend.Exception.EnumValidationException;
+import com.example.siternbackend.Validation.EnumValid;
 import com.example.siternbackend.jobs.dtos.CreatingJobDTO;
 import com.example.siternbackend.jobs.dtos.EditJobDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
 import com.example.siternbackend.jobs.entities.JobPost;
+import com.example.siternbackend.jobs.entities.WorkType;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import com.example.siternbackend.jobs.services.JobService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,20 +14,14 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -71,13 +65,30 @@ public class JobController {
         }
     }
 
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ResponseEntity<JobPost> createJob(@Valid @EnumValid(enumClass = WorkType.class) @RequestBody CreatingJobDTO newJob, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException,RuntimeException {
+//        log.info("POST mapping for creating a job posting");
+//        System.out.println("postmapping");
+//        return jobService.create(newJob, request);
+//    }
+    @ExceptionHandler(EnumValidationException.class)
+    public ResponseEntity<String> handleEnumValidationException(EnumValidationException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+}
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<JobPost> createJob(@Valid @RequestBody CreatingJobDTO newJob, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException {
+    public ResponseEntity<String> createJob(@Valid @EnumValid(enumClass = WorkType.class) @RequestBody CreatingJobDTO newJob, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException, RuntimeException {
         log.info("POST mapping for creating a job posting");
-        System.out.println("postmapping");
-        return jobService.create(newJob, request);
+        try {
+            return jobService.create(newJob, request);
+        } catch (EnumValidationException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteJobPostById(@PathVariable Integer id, HttpServletRequest request){
         try {

@@ -1,5 +1,6 @@
 package com.example.siternbackend.jobs.dtos;
 
+import com.example.siternbackend.Validation.EnumValid;
 import com.example.siternbackend.jobs.entities.WorkType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -50,7 +51,7 @@ public class CreatingJobDTO {
     private String link;
     @NotNull(message = "must not be null")
     private Integer salary;
-    @NotNull(message = "must not be null")
+    @EnumValid(enumClass = WorkType.class, message = "Invalid workType value. Accepted values are: {enumValues}")
     @Enumerated(EnumType.STRING)
     private WorkType workType;
     @NotNull(message = "must not be null")

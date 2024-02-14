@@ -3,8 +3,6 @@ package com.example.siternbackend.user.DTOs;
 import com.example.siternbackend.user.entities.Role;
 import lombok.*;
 
-import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 /**

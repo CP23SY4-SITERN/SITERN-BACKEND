@@ -1,6 +1,5 @@
 package com.example.siternbackend.user.entities;
 
-import com.example.siternbackend.jobs.entities.WorkType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
