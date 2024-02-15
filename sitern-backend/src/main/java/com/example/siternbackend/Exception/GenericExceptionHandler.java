@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 @ControllerAdvice
 public class GenericExceptionHandler {
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleAllExceptions(Exception ex) {
-        String errorMessage = ex.getMessage();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<String> handleAllExceptions(Exception ex) {
+//      String errorMessage = ex.getMessage();
+//       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+//    }
 }

@@ -48,10 +48,13 @@ public class UserService {
     @Autowired
     private AuthoritiesRepository authoritiesRepository;
 
-    public List<UserDto> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         //ต้องเพิ่ม sortbycompanyID
         List<User> user = userRepository.findAll();
-        return listMapper.mapList(user ,UserDto.class,modelMapper);
+        return mapListUserToListUserResponse(user);
+    }
+    public List<UserResponse> mapListUserToListUserResponse(List<User> users) {
+        return users.stream().map(this::mapUserToUserResponse).collect(Collectors.toList());
     }
     public Optional<User> findAllById(int id) {
         return userRepository.findById(id);
@@ -66,12 +69,14 @@ public class UserService {
     }
 
     // ... existing code ...
-    public ResponseEntity<User> addUser(CreateUserDto newUsers, HttpServletRequest request) throws MessagingException, IOException{
+    public ResponseEntity<UserResponse> addUser(CreateUserDto newUsers, HttpServletRequest request) throws MessagingException, IOException{
         // Check if the email is already registered
         if (userRepository.existsByEmail(newUsers.getEmail())) {
             throw new IllegalArgumentException("Email is already registered");
         }
         User newUser = modelMapper.map(newUsers, User.class);
+        Authorities authorities = getAuthorityByName(Roles.STUDENT);
+        newUser.setAuthorities(List.of(authorities));
         // Encode the password
         newUser.setPassword(passwordEncoder.encode(newUsers.getPassword()));
         // Set other attributes
@@ -79,8 +84,8 @@ public class UserService {
         System.out.println("setCreateDatetime");
         newUser.setUpdated(LocalDateTime.now());
         System.out.println("setUpdateDatetime");
-        userRepository.saveAndFlush(newUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapUserToUserResponse(userRepository.save(newUser)));
+
     }
 //    public User mapUser(User existingUser, User updateUser) {
 //        existingUser.setUsername(updateUser.getUsername());
@@ -110,9 +115,9 @@ public class UserService {
 
         boolean isStaff = userFromToken.getAuthorities()
                 .stream()
-                .anyMatch(authority -> Roles.Staff.toString().equalsIgnoreCase(authority.getAuthority()));
+                .anyMatch(authority -> Roles.STAFF.toString().equalsIgnoreCase(authority.getAuthority()));
         if (!isStaff) {
-            if (!userFromId.getUsername().equals(userFromToken.getUsername()) || authorities.contains(Roles.Staff.toString())) {
+            if (!userFromId.getUsername().equals(userFromToken.getUsername()) || authorities.contains(Roles.STAFF.toString())) {
                 log.info("Unauthorized: Cannot Update this User");
                 return UserResponse.builder().build();
             }
@@ -146,7 +151,7 @@ public class UserService {
     }
 
     public Authorities getAuthorityByName(Roles roles) {
-        return authoritiesRepository.findByRoles(roles);
+        return authoritiesRepository.findAuthoritiesByRoles(roles);
     }
 
     public UserResponse mapUserToUserResponse(User user) {

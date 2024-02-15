@@ -23,7 +23,6 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user", schema = "SITern")
 public class User implements UserDetails, Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
@@ -31,26 +30,21 @@ public class User implements UserDetails, Serializable {
 
     @Size(max = 45)
     @NotNull
-    @Column(name = "email", nullable = false, length = 45)
     private String email;
 
     @Size(max = 255)
     @NotNull
-    @Column(name = "password_hashed", nullable = false)
     private String password;
 
     @Size(max = 45)
     @NotNull
-    @Column(name = "username", nullable = false, length = 45)
     private String username;
 
     @NotNull
-    @Column(name = "created", nullable = false, updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime created;
 
     @NotNull
-    @Column(name = "updated", nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updated;
 

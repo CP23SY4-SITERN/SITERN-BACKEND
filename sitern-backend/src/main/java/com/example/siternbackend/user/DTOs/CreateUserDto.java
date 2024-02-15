@@ -26,8 +26,6 @@ public class CreateUserDto {
     @Size(min = 6, max = 255,message = "must between 6 to 255 Characters")
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    Roles roles;
 
     @NotNull
     @Size(max = 45)

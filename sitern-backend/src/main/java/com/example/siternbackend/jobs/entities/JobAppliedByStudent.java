@@ -2,29 +2,25 @@ package com.example.siternbackend.jobs.entities;
 
 import com.example.siternbackend.student.entities.StudentProfile;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 
-@Getter
-@Setter
 @Entity
-@Table(name = "job_applied_by_student", schema = "SITern")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class JobAppliedByStudent {
-    @EmbeddedId
-    private JobAppliedByStudentId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @MapsId("studentProfileId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "student_profile_ID", nullable = false, referencedColumnName = "ID")
     private StudentProfile studentProfile;
 
-    @MapsId("id")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private JobPost jobPost;
 
-    @Column(name = "apply_date", nullable = false)
     private Instant applyDate;
 
 }

@@ -22,7 +22,7 @@ public class JobPostDTO {
     private Integer id;
     private String title;
     private LocalDateTime createdDate;
-    private Long company_ID;
+    private Integer company_ID;
     private String companyName;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private String applicationDeadline;

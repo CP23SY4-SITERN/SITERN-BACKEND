@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AuthoritiesRepository extends JpaRepository<Authorities, Integer> {
 
-    Authorities findByRoles(Roles roles);
+    Authorities findAuthoritiesByRoles(Roles roles);
 
     List<Authorities> findByUserId(int userId);
 }

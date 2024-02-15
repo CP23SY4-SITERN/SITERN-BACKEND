@@ -42,11 +42,11 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         try {
-            List<UserDto> userDto = userService.getAllUsers();
-            log.info("Retrieved {} Users", userDto.size());
-            return userDto;
+            List<UserResponse> userResponses = userService.getAllUsers();
+            log.info("Retrieved {} Users", userResponses.size());
+            return userResponses;
         } catch (Exception e) {
             log.error("Error while retrieving Users", e);
             throw e; // Rethrow the exception or handle it appropriately
@@ -72,17 +72,11 @@ public class UserController {
         String password = createUserDto.getPassword();
 
         // Call the service method to add the user
-        User user = userService.addUser(createUserDto, request).getBody();
+        UserResponse user = userService.addUser(createUserDto, request).getBody();
 
-        // Map the user details to UserResponse
-        UserResponse userResponse = new UserResponse();
-        userResponse.setId(user.getId());
-        userResponse.setUsername(user.getUsername());
-        userResponse.setEmail(user.getEmail());
-        userResponse.setAuthorities(user.getSimpleAuthorities());
 
         // Return the response with HTTP status 201 Created
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
 //    @PatchMapping("/{id}")

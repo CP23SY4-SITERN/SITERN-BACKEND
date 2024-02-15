@@ -3,6 +3,7 @@ package com.example.siternbackend.jobs.services;
 import com.example.siternbackend.company.DTOS.EditCompanyDTO;
 import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.company.repositories.CompanyRepository;
+import com.example.siternbackend.company.services.CompanyService;
 import com.example.siternbackend.jobs.dtos.CreatingJobDTO;
 import com.example.siternbackend.jobs.dtos.EditJobDTO;
 import com.example.siternbackend.jobs.dtos.JobLocationDTO;
@@ -45,6 +46,8 @@ public class JobService {
     private ListMapper listMapper;
     @Autowired
     private ConversionService conversionService;
+    @Autowired
+    private CompanyService companyService;
 
     public JobService() {
     }
@@ -96,7 +99,7 @@ public class JobService {
     private JobPost convertToEntity(JobPostDTO jobPostDTO) {
         JobPost jobPost = new JobPost();
         jobPost.setId(jobPostDTO.getId());
-        jobPost.setCompany_ID(jobPostDTO.getCompany_ID());
+        jobPost.setCompany(companyService.getCompanyByID(jobPostDTO.getCompany_ID()));
         // Set other properties
         return jobPost;
     }

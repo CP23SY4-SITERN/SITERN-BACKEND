@@ -66,16 +66,16 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
+//                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(FREE_AREA).permitAll()
                         .requestMatchers(STAFF_WHITELIST).hasAnyAuthority(
-                                Roles.Student.name(),
-                                Roles.Staff.name()
+                                Roles.STUDENT.name(),
+                                Roles.STAFF.name()
                         )
-                        .requestMatchers(STUDENT_WHITELIST).hasAuthority(Roles.Student.name())
-                        .requestMatchers(USER_WHITELIST).hasAnyAuthority(Roles.Staff.name())
+                        .requestMatchers(STUDENT_WHITELIST).hasAuthority(Roles.STUDENT.name())
+                        .requestMatchers(USER_WHITELIST).hasAnyAuthority(Roles.STAFF.name())
                         .anyRequest().authenticated()
                 );
         http.authenticationProvider(authenticationProvider());

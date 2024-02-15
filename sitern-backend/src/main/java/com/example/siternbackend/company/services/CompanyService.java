@@ -54,13 +54,13 @@ public class CompanyService {
 
 
     //    //GET COMPANY BY ID
-    public CompanyDTO getCompanyByID(Integer id) {
+    public Company getCompanyByID(Integer id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, " id " + id +
                         "Does Not Exist !!!"
                 ));
-        return modelMapper.map(company, CompanyDTO.class);
+        return modelMapper.map(company, Company.class);
     }
 //
 //    private JobPost convertToEntity(JobPostDTO jobPostDTO) {
