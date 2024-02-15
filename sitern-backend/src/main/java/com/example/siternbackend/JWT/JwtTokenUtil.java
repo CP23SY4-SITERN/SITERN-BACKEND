@@ -1,5 +1,7 @@
 package com.example.siternbackend.JWT;
 
+import com.example.siternbackend.token.entities.Token;
+import com.example.siternbackend.token.services.TokenService;
 import com.example.siternbackend.user.entities.User;
 import com.example.siternbackend.user.services.UserService;
 import io.jsonwebtoken.*;
@@ -25,6 +27,8 @@ public class JwtTokenUtil implements Serializable {
 
     @Autowired
     UserService userService;
+    @Autowired
+    TokenService tokenService;
     static final String CLAIM_KEY_USERNAME = "sub";
     static final String CLAIM_KEY_ID = "id";
     static final String CLAIM_KEY_ROLE = "role";
@@ -77,9 +81,9 @@ public class JwtTokenUtil implements Serializable {
         return getClaimsFromToken(token).getSubject();
     }
 
-//    public List<String> getAuthoritiesFromToken(String token) {
-//        return userService.getUserByEmail(getUsernameFromToken(token)).getAuthorities();
-//    }
+    public List<String> getAuthoritiesFromToken(String token) {
+        return userService.getUserByEmail(getUsernameFromToken(token)).getAuthorities();
+    }
 
     public User getUserFromToken(String token) {
         return userService.findUserByEmail(getUsernameFromToken(token));
@@ -102,6 +106,13 @@ public class JwtTokenUtil implements Serializable {
         final String username = getUsernameFromToken(token);
         return (username.equals(user.getEmail()) && !isTokenExpired(token));
     }
+    public Boolean isTokenRevoked(String token) throws Exception {
+        return tokenService.findTokenByToken(token).getIsRevoke();
+    }
+
+    public Boolean isAccessToken(String token) throws Exception {
+        return tokenService.findTokenByToken(token).getIsAccess();
+    }
 
     public Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
         return created.before(lastPasswordReset);
@@ -110,5 +121,10 @@ public class JwtTokenUtil implements Serializable {
     public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
         final Date created = getCreatedDateFromToken(token);
         return (!isCreatedBeforeLastPasswordReset(created, lastPasswordReset) && !isTokenExpired(token));
+    }
+    public Token revokeToken(String tokenString) throws Exception {
+        Token token = tokenService.findTokenByToken(tokenString);
+        token.setIsRevoke(true);
+        return tokenService.upsertToken(token);
     }
 }
