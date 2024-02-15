@@ -4,16 +4,24 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
 
-@Getter
-@Setter
+
+@Data
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user", schema = "SITern")
-public class User {
+public class User implements UserDetails, Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
@@ -26,11 +34,11 @@ public class User {
     @Size(max = 255)
     @NotNull
     @Column(name = "password_hashed", nullable = false)
-    private String passwordHashed;
+    private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private Role role;
+    private Roles roles;
 
     @Size(max = 45)
     @NotNull
@@ -47,4 +55,32 @@ public class User {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updated;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    List<Authorities> authorities;
+    public List<String> getSimpleAuthorities() {
+        return this.authorities.stream().map(authorities -> authorities.getRoles().name()).toList();
+    }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+    @Builder.Default
+    Date lastPasswordReset = Date.from(LocalDate.of(2023, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+    @Builder.Default
+    Boolean enables = true;
+    @Override
+    public boolean isAccountNonLocked() {
+        return enables;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enables;
+    }
 }

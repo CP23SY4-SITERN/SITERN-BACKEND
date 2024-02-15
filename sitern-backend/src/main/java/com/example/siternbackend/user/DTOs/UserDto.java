@@ -1,6 +1,6 @@
 package com.example.siternbackend.user.DTOs;
 
-import com.example.siternbackend.user.entities.Role;
+import com.example.siternbackend.user.entities.Roles;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ public class UserDto  {
     private Integer id;
     private String email;
     private String passwordHashed;
-    private Role role;
+    private Roles roles;
     private String username;
     private LocalDateTime created;
     private LocalDateTime updated;

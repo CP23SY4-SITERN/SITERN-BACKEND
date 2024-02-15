@@ -1,7 +1,7 @@
 package com.example.siternbackend.user.DTOs;
 
 
-import com.example.siternbackend.user.entities.Role;
+import com.example.siternbackend.user.entities.Roles;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
@@ -27,7 +27,7 @@ public class CreateUserDto {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    Role role;
+    Roles roles;
 
     @NotNull
     @Size(max = 45)

@@ -14,7 +14,7 @@ public class StudentProfile {
     private Integer id;
 
     @MapsId("userId")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_ID", nullable = false)
     private User user;
 

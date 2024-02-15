@@ -1,10 +1,11 @@
 package com.example.siternbackend.Config;
 
 import com.example.siternbackend.JWT.JwtEntryPoint;
+import com.example.siternbackend.JWT.JwtFilter;
 import com.example.siternbackend.user.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import com.example.siternbackend.user.entities.Role;
+import com.example.siternbackend.user.entities.Roles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,12 +25,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -70,17 +65,16 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(FREE_AREA).permitAll()
                         .requestMatchers(ACCOUNT_WHITELIST).hasAnyAuthority(
-                                Role.Student.name(),
-                                Role.Staff.name()
+                                Roles.Student.name(),
+                                Roles.Staff.name()
                         )
-                        .requestMatchers(ADMIN_WHITELIST).hasAuthority(Role.Student.name())
-                        .requestMatchers(USER_WHITELIST).hasAnyAuthority(Role.Staff.name())
+                        .requestMatchers(ADMIN_WHITELIST).hasAuthority(Roles.Student.name())
+                        .requestMatchers(USER_WHITELIST).hasAnyAuthority(Roles.Staff.name())
                         .anyRequest().authenticated()
                 );
         http.authenticationProvider(authenticationProvider());
@@ -88,9 +82,9 @@ public class SecurityConfig {
         return http.build();
     }
 
-    List<String> allowedOrigins = Arrays.asList(
-            "*"
-    );
+//    List<String> allowedOrigins = Arrays.asList(
+//            "*"
+//    );
 
 
     @SneakyThrows
