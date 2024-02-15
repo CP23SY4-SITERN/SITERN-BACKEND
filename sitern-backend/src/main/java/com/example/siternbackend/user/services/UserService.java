@@ -25,8 +25,11 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -101,9 +104,51 @@ public class UserService {
 
         return mapUserToUserResponse(userRepository.save(newUser));
     }
-    public Authorities getAuthorityByName(Roles name) {
-        return authoritiesRepository.findByName(name);
+    public UserResponse updateUser(String emailFromToken, int id, String authorities, String userName, String email) {
+        User userFromToken = userRepository.findByEmail(emailFromToken).orElseThrow(() -> new DemoGraphqlException("This user not found"));
+        User userFromId = userRepository.findById(id).orElseThrow(() -> new DemoGraphqlException("This user not found"));
+
+        boolean isStaff = userFromToken.getAuthorities()
+                .stream()
+                .anyMatch(authority -> Roles.Staff.toString().equalsIgnoreCase(authority.getAuthority()));
+        if (!isStaff) {
+            if (!userFromId.getUsername().equals(userFromToken.getUsername()) || authorities.contains(Roles.Staff.toString())) {
+                log.info("Unauthorized: Cannot Update this User");
+                return UserResponse.builder().build();
+            }
+        }
+
+        List<Authorities> authoritiesList = authoritiesRepository.findAll();
+        List<String> roleList = Arrays.stream(authorities.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+
+        boolean allRolesCorrect = roleList.stream()
+                .allMatch(role -> authoritiesList.stream()
+                        .anyMatch(authority -> authority.getUser().toString().equals(role)));
+
+        if (allRolesCorrect) {
+            List<Authorities> userAuthorities = roleList.stream()
+                    .map(role -> authoritiesList.stream()
+                            .filter(authority -> authority.getUser().toString().equals(role))
+                            .findFirst()
+                            .orElse(null))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            userFromId.setAuthorities(userAuthorities);
+        } else {
+            log.error("Incorrect update role");
+            return UserResponse.builder().build();
+        }
+        userFromId.setUsername(userName);
+        userFromId.setEmail(email);
+        return mapUserToUserResponse(userRepository.save(userFromId));
     }
+
+    public Authorities getAuthorityByName(Roles roles) {
+        return authoritiesRepository.findByRoles(roles);
+    }
+
     public UserResponse mapUserToUserResponse(User user) {
         try {
             UserResponse userResponse = new UserResponse();

@@ -9,23 +9,31 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Service
 @Slf4j
-@RequiredArgsConstructor
+@Component
 public class JwtFilter extends OncePerRequestFilter {
-    final JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    final UserService userService;
-    final TokenService tokenService;
+    private final UserService userService;
+    private final TokenService tokenService;
+//    private final JwtTokenUtil jwtTokenUtil;
 
+    @Autowired
+    public JwtFilter(JwtTokenUtil jwtTokenUtil, UserService userService, TokenService tokenService) {
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.userService = userService;
+        this.tokenService = tokenService;
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("Authorization");
