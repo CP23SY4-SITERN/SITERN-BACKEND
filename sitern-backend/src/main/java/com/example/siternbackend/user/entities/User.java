@@ -5,12 +5,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -57,6 +60,15 @@ public class User implements UserDetails, Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER)
     List<Authorities> authorities;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.authorities
+                .stream()
+                .map(authorities -> new SimpleGrantedAuthority(authorities.getRoles().name()))
+                .toList();
+    }
+
     public List<String> getSimpleAuthorities() {
         return this.authorities.stream().map(authorities -> authorities.getRoles().name()).toList();
     }

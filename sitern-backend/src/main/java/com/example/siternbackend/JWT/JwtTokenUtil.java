@@ -2,16 +2,16 @@ package com.example.siternbackend.JWT;
 
 import com.example.siternbackend.token.entities.Token;
 import com.example.siternbackend.token.services.TokenService;
+import com.example.siternbackend.user.entities.Authorities;
 import com.example.siternbackend.user.entities.User;
 import com.example.siternbackend.user.services.UserService;
-import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
 
 import javax.crypto.spec.SecretKeySpec;
 import java.io.Serial;
@@ -40,27 +40,32 @@ public class JwtTokenUtil implements Serializable {
     private String SECRET;
 
 
-    public String generateJWT(User user, Long expiration) {
-        Map<String,Object> claims = new HashMap<>();
+    public String generateJWT(User user, Long expiration, boolean isAccess) {
+        Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_ID, user.getId().toString());
         claims.put(CLAIM_KEY_USERNAME, user.getEmail());
         claims.put(CLAIM_KEY_ROLE, user.getSimpleAuthorities());
         claims.put(CLAIM_KEY_CREATED, new Date());
-        return generateToken(claims, expiration);
+
+        Date expirationDate = generateExpirationDate(expiration);
+        String token = generateToken(claims, expirationDate);
+        tokenService.upsertToken(Token.builder().token(token).user(user).isRevoke(false).expiration(expirationDate).isAccess(isAccess).build());
+        return token;
     }
 
     public String refreshJWT(String token, Long expiration) {
+        Date expirationDate = generateExpirationDate(expiration);
         Claims claims = getClaimsFromToken(token);
         claims.put(CLAIM_KEY_CREATED, new Date());
-        return generateToken(claims, expiration);
+        return generateToken(claims, expirationDate);
     }
 
-    public String generateToken(Map<String, Object> claims, Long expiration){
+    public String generateToken(Map<String, Object> claims, Date expirationDate){
         final Key key = new SecretKeySpec(SECRET.getBytes(), SignatureAlgorithm.HS512.getJcaName());
         return Jwts.builder()
                 .setClaims(claims)
                 .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(generateExpirationDate(expiration))
+                .setExpiration(expirationDate)
                 .compact();
     }
 
@@ -81,13 +86,13 @@ public class JwtTokenUtil implements Serializable {
         return getClaimsFromToken(token).getSubject();
     }
 
-    public List<String> getAuthoritiesFromToken(String token) {
-        return userService.getUserByEmail(getUsernameFromToken(token)).getAuthorities();
-    }
+//    public List<String> getAuthoritiesFromToken(String token) {
+//        return userService.getUserByEmail(getUsernameFromToken(token)).getAuthorities();
+//    }
 
-    public User getUserFromToken(String token) {
-        return userService.findUserByEmail(getUsernameFromToken(token));
-    }
+//    public User getUserFromToken(String token) {
+//        return userService.findUserByEmail(getUsernameFromToken(token));
+//    }
 
     public Date getExpirationDateFromToken(String token) {
         return getClaimsFromToken(token).getExpiration();
@@ -102,9 +107,9 @@ public class JwtTokenUtil implements Serializable {
         return expiration.before(new Date());
     }
 
-    public Boolean isTokenValid(String token, User user) {
+    public Boolean isTokenValid(String token, User user) throws Exception {
         final String username = getUsernameFromToken(token);
-        return (username.equals(user.getEmail()) && !isTokenExpired(token));
+        return (username.equals(user.getEmail()) && !isTokenExpired(token)) && !isTokenRevoked(token);
     }
     public Boolean isTokenRevoked(String token) throws Exception {
         return tokenService.findTokenByToken(token).getIsRevoke();
