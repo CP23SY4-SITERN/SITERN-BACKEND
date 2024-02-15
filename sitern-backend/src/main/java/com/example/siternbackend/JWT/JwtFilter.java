@@ -21,6 +21,7 @@ import java.io.IOException;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
 
@@ -28,12 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
 //    private final JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    public JwtFilter(JwtTokenUtil jwtTokenUtil, UserService userService, TokenService tokenService) {
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userService = userService;
-        this.tokenService = tokenService;
-    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("Authorization");

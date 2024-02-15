@@ -13,18 +13,19 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
+#    password: Jubby4400
     password: sitern007
-    url: jdbc:mysql://172.17.0.1:3307/SITern
+#    url: jdbc:mysql://172.17.0.1:3307/New_SITern
 #    url: jdbc:mysql://localhost:3306/sitern
-#    url: jdbc:mysql://10.4.85.44:3307/SITern
+    url: jdbc:mysql://10.4.85.44:3307/New_SITern
   jpa:
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-      ddl-auto: none
-  jwt:
-    secret: "jubbynonnykobfhaandajsiameiei"
-    refreshExpirationDateInMs: 600000
+      ddl-auto: update
+jwt:
+  secret: "jubbynonnykobfhaandajsiameiei"
+  refreshExpirationDateInMs: 600000
 #ssh:
 #  username: sysadmin
 #  password: sitern007

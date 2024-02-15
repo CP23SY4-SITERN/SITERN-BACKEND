@@ -39,10 +39,6 @@ public class User implements UserDetails, Serializable {
     @Column(name = "password_hashed", nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private Roles roles;
-
     @Size(max = 45)
     @NotNull
     @Column(name = "username", nullable = false, length = 45)

@@ -66,44 +66,44 @@ public class UserService {
     }
 
     // ... existing code ...
-//    public ResponseEntity<User> createUsers(CreateUserDto newUsers, HttpServletRequest request) throws MessagingException, IOException{
-//        // Check if the email is already registered
-//        if (userRepository.existsByEmail(newUsers.getEmail())) {
-//            throw new IllegalArgumentException("Email is already registered");
-//        }
-//        User newUser = modelMapper.map(newUsers, User.class);
-//        // Encode the password
-//        newUser.setPasswordHashed(passwordEncoder.encode(newUsers.getPassword()));
-//        // Set other attributes
-//        newUser.setCreated(LocalDateTime.now());
-//        System.out.println("setCreateDatetime");
-//        newUser.setUpdated(LocalDateTime.now());
-//        System.out.println("setUpdateDatetime");
-//        userRepository.saveAndFlush(newUser);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-//    }
+    public ResponseEntity<User> addUser(CreateUserDto newUsers, HttpServletRequest request) throws MessagingException, IOException{
+        // Check if the email is already registered
+        if (userRepository.existsByEmail(newUsers.getEmail())) {
+            throw new IllegalArgumentException("Email is already registered");
+        }
+        User newUser = modelMapper.map(newUsers, User.class);
+        // Encode the password
+        newUser.setPassword(passwordEncoder.encode(newUsers.getPassword()));
+        // Set other attributes
+        newUser.setCreated(LocalDateTime.now());
+        System.out.println("setCreateDatetime");
+        newUser.setUpdated(LocalDateTime.now());
+        System.out.println("setUpdateDatetime");
+        userRepository.saveAndFlush(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    }
 //    public User mapUser(User existingUser, User updateUser) {
 //        existingUser.setUsername(updateUser.getUsername());
 //        existingUser.setUpdated(updateUser.getUpdated());
 //        existingUser.setEmail(updateUser.getEmail());
-//        existingUser.setRoles(updateUser.getRoles());
+//
 //        return existingUser;
 //    }
     private final PasswordEncoder encoder = new BCryptPasswordEncoder();
-    public UserResponse addUser(String userName, String email, String password) {
-        if (!userRepository.findByEmail(email).isEmpty()) {
-            throw new DemoGraphqlException("This email have already registered");
-        }
-        Authorities authorities = getAuthorityByName(Roles.Student);
-        User newUser = User.builder()
-                .username(userName)
-                .email(email)
-                .password(encoder.encode(password))
-                .authorities(List.of(authorities))
-                .build();
-
-        return mapUserToUserResponse(userRepository.save(newUser));
-    }
+//    public UserResponse addUser(String userName, String email, String password) {
+//        if (!userRepository.findByEmail(email).isEmpty()) {
+//            throw new DemoGraphqlException("This email have already registered");
+//        }
+//        Authorities authorities = getAuthorityByName(Roles.Student);
+//        User newUser = User.builder()
+//                .username(userName)
+//                .email(email)
+//                .password(encoder.encode(password))
+//                .authorities(List.of(authorities))
+//                .build();
+//
+//        return mapUserToUserResponse(userRepository.save(newUser));
+//    }
     public UserResponse updateUser(String emailFromToken, int id, String authorities, String userName, String email) {
         User userFromToken = userRepository.findByEmail(emailFromToken).orElseThrow(() -> new DemoGraphqlException("This user not found"));
         User userFromId = userRepository.findById(id).orElseThrow(() -> new DemoGraphqlException("This user not found"));
@@ -152,8 +152,8 @@ public class UserService {
     public UserResponse mapUserToUserResponse(User user) {
         try {
             UserResponse userResponse = new UserResponse();
-            userResponse.setId(Long.valueOf(user.getId()));
-            userResponse.setName(user.getUsername());
+            userResponse.setId(user.getId());
+            userResponse.setUsername(user.getUsername());
             userResponse.setEmail(user.getEmail());
             userResponse.setAuthorities(user.getSimpleAuthorities());
             return userResponse;

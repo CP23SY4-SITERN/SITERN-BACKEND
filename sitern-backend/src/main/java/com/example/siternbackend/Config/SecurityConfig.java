@@ -39,10 +39,11 @@ public class SecurityConfig {
             "/playground",
             "/api/graphql",
             "/api/v1/auth",
-            "/api/v1/details"
+            "/api/v1/details",
+                    "/api/users",
     };
 
-    private static final String[] ACCOUNT_WHITELIST = {
+    private static final String[] STUDENT_WHITELIST= {
             "/api/v1/auth/details",
             "/api/v1/auth/credentials",
             "/api/v1/auth/password",
@@ -52,7 +53,7 @@ public class SecurityConfig {
             "/api/v1/auth/refresh",
     };
 
-    private static final String[] ADMIN_WHITELIST = {
+    private static final String[] STAFF_WHITELIST = {
             "/api/v1/admin/**"
     };
 
@@ -69,11 +70,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(FREE_AREA).permitAll()
-                        .requestMatchers(ACCOUNT_WHITELIST).hasAnyAuthority(
+                        .requestMatchers(STAFF_WHITELIST).hasAnyAuthority(
                                 Roles.Student.name(),
                                 Roles.Staff.name()
                         )
-                        .requestMatchers(ADMIN_WHITELIST).hasAuthority(Roles.Student.name())
+                        .requestMatchers(STUDENT_WHITELIST).hasAuthority(Roles.Student.name())
                         .requestMatchers(USER_WHITELIST).hasAnyAuthority(Roles.Staff.name())
                         .anyRequest().authenticated()
                 );

@@ -9,6 +9,7 @@ import com.example.siternbackend.user.entities.User;
 import com.example.siternbackend.user.repositories.AuthoritiesRepository;
 import com.example.siternbackend.user.repositories.UserRepository;
 import com.example.siternbackend.user.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -61,17 +64,25 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<UserResponse> addUser(@RequestBody CreateUserDto createUserDto) {
+    public ResponseEntity<UserResponse> addUser(@RequestBody CreateUserDto createUserDto, HttpServletRequest request)
+            throws MessagingException, IOException {
         // Extract user details from the request
-        String userName = createUserDto.getUsername();
+        String username = createUserDto.getUsername();
         String email = createUserDto.getEmail();
         String password = createUserDto.getPassword();
 
         // Call the service method to add the user
-        UserResponse userResponse = userService.addUser(userName, email, password);
+        User user = userService.addUser(createUserDto, request).getBody();
+
+        // Map the user details to UserResponse
+        UserResponse userResponse = new UserResponse();
+        userResponse.setId(user.getId());
+        userResponse.setUsername(user.getUsername());
+        userResponse.setEmail(user.getEmail());
+        userResponse.setAuthorities(user.getSimpleAuthorities());
 
         // Return the response with HTTP status 201 Created
-        return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
 //    @PatchMapping("/{id}")

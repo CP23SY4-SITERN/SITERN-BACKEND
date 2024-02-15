@@ -11,10 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse {
-    private Long id;
-    private String name;
+    private Integer id;
+    private String username;
     private String email;
     private List<String> authorities;
-    private int score;
 
 }
