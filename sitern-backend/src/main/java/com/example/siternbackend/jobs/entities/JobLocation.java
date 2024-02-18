@@ -1,9 +1,13 @@
 package com.example.siternbackend.jobs.entities;
 
+import com.example.siternbackend.company.entities.Company;
+import com.example.siternbackend.internshipstatus.entities.InternshipApplicationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 @Entity
 @Data
@@ -30,5 +34,8 @@ public class JobLocation {
     @OneToMany(mappedBy = "jobLocation")
     private Set<JobPost> jobPosts = new LinkedHashSet<>();
 
+
+    @ManyToOne
+    private Company company;
 
 }

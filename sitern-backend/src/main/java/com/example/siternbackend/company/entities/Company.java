@@ -1,14 +1,15 @@
 package com.example.siternbackend.company.entities;
 
 import com.example.siternbackend.internshipstatus.entities.InternshipApplicationStatus;
+import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -40,10 +41,11 @@ public class Company {
     @OneToMany(mappedBy = "company")
     private Set<JobPost> jobPosts = new LinkedHashSet<>();
 
-    @ManyToOne
-    private JobLocation jobLocation;
+//    @ManyToOne
+//    private JobLocation jobLocation;
 
-
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<JobLocation> jobLocations = new HashSet<>();
 //    @MapsId("companyId")
 //    @JsonIgnore
 //    @ManyToOne(fetch = FetchType.EAGER, cascade =CascadeType.PERSIST)
@@ -53,5 +55,7 @@ public class Company {
 //    @Column(name = "company_ID")
 //    @JsonIgnore
 //    private Long company_ID;
+
+
 
 }

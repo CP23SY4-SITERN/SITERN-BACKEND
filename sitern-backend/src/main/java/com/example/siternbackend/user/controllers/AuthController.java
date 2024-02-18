@@ -27,7 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     final AuthenticationManager authenticationManager;

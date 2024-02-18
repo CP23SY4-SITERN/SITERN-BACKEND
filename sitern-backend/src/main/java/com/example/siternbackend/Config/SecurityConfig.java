@@ -38,27 +38,33 @@ public class SecurityConfig {
     private static final String[] FREE_AREA = {
             "/playground",
             "/api/graphql",
-            "/api/v1/auth",
-            "/api/v1/details",
-                    "/api/users",
+            "/api/auth",
+            "/api/details",
+                    "/api/users/**",
+            "/api/auth/login",
+            "/api/jobs/**",
+            "/api/companies",
+            "/api/jobLocation",
+            "/api/companies",
+            "/api/companies/jobLocation"
     };
 
     private static final String[] STUDENT_WHITELIST= {
-            "/api/v1/auth/details",
-            "/api/v1/auth/credentials",
-            "/api/v1/auth/password",
-            "/api/v1/auth/email",
-            "/api/v1/auth/username",
-            "/api/v1/auth/forget-password",
-            "/api/v1/auth/refresh",
+            "/api/auth/details",
+            "/api/auth/credentials",
+            "/api/auth/password",
+            "/api/auth/email",
+            "/api/auth/username",
+            "/api/auth/forget-password",
+            "/api/auth/refresh",
     };
 
     private static final String[] STAFF_WHITELIST = {
-            "/api/v1/admin/**"
+            "/api/admin/**"
     };
 
     private static final String[] USER_WHITELIST = {
-            "/api/v1/user/**"
+            "/api/user/**"
     };
 
 

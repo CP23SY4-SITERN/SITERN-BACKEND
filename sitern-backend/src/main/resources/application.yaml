@@ -26,7 +26,8 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       ddl-auto: update
 jwt:
-  secret: "jubbynonnykobfhaandajsiameiei"
+  secret: "mt9SzMnAbvffN4rWp/9XWHh9S8Di3xque3zBcfLJlbxPkAaiztunVfYETB2tV5grDGDc5w+0raj/
+skHalDme0g=="
   refreshExpirationDateInMs: 600000
 #ssh:
 #  username: sysadmin

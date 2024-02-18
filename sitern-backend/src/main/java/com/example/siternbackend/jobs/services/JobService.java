@@ -8,7 +8,9 @@ import com.example.siternbackend.jobs.dtos.CreatingJobDTO;
 import com.example.siternbackend.jobs.dtos.EditJobDTO;
 import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
+import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.jobs.entities.JobPost;
+import com.example.siternbackend.jobs.repositories.JobLocationRepository;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import com.example.siternbackend.util.ListMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,6 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +40,8 @@ import java.util.Set;
 public class JobService {
     @Autowired
     private JobPostRepository jobPostRepository;
-
+    @Autowired
+    private JobLocationRepository jobLocationRepository;
     @Autowired
     private CompanyRepository companyRepository;
     @Autowired
@@ -117,17 +121,32 @@ public class JobService {
 //        System.out.println("Created");
 //        return ResponseEntity.status(HttpStatus.CREATED).body(j);
 //    }
+    public List<JobLocation> findJobLocationsById(Integer jobLocationId) {
+    List<JobLocation> jobLocations = jobLocationRepository.findAllById(Collections.singletonList(jobLocationId));
 
+    if (!jobLocations.isEmpty()) {
+        return jobLocations;
+    } else {
+        throw new EntityNotFoundException("JobLocation not found with ID: " + jobLocationId);
+    }
+}
     public ResponseEntity create(CreatingJobDTO newJob, HttpServletRequest request) throws MessagingException, IOException {
         Company company = companyRepository.findById(newJob.getCompany_ID())
                 .orElseThrow(() -> new EntityNotFoundException("Company not found with ID: " + newJob.getCompany_ID()));
+//        List<JobLocation> jobLocations = findJobLocationsById(newJob.getJob_location_ID());
+//
+//        if (jobLocations.isEmpty()) {
+//            throw new EntityNotFoundException("JobLocation not found with ID: " + newJob.getJob_location_ID());
+//        }
         JobPost j = modelMapper.map(newJob, JobPost.class);
         System.out.println("company found");
         j.setCompany(company);
+//        j.setJobLocation(jobLocations.get(0));
         jobPostRepository.saveAndFlush(j);
         System.out.println("Created");
         return ResponseEntity.status(HttpStatus.CREATED).body(j);
     }
+
     public void deleteJobPostById(Integer id,HttpServletRequest  request) {
                 jobPostRepository.findById(id).orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND,

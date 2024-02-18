@@ -1,15 +1,19 @@
 package com.example.siternbackend.company.services;
 
 import com.example.siternbackend.company.DTOS.CompanyDTO;
+import com.example.siternbackend.company.DTOS.CompanyWithJobLocationDTO;
 import com.example.siternbackend.company.DTOS.EditCompanyDTO;
 import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.company.repositories.CompanyRepository;
 import com.example.siternbackend.jobs.dtos.EditJobDTO;
+import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
+import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import com.example.siternbackend.jobs.services.JobService;
 import com.example.siternbackend.util.ListMapper;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +37,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyService {
@@ -74,11 +79,43 @@ public class CompanyService {
     public ResponseEntity<Company> create(@RequestBody @Valid CompanyDTO newCompany, HttpServletRequest request) throws MethodArgumentNotValidException,MessagingException, IOException {
 
         Company c = modelMapper.map(newCompany, Company.class);
+        // Assuming jobLocationDTO is part of CompanyDTO or available in the request
+//        company.setJobLocationsFromDTO(newCompany.getJobLocations());
         companyRepository.saveAndFlush(c);
         System.out.println("Created");
         return ResponseEntity.status(HttpStatus.CREATED).body(c);
     }
+    public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
+        List<Company> companies = companyRepository.findAll();
+        return companies.stream()
+                .map(this::mapToCompanyWithJobLocationDTO)
+                .collect(Collectors.toList());
+    }
+    private CompanyWithJobLocationDTO mapToCompanyWithJobLocationDTO(Company company) {
+        CompanyWithJobLocationDTO dto = new CompanyWithJobLocationDTO();
+        dto.setCompanyName(company.getCompanyName());
+        dto.setCompanyDescription(company.getCompanyDescription());
+        dto.setCompanyWebsite(company.getCompanyWebsite());
+        dto.setCompanyLocation(company.getCompanyLocation());
+        dto.setCompanyEmployee(company.getCompanyEmployee());
 
+        Set<JobLocationDTO> jobLocationDTOs = company.getJobLocations().stream()
+                .map(this::mapToJobLocationDTO)
+                .collect(Collectors.toSet());
+        dto.setJobLocations(jobLocationDTOs);
+
+        return dto;
+    }
+    private JobLocationDTO mapToJobLocationDTO(JobLocation jobLocation) {
+        JobLocationDTO dto = new JobLocationDTO();
+        dto.setId(jobLocation.getId());
+        dto.setRoad(jobLocation.getRoad());
+        dto.setSubDistrict(jobLocation.getSubDistrict());
+        dto.setProvince(jobLocation.getProvince());
+        dto.setCountry(jobLocation.getCountry());
+        dto.setZip(jobLocation.getZip());
+        return dto;
+    }
     public void deleteCompanyById(Integer id,HttpServletRequest  request) {
         companyRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,

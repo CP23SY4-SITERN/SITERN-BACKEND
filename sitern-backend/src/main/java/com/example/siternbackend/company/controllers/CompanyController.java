@@ -1,6 +1,7 @@
 package com.example.siternbackend.company.controllers;
 
 import com.example.siternbackend.company.DTOS.CompanyDTO;
+import com.example.siternbackend.company.DTOS.CompanyWithJobLocationDTO;
 import com.example.siternbackend.company.DTOS.EditCompanyDTO;
 import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.company.repositories.CompanyRepository;
@@ -65,7 +66,10 @@ public class CompanyController {
     public void deleteCompanyById(@PathVariable Integer id, HttpServletRequest request){
         companyService.deleteCompanyById(id, request);
     }
-
+    @GetMapping("/jobLocation")
+    public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
+        return companyService.getAllCompaniesWithJobLocations();
+    }
     @PatchMapping("/{id}")
     public ResponseEntity<EditCompanyDTO> editCompanyDTO(
             @Valid @RequestBody EditCompanyDTO editCompanyDTO,

@@ -64,7 +64,7 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<UserResponse> addUser(@RequestBody CreateUserDto createUserDto, HttpServletRequest request)
+    public ResponseEntity<UserResponse> addUser(@Valid @RequestBody CreateUserDto createUserDto, HttpServletRequest request)
             throws MessagingException, IOException {
         // Extract user details from the request
         String username = createUserDto.getUsername();
