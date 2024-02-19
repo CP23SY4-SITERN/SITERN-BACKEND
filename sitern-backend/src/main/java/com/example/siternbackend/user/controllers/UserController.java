@@ -11,6 +11,7 @@ import com.example.siternbackend.user.repositories.UserRepository;
 import com.example.siternbackend.user.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,19 @@ public class UserController {
             throw e; // Rethrow the exception or handle it appropriately
         }
     }
+    @GetMapping("/users/getAll")
+    public List<UserDto> getAllDataFromUsers() {
+        try {
+            List<UserDto> userDtos = userService.getAllDataFromUsers();
+            log.info("Retrieved {} Users", userDtos.size());
+            return userDtos;
+        } catch (Exception e) {
+            log.error("Error while retrieving Users", e);
+            throw e; // Rethrow the exception or handle it appropriately
+        }
+    }
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+//    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
 //    @PostMapping
 //    @ResponseStatus(HttpStatus.CREATED)
@@ -90,22 +103,50 @@ public class UserController {
 //        return userRepository.saveAndFlush(user);
 //    }
     //String emailFromToken, int id, String authorities, String userName, String email
+//    @PatchMapping("/users/{id}")
+//    public UserResponse updateUser(
+//        @PathVariable Integer id,
+//        @RequestBody UpdateUserRequest updateUserRequest
+//    ) {
+//    // Extract details from the request
+//    String emailFromToken = updateUserRequest.getEmailFromToken();
+//    String authorities = updateUserRequest.getAuthorities();
+//    String userName = updateUserRequest.getUserName();
+//    String email = updateUserRequest.getEmail();
+//
+//    // Call the service method to perform the update
+//    UserResponse updatedUserResponse = userService.updateUser(emailFromToken, id, authorities, userName, email);
+//
+//    // Return the response
+//    return updatedUserResponse;
+//    }
     @PatchMapping("/users/{id}")
-    public UserResponse updateUser(
-        @PathVariable Integer id,
-        @RequestBody UpdateUserRequest updateUserRequest
+    public ResponseEntity<UserResponse> updateUser(
+            @PathVariable Integer id,
+            @RequestBody UpdateUserRequest updateUserRequest
     ) {
-    // Extract details from the request
-    String emailFromToken = updateUserRequest.getEmailFromToken();
-    String authorities = updateUserRequest.getAuthorities();
-    String userName = updateUserRequest.getUserName();
-    String email = updateUserRequest.getEmail();
+        try {
+            // Validate the update request
+            // ...
 
-    // Call the service method to perform the update
-    UserResponse updatedUserResponse = userService.updateUser(emailFromToken, id, authorities, userName, email);
+            // Call the service method to perform the update
+            UserResponse updatedUserResponse = userService.updateUser(
+                    updateUserRequest.getEmailFromToken(),
+                    id,
+                    updateUserRequest.getAuthorities(),
+                    updateUserRequest.getUserName(),
+                    updateUserRequest.getEmail()
+            );
 
-    // Return the response
-    return updatedUserResponse;
+            // Return the response with OK status
+            return ResponseEntity.ok(updatedUserResponse);
+        } catch (ValidationException e) {
+            // Handle validation errors and return a 400 Bad Request response
+            return ResponseEntity.badRequest().build();
+        } catch (RuntimeException e) {
+            // Handle update errors and return an appropriate response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
     @Data
     public class UpdateUserRequest {

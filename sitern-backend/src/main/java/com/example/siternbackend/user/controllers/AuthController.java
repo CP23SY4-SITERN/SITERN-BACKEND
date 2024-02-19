@@ -6,14 +6,14 @@ import com.example.siternbackend.authentication.JwtResponse;
 import com.example.siternbackend.authentication.LoginRequest;
 import com.example.siternbackend.user.entities.User;
 import com.example.siternbackend.user.services.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -21,9 +21,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
+import org.springframework.security.core.AuthenticationException;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -38,12 +37,25 @@ public class AuthController {
     final Long ONE_WEEK = 604800L;
     final Long ONE_DAY = 86400L;
 
+//    @PostMapping("/login")
+//    public ResponseEntity<JwtResponse> login(@Validated @RequestBody LoginRequest login) {
+//         User user = loginWithEmail(login.email(), login.password());
+//         return ResponseEntity.ok(new JwtResponse(createToken(user, ONE_DAY, true), createToken(user, ONE_WEEK, false)));
+//    }
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@Validated @RequestBody LoginRequest login) {
-//        return ResponseEntity.ok(new JwtResponse("", ""));
-        User user = loginWithEmail(login.email(), login.password());
-        return ResponseEntity.ok(new JwtResponse(createToken(user, ONE_DAY, true), createToken(user, ONE_WEEK, false)));
-    }
+    public ResponseEntity<?> login(@RequestBody LoginRequest login) {
+        try {
+            User user = loginWithEmail(login.email(), login.password());
+            JwtResponse jwtResponse = new JwtResponse(createToken(user, ONE_DAY, true), createToken(user, ONE_WEEK, false));
+                return ResponseEntity.ok(jwtResponse);
+            } catch (UsernameNotFoundException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Email not found");
+            } catch (BadCredentialsException e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password not matched for user " + login.email());
+            } catch (AuthenticationException e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
+        }
+}
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@Validated @RequestBody JwtResponse token) throws Exception {
@@ -82,19 +94,47 @@ public class AuthController {
     }
 
     private User loginProcess(String email, String password, User user) {
-        if (!checkAuth(user, password)) {
-            return null;
+        if (user == null) {
+            log.error("User not found");
+            throw new UsernameNotFoundException("User not found");
         }
+        if (email == null) {
+            log.error("Email not found");
+            throw new UsernameNotFoundException("Email not found");
+        }
+
+        if (!checkAuth(user, password)) {
+            log.error("Password not matched for user {}", email);
+            throw new BadCredentialsException("Bad credentials");
+        }
+
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-            log.info("user {} successfully logged in", email);
-        } catch (Exception e) {
-            log.error("login process error: {}", e.getMessage());
+            log.info("User {} successfully logged in", email);
+        } catch (AuthenticationException e) {
+            log.error("Authentication failed for user {}: {}", email, e.getMessage());
+            throw new BadCredentialsException("Bad credentials");
         }
+
         return user;
     }
 
     private boolean checkAuth(User user, String password) {
         return user != null && passwordEncoder.matches(password, user.getPassword());
+    }
+    public class ResponseError {
+        private String errorMessage;
+
+        public ResponseError(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
     }
 }

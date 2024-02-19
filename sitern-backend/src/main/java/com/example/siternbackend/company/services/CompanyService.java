@@ -10,6 +10,7 @@ import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
 import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.jobs.entities.JobPost;
+import com.example.siternbackend.jobs.repositories.JobLocationRepository;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import com.example.siternbackend.jobs.services.JobService;
 import com.example.siternbackend.util.ListMapper;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +50,8 @@ public class CompanyService {
     @Autowired
     private ListMapper listMapper;
 
+    @Autowired
+    private JobLocationRepository jobLocationRepository;
     public CompanyService() {
     }
 
@@ -81,9 +85,21 @@ public class CompanyService {
         Company c = modelMapper.map(newCompany, Company.class);
         // Assuming jobLocationDTO is part of CompanyDTO or available in the request
 //        company.setJobLocationsFromDTO(newCompany.getJobLocations());
+        List<JobLocationDTO> jobLocationDTOList = (List<JobLocationDTO>) newCompany.getJobLocations();
+        List<JobLocation> jobLocations = createOrFetchJobLocations(jobLocationDTOList);
+        c.setJobLocations(new HashSet<>(jobLocations));
         companyRepository.saveAndFlush(c);
         System.out.println("Created");
         return ResponseEntity.status(HttpStatus.CREATED).body(c);
+    }
+    private List<JobLocation> createOrFetchJobLocations(List<JobLocationDTO> jobLocationDTOList) {
+        List<JobLocation> jobLocations = new ArrayList<>();
+        for (JobLocationDTO jobLocationDTO : jobLocationDTOList) {
+            JobLocation jobLocation = modelMapper.map(jobLocationDTO, JobLocation.class);
+            // You may need to set additional properties if necessary
+            jobLocations.add(jobLocation);
+        }
+        return jobLocationRepository.saveAll(jobLocations);
     }
     public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
         List<Company> companies = companyRepository.findAll();

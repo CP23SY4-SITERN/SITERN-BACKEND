@@ -1,10 +1,13 @@
 package com.example.siternbackend.jobs.dtos;
 
+import com.example.siternbackend.company.DTOS.CompanyDTO;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,4 +27,5 @@ public class JobLocationDTO {
     private String country;
     @Size(max = 45 , message = "Zip must lower than 45 characters")
     private String zip;
+//    private Set<CompanyDTO> company;
 }

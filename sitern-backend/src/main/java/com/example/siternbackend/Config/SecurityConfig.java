@@ -44,7 +44,7 @@ public class SecurityConfig {
             "/api/auth/login",
             "/api/jobs/**",
             "/api/companies",
-            "/api/jobLocation",
+//            "/api/jobLocation",
             "/api/companies",
             "/api/companies/jobLocation"
     };
@@ -57,6 +57,7 @@ public class SecurityConfig {
             "/api/auth/username",
             "/api/auth/forget-password",
             "/api/auth/refresh",
+            "/api/jobLocation",
     };
 
     private static final String[] STAFF_WHITELIST = {
@@ -72,7 +73,7 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-//                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(FREE_AREA).permitAll()

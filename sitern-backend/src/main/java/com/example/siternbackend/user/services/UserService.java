@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,14 @@ public class UserService {
         List<User> user = userRepository.findAll();
         return mapListUserToListUserResponse(user);
     }
+    public List<UserDto> getAllDataFromUsers() {
+        //ต้องเพิ่ม sortbycompanyID
+        List<User> user = userRepository.findAll();
+        return mapListUserToListUserDtos(user);
+    }
+    public List<UserDto> mapListUserToListUserDtos(List<User> users) {
+        return users.stream().map(this::mapListUserToListUserDtos).collect(Collectors.toList());
+    }
     public List<UserResponse> mapListUserToListUserResponse(List<User> users) {
         return users.stream().map(this::mapUserToUserResponse).collect(Collectors.toList());
     }
@@ -65,7 +74,10 @@ public class UserService {
     }
 
     public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("This user not found"));
+//        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("This Email not found"));
+//    }
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 
     // ... existing code ...
@@ -165,6 +177,21 @@ public class UserService {
         } catch (Exception e) {
             log.error("Could not Map User to UserResponse: " + e.getMessage());
             return UserResponse.builder().build();
+        }
+    }
+    public UserDto mapListUserToListUserDtos(User user) {
+        try {
+            UserDto userDto = new UserDto();
+            userDto.setId(user.getId());
+            userDto.setUsername(user.getUsername());
+            userDto.setEmail(user.getEmail());
+            userDto.setAuthorities(user.getSimpleAuthorities());
+            userDto.setCreated(user.getCreated());
+            userDto.setUpdated(user.getUpdated());
+            return userDto;
+        } catch (Exception e) {
+            log.error("Could not Map User to UserResponse: " + e.getMessage());
+            return UserDto.builder().build();
         }
     }
     }
