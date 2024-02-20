@@ -54,7 +54,7 @@ public class CompanyController {
             throw e; // Rethrow the exception or handle it appropriately
         }
     }
-    @GetMapping("/company/{companyName}")
+    @GetMapping("/{companyName}")
     public List<JobLocation> getAllJobLocationFromCompanyName(@PathVariable String companyName) {
         return jobLocationService.getAllJobLocationFromCompanyName(companyName);
     }

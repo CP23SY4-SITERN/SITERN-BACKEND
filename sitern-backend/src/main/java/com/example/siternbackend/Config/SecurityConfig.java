@@ -46,7 +46,8 @@ public class SecurityConfig {
             "/api/companies",
 //            "/api/jobLocation",
             "/api/companies",
-            "/api/companies/jobLocation"
+            "/api/companies/jobLocation",
+            "/api/companies/**",
     };
 
     private static final String[] STUDENT_WHITELIST= {
@@ -58,6 +59,7 @@ public class SecurityConfig {
             "/api/auth/forget-password",
             "/api/auth/refresh",
             "/api/jobLocation",
+
     };
 
     private static final String[] STAFF_WHITELIST = {
