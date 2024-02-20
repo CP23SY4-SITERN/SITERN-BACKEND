@@ -9,6 +9,7 @@ import com.example.siternbackend.jobs.entities.JobPost;
 import com.example.siternbackend.jobs.entities.WorkType;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import com.example.siternbackend.jobs.services.JobService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -16,12 +17,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -77,18 +81,30 @@ public class JobController {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
 }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> createJob(@Valid @EnumValid(enumClass = WorkType.class) @RequestBody CreatingJobDTO newJob, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException, RuntimeException {
-        log.info("POST mapping for creating a job posting");
-        try {
-            return jobService.create(newJob, request);
-        } catch (EnumValidationException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ResponseEntity<String> createJob(@Valid @EnumValid(enumClass = WorkType.class) @RequestBody CreatingJobDTO newJob, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException, RuntimeException {
+//        log.info("POST mapping for creating a job posting");
+//        try {
+//            return jobService.create(newJob, request);
+//        } catch (EnumValidationException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (EntityNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Email not found");
+//        }
+//    }
+@PostMapping
+@ResponseStatus(HttpStatus.CREATED)
+public ResponseEntity<String> createJob(@Valid @EnumValid(enumClass = WorkType.class) @RequestBody CreatingJobDTO newJob, HttpServletRequest request) throws MethodArgumentNotValidException, MessagingException, IOException, RuntimeException {
+    log.info("POST mapping for creating a job posting");
+    try {
+        return jobService.create(newJob, request);
+    } catch (EnumValidationException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
-
-
+}
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteJobPostById(@PathVariable Integer id, HttpServletRequest request){
         try {

@@ -27,5 +27,5 @@ public class JobLocationDTO {
     private String country;
     @Size(max = 45 , message = "Zip must lower than 45 characters")
     private String zip;
-//    private Set<CompanyDTO> company;
+    private Integer companyID;
 }

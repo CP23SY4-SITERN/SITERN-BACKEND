@@ -31,10 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class JobService {
@@ -133,15 +130,15 @@ public class JobService {
     public ResponseEntity create(CreatingJobDTO newJob, HttpServletRequest request) throws MessagingException, IOException {
         Company company = companyRepository.findById(newJob.getCompany_ID())
                 .orElseThrow(() -> new EntityNotFoundException("Company not found with ID: " + newJob.getCompany_ID()));
-//        List<JobLocation> jobLocations = findJobLocationsById(newJob.getJob_location_ID());
-//
-//        if (jobLocations.isEmpty()) {
-//            throw new EntityNotFoundException("JobLocation not found with ID: " + newJob.getJob_location_ID());
-//        }
+        List<JobLocation> jobLocations = findJobLocationsById(newJob.getJobLocation_ID());
+
+        if (jobLocations.isEmpty()) {
+            throw new EntityNotFoundException("JobLocation not found with ID: " + newJob.getJobLocation_ID());
+        }
         JobPost j = modelMapper.map(newJob, JobPost.class);
         System.out.println("company found");
         j.setCompany(company);
-//        j.setJobLocation(jobLocations.get(0));
+        j.setJobLocation(jobLocations.get(0));
         jobPostRepository.saveAndFlush(j);
         System.out.println("Created");
         return ResponseEntity.status(HttpStatus.CREATED).body(j);
