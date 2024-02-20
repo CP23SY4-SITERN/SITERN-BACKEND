@@ -70,10 +70,19 @@ public class JobService {
             if (jobLocationDTO != null) {
                 jobPostDTO.setZip(jobLocationDTO.getZip());
             }
-        }
 
-        return jobPostDTOs;
+            // Set the company_id
+            Integer companyId = jobPostDTO.getCompany_id();
+            if (companyId == null) {
+                // Extract company_id from the associated Company entity in JobPost
+                Company company = jobPostRepository.getOne(jobPostDTO.getId()).getCompany();
+                if (company != null) {
+                    jobPostDTO.setCompany_id(company.getId());
+                }
+            }
+        }return jobPostDTOs;
     }
+
 
 
 
@@ -100,7 +109,7 @@ public class JobService {
     private JobPost convertToEntity(JobPostDTO jobPostDTO) {
         JobPost jobPost = new JobPost();
         jobPost.setId(jobPostDTO.getId());
-        jobPost.setCompany(companyService.getCompanyByID(jobPostDTO.getCompany_ID()));
+        jobPost.setCompany(companyService.getCompanyByID(jobPostDTO.getCompany_id()));
         // Set other properties
         return jobPost;
     }

@@ -1,5 +1,6 @@
 package com.example.siternbackend.jobs.dtos;
 
+import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -22,7 +23,7 @@ public class JobPostDTO {
     private Integer id;
     private String title;
     private LocalDateTime createdDate;
-    private Integer company_ID;
+    private Integer company_id;
     private String companyName;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private String applicationDeadline;
