@@ -106,13 +106,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(FREE_AREA).permitAll()
-                        .requestMatchers(STAFF_WHITELIST).hasAnyAuthority(
+                        .requestMatchers(STUDENT_WHITELIST).hasAnyAuthority(
                                 Roles.STUDENT.name(),
-                                Roles.STAFF.name()
-                        )
-                        .requestMatchers(STUDENT_WHITELIST).hasAuthority(Roles.STUDENT.name())
+                                Roles.STAFF.name())
+                        .requestMatchers(STAFF_WHITELIST).hasAuthority(Roles.STAFF.name())
                         .requestMatchers(HttpMethod.POST,"/api/jobs/**").hasAuthority(Roles.STAFF.name())
-                                .requestMatchers(HttpMethod.POST,"/api/jobs").hasAuthority(Roles.STAFF.name())
+                        .requestMatchers(HttpMethod.POST,"/api/jobs").hasAuthority(Roles.STAFF.name())
 //                        .requestMatchers(USER_WHITELIST).hasAnyAuthority(Roles.OTHER.name())
                         .anyRequest().authenticated()
                 );
