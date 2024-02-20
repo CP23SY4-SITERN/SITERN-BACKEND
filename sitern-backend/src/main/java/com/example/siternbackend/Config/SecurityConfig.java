@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import com.example.siternbackend.user.entities.Roles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,6 +26,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -35,6 +41,17 @@ public class SecurityConfig {
     final JwtFilter jwtFilter;
     final UserService userService;
 
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOriginPattern("*");
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*")); // Allow all headers
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
     private static final String[] FREE_AREA = {
             "/playground",
             "/api/graphql",
@@ -60,6 +77,7 @@ public class SecurityConfig {
             "/api/auth/forget-password",
             "/api/auth/refresh",
             "/api/jobLocation",
+            "/api/auth/logout",
 
     };
 
@@ -72,6 +90,7 @@ public class SecurityConfig {
             "/api/jobs",
             "/api/jobs/**",
             "/api/users/**",
+            "/api/auth/logout",
     };
 
     private static final String[] USER_WHITELIST = {
@@ -92,6 +111,8 @@ public class SecurityConfig {
                                 Roles.STAFF.name()
                         )
                         .requestMatchers(STUDENT_WHITELIST).hasAuthority(Roles.STUDENT.name())
+                        .requestMatchers(HttpMethod.POST,"/api/jobs/**").hasAuthority(Roles.STAFF.name())
+                                .requestMatchers(HttpMethod.POST,"/api/jobs").hasAuthority(Roles.STAFF.name())
 //                        .requestMatchers(USER_WHITELIST).hasAnyAuthority(Roles.OTHER.name())
                         .anyRequest().authenticated()
                 );
