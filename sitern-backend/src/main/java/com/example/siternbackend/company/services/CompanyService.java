@@ -85,9 +85,9 @@ public class CompanyService {
         Company c = modelMapper.map(newCompany, Company.class);
         // Assuming jobLocationDTO is part of CompanyDTO or available in the request
 //        company.setJobLocationsFromDTO(newCompany.getJobLocations());
-        List<JobLocationDTO> jobLocationDTOList = (List<JobLocationDTO>) newCompany.getJobLocations();
-        List<JobLocation> jobLocations = createOrFetchJobLocations(jobLocationDTOList);
-        c.setJobLocations(new HashSet<>(jobLocations));
+//        List<JobLocationDTO> jobLocationDTOList = (List<JobLocationDTO>) newCompany.getJobLocations();
+//        List<JobLocation> jobLocations = createOrFetchJobLocations(jobLocationDTOList);
+//        c.setJobLocations(new HashSet<>(jobLocations));
         companyRepository.saveAndFlush(c);
         System.out.println("Created");
         return ResponseEntity.status(HttpStatus.CREATED).body(c);
