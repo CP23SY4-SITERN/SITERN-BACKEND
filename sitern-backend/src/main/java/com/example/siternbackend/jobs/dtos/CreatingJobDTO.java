@@ -2,6 +2,7 @@ package com.example.siternbackend.jobs.dtos;
 
 import com.example.siternbackend.Validation.EnumValid;
 import com.example.siternbackend.jobs.entities.WorkType;
+import com.example.siternbackend.util.FutureDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.EnumType;
@@ -32,6 +33,7 @@ public class CreatingJobDTO {
     private LocalDateTime createdDate;
     @NotNull(message = "must not be null")
     private Integer company_ID;
+    @FutureDate(message = "Application deadline must be a date in the future")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate applicationDeadline;
     @NotNull(message = "must not be null")
