@@ -55,14 +55,13 @@ public class SecurityConfig {
     private static final String[] FREE_AREA = {
             "/playground",
             "/api/graphql",
-            "/api/auth",
+            "/api/auth/**",
             "/api/details",
             "/api/users",
             "/users/{id}",
             "/api/auth/login",
             "/api/jobs/**",
             "/api/jobs",
-            "/api/companies",
             "/api/companies",
             "/api/companies/jobLocation",
             "/api/companies/**",
@@ -78,7 +77,8 @@ public class SecurityConfig {
             "/api/auth/refresh",
             "/api/jobLocation",
             "/api/auth/logout",
-
+            "/api/companies",
+            "/api/companies/**",
     };
 
     private static final String[] STAFF_WHITELIST = {
