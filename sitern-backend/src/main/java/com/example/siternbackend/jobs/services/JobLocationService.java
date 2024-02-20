@@ -71,4 +71,7 @@ public class JobLocationService {
         jobLocationRepository.deleteById(id);
 
     }
+    public List<JobLocation> getAllJobLocationFromCompanyName(String companyName) {
+        return jobLocationRepository.findByCompany_CompanyName(companyName);
+    }
 }

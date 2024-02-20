@@ -54,7 +54,6 @@ public class CreatingJobDTO {
     @EnumValid(enumClass = WorkType.class, message = "Invalid workType value. Accepted values are: {enumValues}")
     @Enumerated(EnumType.STRING)
     private WorkType workType;
-    @NotNull(message = "must not be null")
     private Integer job_location_ID;
     private byte isActive;
 

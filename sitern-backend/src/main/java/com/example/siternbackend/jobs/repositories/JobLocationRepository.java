@@ -8,4 +8,5 @@ import java.util.List;
 public interface JobLocationRepository extends JpaRepository<JobLocation, Integer> {
 //    List<JobLocation> findByCompanyName(String companyName);
     List<JobLocation> findJobLocationsById(Integer id);
+    List<JobLocation> findByCompany_CompanyName(String companyName);
 }
