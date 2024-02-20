@@ -75,5 +75,9 @@ public class JobPost {
         this.createdDate = LocalDateTime.now();
         System.out.println("Setting createdDate: " + this.createdDate);
     }
+    @PreRemove
+    protected void removeJobLocationAssociation() {
+        this.jobLocation = null;
+    }
 
 }
