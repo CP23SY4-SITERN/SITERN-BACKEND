@@ -40,12 +40,12 @@ public class SecurityConfig {
             "/api/graphql",
             "/api/auth",
             "/api/details",
-                    "/api/users/**",
+            "/api/users",
+            "/users/{id}",
             "/api/auth/login",
             "/api/jobs/**",
             "/api/jobs",
             "/api/companies",
-//            "/api/jobLocation",
             "/api/companies",
             "/api/companies/jobLocation",
             "/api/companies/**",
@@ -64,7 +64,14 @@ public class SecurityConfig {
     };
 
     private static final String[] STAFF_WHITELIST = {
-            "/api/admin/**"
+            "/api/admin/**",
+            "/api/companies",
+            "/api/companies/**",
+            "/api/jobLocation",
+            "/api/jobLocation/**",
+            "/api/jobs",
+            "/api/jobs/**",
+            "/api/users/**",
     };
 
     private static final String[] USER_WHITELIST = {
@@ -85,7 +92,7 @@ public class SecurityConfig {
                                 Roles.STAFF.name()
                         )
                         .requestMatchers(STUDENT_WHITELIST).hasAuthority(Roles.STUDENT.name())
-                        .requestMatchers(USER_WHITELIST).hasAnyAuthority(Roles.STAFF.name())
+//                        .requestMatchers(USER_WHITELIST).hasAnyAuthority(Roles.OTHER.name())
                         .anyRequest().authenticated()
                 );
         http.authenticationProvider(authenticationProvider());

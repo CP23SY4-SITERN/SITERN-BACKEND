@@ -125,7 +125,7 @@ public class CompanyController {
         }
     }
     @PatchMapping("/{id}")
-    public ResponseEntity<EditCompanyDTO> editCompanyDTO(
+    public ResponseEntity<?> editCompanyDTO(
             @Valid @RequestBody EditCompanyDTO editCompanyDTO,
             @PathVariable int id,
             HttpServletRequest request) {
@@ -134,10 +134,11 @@ public class CompanyController {
             EditCompanyDTO updatedCompany = companyService.editCompany(request, editCompanyDTO, id);
             return ResponseEntity.ok(updatedCompany);
         } catch (JobService.ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
+//            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
+  
 
 
 }
