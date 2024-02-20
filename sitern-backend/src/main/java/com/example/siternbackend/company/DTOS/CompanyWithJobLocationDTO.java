@@ -1,6 +1,7 @@
 package com.example.siternbackend.company.DTOS;
 
 import com.example.siternbackend.jobs.dtos.JobLocationDTO;
+import com.example.siternbackend.jobs.entities.JobLocation;
 import lombok.Data;
 
 import java.util.Set;

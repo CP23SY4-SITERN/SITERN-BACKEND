@@ -3,11 +3,13 @@ package com.example.siternbackend.jobs.controllers;
 import com.example.siternbackend.jobs.dtos.CreatingJobDTO;
 import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
+import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.example.siternbackend.jobs.repositories.JobLocationRepository;
 import com.example.siternbackend.jobs.repositories.JobPostRepository;
 import com.example.siternbackend.jobs.services.JobLocationService;
 import com.example.siternbackend.jobs.services.JobService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -76,4 +78,52 @@ public class JobLocationController {
             return new ResponseEntity<>("Error deleting job location with ID: " + id, HttpStatus.NOT_FOUND);
         }
     }
+    @GetMapping("/{companyName}")
+    public ResponseEntity<List<JobLocation>> getAllJobLocationFromCompanyName(
+            @PathVariable String companyName,
+            HttpServletRequest request) {
+        try {
+            List<JobLocation> jobLocations = jobLocationService.getAllJobLocationFromCompanyName(companyName);
+            // Log success message and related information
+            log.info("Get Job Locations Successful for Company Name: {}", companyName);
+            // You can log additional information if needed, e.g., request details
+            log.debug("Request details - Method: {}, URI: {}", request.getMethod(), request.getRequestURI());
+
+            // Return the list of job locations to the client
+            return new ResponseEntity<>(jobLocations, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            // Log the exception and return an error message to the client
+            log.error("Error getting job locations for Company Name: {}", companyName, e);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            // Log any other exceptions that might occur
+            log.error("Unexpected error getting job locations for Company Name: {}", companyName, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/company/{id}")
+    public ResponseEntity<List<JobLocation>> getAllJobLocationFromCompanyId(
+            @PathVariable Integer id,
+            HttpServletRequest request) {
+        try {
+            List<JobLocation> jobLocations = jobLocationService.getAllJobLocationFromCompanyId(id);
+            // Log success message and related information
+            log.info("Get Job Locations Successful for Company ID: {}", id);
+            // You can log additional information if needed, e.g., request details
+            log.debug("Request details - Method: {}, URI: {}", request.getMethod(), request.getRequestURI());
+
+            // Return the list of job locations to the client
+            return new ResponseEntity<>(jobLocations, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            // Log the exception and return an error message to the client
+            log.error("Error getting job locations for Company ID: {}", id, e);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            // Log any other exceptions that might occur
+            log.error("Unexpected error getting job locations for Company ID: {}", id, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

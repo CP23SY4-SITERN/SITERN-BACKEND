@@ -101,12 +101,28 @@ public class CompanyService {
         }
         return jobLocationRepository.saveAll(jobLocations);
     }
-    public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
-        List<Company> companies = companyRepository.findAll();
-        return companies.stream()
-                .map(this::mapToCompanyWithJobLocationDTO)
-                .collect(Collectors.toList());
-    }
+//    public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
+//        List<Company> companies = companyRepository.findAll();
+//        return companies.stream()
+//                .map(this::mapToCompanyWithJobLocationDTO)
+//                .collect(Collectors.toList());
+//    }
+public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
+    List<Company> companies = companyRepository.findAllWithJobLocations();
+    companies.forEach(company -> {
+        Set<JobLocation> jobLocations = company.getJobLocations();
+        // Log or print jobLocations to see if they are loaded
+        System.out.println("Job Locations for Company " + company.getId() + ": " + jobLocations);
+    });
+
+    return companies.stream()
+            .map(this::mapToCompanyWithJobLocationDTO)
+            .collect(Collectors.toList());
+}
+//    public Company getCompanyWithJobLocations(Integer companyId) {
+//        return companyRepository.findByIdWithJobLocations(companyId)
+//                .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + companyId));
+//    }
     private CompanyWithJobLocationDTO mapToCompanyWithJobLocationDTO(Company company) {
         CompanyWithJobLocationDTO dto = new CompanyWithJobLocationDTO();
         dto.setCompanyName(company.getCompanyName());
@@ -193,5 +209,26 @@ public class CompanyService {
         return nullProperties.toArray(new String[0]);
     }
 
-
+//    public List<JobLocation> getAllJobLocationFromCompanyName(String companyName) {
+//        return jobLocationRepository.findByCompany_CompanyName(companyName);
+//    }
+//    public List<Company> getAllCompaniesByJobLocations(String companyName){
+//
+//    }
+//    public List<Company> getCompaniesByJobLocationsRoad(String road) {
+//    return companyRepository.findCompaniesByJobLocationsRoad(road);
+//    }
+    public List<JobLocation> getAllJobLocationFromCompanyName(String companyName) {
+        return jobLocationRepository.findByCompany_CompanyName(companyName);
+    }
+    public List<JobLocation> getAllJobLocationFromCompanyId(Integer id) {
+        return jobLocationRepository.findByCompany_Id(id);
+    }
+    public Company getCompanyWithJobLocations(Integer company_id) {
+        return companyRepository.findByIdWithJobLocations(company_id)
+                .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + company_id));
+    }
+    public List<JobLocation> getJobLocationsByCompanyId(Integer companyId) {
+        return jobLocationRepository.findByCompany_Id(companyId);
+    }
 }

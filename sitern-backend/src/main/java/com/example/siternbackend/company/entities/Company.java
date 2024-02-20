@@ -5,6 +5,7 @@ import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.jobs.entities.JobPost;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,9 +44,10 @@ public class Company {
 
 //    @ManyToOne
 //    private JobLocation jobLocation;
-
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "company")
     private Set<JobLocation> jobLocations = new HashSet<>();
+
 //    @MapsId("companyId")
 //    @JsonIgnore
 //    @ManyToOne(fetch = FetchType.EAGER, cascade =CascadeType.PERSIST)

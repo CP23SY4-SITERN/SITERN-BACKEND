@@ -2,13 +2,13 @@ package com.example.siternbackend.jobs.entities;
 
 import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.internshipstatus.entities.InternshipApplicationStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -32,9 +32,9 @@ public class JobLocation {
     private String zip;
 
     @OneToMany(mappedBy = "jobLocation")
-    private Set<JobPost> jobPosts = new LinkedHashSet<>();
+    private Set<JobPost> jobPosts = new HashSet<>();
 
-
+    @JsonBackReference
     @ManyToOne
     private Company company;
 

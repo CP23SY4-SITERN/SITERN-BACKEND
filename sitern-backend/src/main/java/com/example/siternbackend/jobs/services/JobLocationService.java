@@ -1,5 +1,6 @@
 package com.example.siternbackend.jobs.services;
 
+import com.example.siternbackend.company.entities.Company;
 import com.example.siternbackend.jobs.dtos.CreatingJobDTO;
 import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import com.example.siternbackend.jobs.dtos.JobPostDTO;
@@ -73,5 +74,8 @@ public class JobLocationService {
     }
     public List<JobLocation> getAllJobLocationFromCompanyName(String companyName) {
         return jobLocationRepository.findByCompany_CompanyName(companyName);
+    }
+    public List<JobLocation> getAllJobLocationFromCompanyId(Integer id) {
+        return jobLocationRepository.findByCompany_Id(id);
     }
 }
