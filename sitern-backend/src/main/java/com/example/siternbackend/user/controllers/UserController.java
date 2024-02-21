@@ -77,7 +77,7 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<UserResponse> addUser(@Valid @RequestBody CreateUserDto createUserDto, HttpServletRequest request)
+    public ResponseEntity<?> addUser(@Valid @RequestBody CreateUserDto createUserDto, HttpServletRequest request)
             throws MessagingException, IOException {
         // Extract user details from the request
         String username = createUserDto.getUsername();
@@ -85,11 +85,24 @@ public class UserController {
         String password = createUserDto.getPassword();
 
         // Call the service method to add the user
-        UserResponse user = userService.addUser(createUserDto, request).getBody();
+        try {
+            // Validate the update request
+            // ...
 
+            // Call the service method to perform the update
+            UserResponse user = userService.addUser(createUserDto, request).getBody();
 
-        // Return the response with HTTP status 201 Created
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+            // Return the response with OK status
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        } catch (ValidationException e) {
+            // Handle validation errors and return a 400 Bad Request response
+            return ResponseEntity.badRequest().body(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Email not found");
+        } catch (RuntimeException e) {
+            // Handle update errors and return an appropriate response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
     }
 
 //    @PatchMapping("/{id}")

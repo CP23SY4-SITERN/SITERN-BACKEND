@@ -85,6 +85,8 @@ public class UserService {
         // Check if the email is already registered
         if (userRepository.existsByEmail(newUsers.getEmail())) {
             throw new IllegalArgumentException("Email is already registered");
+        } if (userRepository.existsByUsername(newUsers.getUsername())){
+            throw new IllegalArgumentException("Username is already exists");
         }
         User newUser = modelMapper.map(newUsers, User.class);
         Authorities authorities = getAuthorityByName(Roles.STUDENT);
