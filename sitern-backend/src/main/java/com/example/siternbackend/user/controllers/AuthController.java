@@ -62,7 +62,7 @@ public class AuthController {
         try {
             jwtTokenUtil.revokeToken(token.token());
             jwtTokenUtil.revokeToken(token.refreshToken());
-            return ResponseEntity.ok("token revoked");
+            return ResponseEntity.ok("token revoked,Logout Successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("cannot revoke this token");
         }
