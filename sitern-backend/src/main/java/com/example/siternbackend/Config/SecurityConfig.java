@@ -53,20 +53,28 @@ public class SecurityConfig {
 //        return source;
 //    }
     private static final String[] FREE_AREA = {
-            "/playground",
             "/api/graphql",
             "/api/auth/**",
+            "/api/auth",
+            "/api/auth/login",
             "/api/details",
             "/api/users",
+            "/api/users/**",
             "/users/{id}",
-            "/api/auth/login",
+
             "/api/jobs/**",
             "/api/jobs",
             "/api/companies",
             "/api/companies/jobLocation",
             "/api/companies/**",
     };
-
+    private static final String[] FREE_AREA_FOR_LOGIN = {
+            "/playground",
+            "/api/graphql",
+            "/api/auth",
+            "/api/auth/login",
+            "/api/users",
+    };
     private static final String[] STUDENT_WHITELIST= {
             "/api/auth/details",
             "/api/auth/credentials",
@@ -79,6 +87,7 @@ public class SecurityConfig {
             "/api/auth/logout",
             "/api/companies",
             "/api/companies/**",
+            "/api/auth/**",
     };
 
     private static final String[] STAFF_WHITELIST = {
@@ -105,13 +114,16 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(FREE_AREA).permitAll()
+                        .requestMatchers(FREE_AREA_FOR_LOGIN).permitAll()
+                        .requestMatchers(HttpMethod.GET,FREE_AREA).permitAll()
                         .requestMatchers(STUDENT_WHITELIST).hasAnyAuthority(
                                 Roles.STUDENT.name(),
                                 Roles.STAFF.name())
                         .requestMatchers(STAFF_WHITELIST).hasAuthority(Roles.STAFF.name())
-                        .requestMatchers(HttpMethod.POST,"/api/jobs/**").hasAuthority(Roles.STAFF.name())
-                        .requestMatchers(HttpMethod.POST,"/api/jobs").hasAuthority(Roles.STAFF.name())
+                                .requestMatchers(HttpMethod.POST,"/api/jobs/**").hasAuthority(Roles.STAFF.name())
+                                .requestMatchers(HttpMethod.POST,"/api/jobs").hasAuthority(Roles.STAFF.name())
+                                .requestMatchers(HttpMethod.POST,"/api/companies/**").hasAuthority(Roles.STAFF.name())
+                                .requestMatchers(HttpMethod.POST,"/api/companies").hasAuthority(Roles.STAFF.name())
 //                        .requestMatchers(USER_WHITELIST).hasAnyAuthority(Roles.OTHER.name())
                         .anyRequest().authenticated()
                 );
