@@ -7,17 +7,19 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-@Entity
 @Data
+@Builder
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentProfile {
     @Id
-    private Integer id;
+    private Integer userId;
 
-    @MapsId("userId")
     @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
     private User user;
+
     @Size(max = 255 , message = "Your Firstname must be between 1 to 255 characters")
     private String firstName;
     @Size(max = 255 , message = "Your Lastname must be between 1 to 255 characters")

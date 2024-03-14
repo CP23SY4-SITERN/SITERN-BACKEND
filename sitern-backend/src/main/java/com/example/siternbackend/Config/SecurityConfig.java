@@ -88,6 +88,8 @@ public class SecurityConfig {
             "/api/companies",
             "/api/companies/**",
             "/api/auth/**",
+            "/api/student-profiles",
+            "/api/student-profiles/**"
     };
 
     private static final String[] STAFF_WHITELIST = {
