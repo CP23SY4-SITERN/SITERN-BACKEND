@@ -51,6 +51,8 @@ public class Company {
     @OneToMany(mappedBy = "company")
     private Set<JobLocation> jobLocations = new HashSet<>();
 
+    @ManyToOne
+    private JobLocation jobLocation;
 //    @MapsId("companyId")
 //    @JsonIgnore
 //    @ManyToOne(fetch = FetchType.EAGER, cascade =CascadeType.PERSIST)
