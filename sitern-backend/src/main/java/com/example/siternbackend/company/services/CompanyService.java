@@ -21,6 +21,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,12 +58,32 @@ public class CompanyService {
     }
 
     //get ALL JOB
-    public List<CompanyDTO> getAllCompanies() {
-        List<Company> companyList = companyRepository.findAll();
-        return listMapper.mapList(companyList, CompanyDTO.class, modelMapper);
+//    public List<CompanyDTO> getAllCompanies() {
+//        List<Company> companyList = companyRepository.findAll();
+//        return listMapper.mapList(companyList, CompanyDTO.class, modelMapper);
+//    }
+
+    //pageable all job
+//    public Page<CompanyDTO> getAllCompanies(Pageable pageable) {
+//        Page<Company> companyPage = companyRepository.findAll(pageable);
+//        return companyPage.map(company -> modelMapper.map(company, CompanyDTO.class));
+//    }
+    public Page<CompanyDTO> getAllCompanies(Pageable pageable) {
+        Page<Company> companyPage = companyRepository.findAll(pageable);
+        return companyPage.map(this::mapToCompanyDTOWithJobLocations);
     }
 
+//    private CompanyDTO mapToCompanyDTOWithJobLocations(Company company) {
+//        CompanyDTO dto = modelMapper.map(company, CompanyDTO.class);
+//        dto.setJobLocations(mapToJobLocationDTOs(company.getJobLocations()));
+//        return dto;
+//    }
 
+    private Set<JobLocationDTO> mapToJobLocationDTOs(Set<JobLocation> jobLocations) {
+        return jobLocations.stream()
+                .map(jobLocation -> modelMapper.map(jobLocation, JobLocationDTO.class))
+                .collect(Collectors.toSet());
+    }
     //    //GET COMPANY BY ID
     public Company getCompanyByID(Integer id) {
         Company company = companyRepository.findById(id)
@@ -71,15 +93,6 @@ public class CompanyService {
                 ));
         return modelMapper.map(company, Company.class);
     }
-//
-//    private JobPost convertToEntity(JobPostDTO jobPostDTO) {
-//        JobPost jobPost = new JobPost();
-//        jobPost.setId(jobPostDTO.getId());
-//        jobPost.setCompany_ID(jobPostDTO.getCompany_ID());
-//        // Set other properties
-//        return jobPost;
-//    }
-//
     public ResponseEntity<Company> create(@RequestBody @Valid CompanyDTO newCompany, HttpServletRequest request) throws MethodArgumentNotValidException,MessagingException, IOException {
 
         Company c = modelMapper.map(newCompany, Company.class);
@@ -107,34 +120,69 @@ public class CompanyService {
 //                .map(this::mapToCompanyWithJobLocationDTO)
 //                .collect(Collectors.toList());
 //    }
-public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
-    List<Company> companies = companyRepository.findAllWithJobLocations();
-    companies.forEach(company -> {
-        Set<JobLocation> jobLocations = company.getJobLocations();
-        // Log or print jobLocations to see if they are loaded
-        System.out.println("Job Locations for Company " + company.getId() + ": " + jobLocations);
-    });
 
-    return companies.stream()
-            .map(this::mapToCompanyWithJobLocationDTO)
-            .collect(Collectors.toList());
-}
-//    public Company getCompanyWithJobLocations(Integer companyId) {
-//        return companyRepository.findByIdWithJobLocations(companyId)
-//                .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + companyId));
+
+    //old one
+//public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
+//    List<Company> companies = companyRepository.findAllWithJobLocations();
+//    companies.forEach(company -> {
+//        Set<JobLocation> jobLocations = company.getJobLocations();
+//        // Log or print jobLocations to see if they are loaded
+//        System.out.println("Job Locations for Company " + company.getId() + ": " + jobLocations);
+//    });
+//
+//    return companies.stream()
+//            .map(this::mapToCompanyWithJobLocationDTO)
+//            .collect(Collectors.toList());
+//}
+
+    //new one
+//    public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
+//        List<Company> companies = companyRepository.findAllWithJobLocations();
+//        List<CompanyWithJobLocationDTO> companyDTOs = new ArrayList<>();
+//
+//        for (Company company : companies) {
+//            CompanyWithJobLocationDTO companyDTO = mapToCompanyWithJobLocationDTO(company);
+//            companyDTOs.add(companyDTO);
+//        }
+//
+//        return companyDTOs;
 //    }
-    private CompanyWithJobLocationDTO mapToCompanyWithJobLocationDTO(Company company) {
-        CompanyWithJobLocationDTO dto = new CompanyWithJobLocationDTO();
+//    private CompanyWithJobLocationDTO mapToCompanyWithJobLocationDTO(Company company) {
+//        CompanyWithJobLocationDTO dto = new CompanyWithJobLocationDTO();
+//        dto.setCompanyName(company.getCompanyName());
+//        dto.setCompanyDescription(company.getCompanyDescription());
+//        dto.setCompanyWebsite(company.getCompanyWebsite());
+//        dto.setCompanyLocation(company.getCompanyLocation());
+//        dto.setCompanyEmployee(company.getCompanyEmployee());
+//
+//        Set<JobLocationDTO> jobLocationDTOs = company.getJobLocations().stream()
+//                .map(this::mapToJobLocationDTO)
+//                .collect(Collectors.toSet());
+//        dto.setJobLocations(jobLocationDTOs);
+//
+//        // Populate additional attributes if necessary
+//        // For example, set the company's ZIP code and company ID
+//
+//        return dto;
+//    }
+    public List<CompanyDTO> getAllCompaniesWithJobLocations() {
+        List<Company> companies = companyRepository.findAllWithJobLocations();
+
+        return companies.stream()
+                .map(this::mapToCompanyDTOWithJobLocations)
+                .collect(Collectors.toList());
+    }
+
+    private CompanyDTO mapToCompanyDTOWithJobLocations(Company company) {
+        CompanyDTO dto = new CompanyDTO();
+        dto.setId(company.getId());
         dto.setCompanyName(company.getCompanyName());
         dto.setCompanyDescription(company.getCompanyDescription());
         dto.setCompanyWebsite(company.getCompanyWebsite());
         dto.setCompanyLocation(company.getCompanyLocation());
         dto.setCompanyEmployee(company.getCompanyEmployee());
-
-        Set<JobLocationDTO> jobLocationDTOs = company.getJobLocations().stream()
-                .map(this::mapToJobLocationDTO)
-                .collect(Collectors.toSet());
-        dto.setJobLocations(jobLocationDTOs);
+        dto.setJobLocations(mapToJobLocationDTOs(company.getJobLocations()));
 
         return dto;
     }
@@ -148,6 +196,38 @@ public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
         dto.setZip(jobLocation.getZip());
         return dto;
     }
+
+
+
+//    public Company getCompanyWithJobLocations(Integer companyId) {
+//        return companyRepository.findByIdWithJobLocations(companyId)
+//                .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + companyId));
+//    }
+//    private CompanyWithJobLocationDTO mapToCompanyWithJobLocationDTO(Company company) {
+//        CompanyWithJobLocationDTO dto = new CompanyWithJobLocationDTO();
+//        dto.setCompanyName(company.getCompanyName());
+//        dto.setCompanyDescription(company.getCompanyDescription());
+//        dto.setCompanyWebsite(company.getCompanyWebsite());
+//        dto.setCompanyLocation(company.getCompanyLocation());
+//        dto.setCompanyEmployee(company.getCompanyEmployee());
+//
+//        Set<JobLocationDTO> jobLocationDTOs = company.getJobLocations().stream()
+//                .map(this::mapToJobLocationDTO)
+//                .collect(Collectors.toSet());
+//        dto.setJobLocations(jobLocationDTOs);
+//
+//        return dto;
+//    }
+//    private JobLocationDTO mapToJobLocationDTO(JobLocation jobLocation) {
+//        JobLocationDTO dto = new JobLocationDTO();
+//        dto.setId(jobLocation.getId());
+//        dto.setRoad(jobLocation.getRoad());
+//        dto.setSubDistrict(jobLocation.getSubDistrict());
+//        dto.setProvince(jobLocation.getProvince());
+//        dto.setCountry(jobLocation.getCountry());
+//        dto.setZip(jobLocation.getZip());
+//        return dto;
+//    }
     public void deleteCompanyById(Integer id,HttpServletRequest  request) {
         companyRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -155,23 +235,6 @@ public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
         companyRepository.deleteById(id);
 
     }
-
-//    public EditCompanyDTO editCompany(HttpServletRequest request, EditCompanyDTO editCompany, Integer id) {
-//          Company company = companyRepository.findById(id).map(o->mapCompany(o, editCompany))
-//                    .orElseThrow(() ->
-//                            new ResponseStatusException(HttpStatus.FORBIDDEN, "No ID : " + id));
-//            companyRepository.saveAndFlush(company);
-//            return modelMapper.map(company, EditCompanyDTO.class);
-//    }
-//
-//        private Company mapCompany(Company existingCompany, EditCompanyDTO updateCompany) {
-//            existingCompany.setCompanyName(updateCompany.getCompanyName());
-//            existingCompany.setCompanyDescription(updateCompany.getCompanyDescription());
-//            existingCompany.setCompanyLocation(updateCompany.getCompanyLocation());
-//            existingCompany.setCompanyWebsite(updateCompany.getCompanyWebsite());
-//            existingCompany.setCompanyEmployee(updateCompany.getCompanyEmployee());
-//            return existingCompany;
-//        }
 
 
 

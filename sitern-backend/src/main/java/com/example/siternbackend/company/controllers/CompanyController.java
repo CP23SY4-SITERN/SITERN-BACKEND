@@ -15,6 +15,8 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -44,16 +46,32 @@ public class CompanyController {
         this.modelMapper = modelMapper;
     }
 
+//    @GetMapping
+//    public List<CompanyDTO> getAllCompanyList() {
+//        try {
+//            List<CompanyDTO> companyDTOS = companyService.getAllCompanies();
+//            log.info("Retrieved {} company list", companyDTOS.size());
+//            return companyDTOS;
+//        } catch (Exception e) {
+//            log.error("Error while retrieving company list", e);
+//            throw e; // Rethrow the exception or handle it appropriately
+//        }
+//    }
     @GetMapping
-    public List<CompanyDTO> getAllCompanyList() {
+    public Page<CompanyDTO> getAllCompanies(Pageable pageable) {
         try {
-            List<CompanyDTO> companyDTOS = companyService.getAllCompanies();
-            log.info("Retrieved {} company list", companyDTOS.size());
-            return companyDTOS;
+        Page<CompanyDTO> companyPage = companyService.getAllCompanies(pageable);
+        log.info("Retrieved {} company list", companyPage.getTotalElements());
+        return companyPage;
         } catch (Exception e) {
-            log.error("Error while retrieving company list", e);
-            throw e; // Rethrow the exception or handle it appropriately
+        log.error("Error while retrieving company list", e);
+        throw e; // Rethrow the exception or handle it appropriately
         }
+    }
+    @GetMapping("/withJobLocations")
+    public ResponseEntity<List<CompanyDTO>> getAllCompaniesWithJobLocations() {
+        List<CompanyDTO> companiesWithJobLocations = companyService.getAllCompaniesWithJobLocations();
+        return ResponseEntity.ok(companiesWithJobLocations);
     }
     @GetMapping("/{id}/jobLocation")
     public List<JobLocation> getAllJobLocationFromCompanyId(@PathVariable Integer id) {
@@ -107,10 +125,7 @@ public class CompanyController {
     public void deleteCompanyById(@PathVariable Integer id, HttpServletRequest request){
         companyService.deleteCompanyById(id, request);
     }
-    @GetMapping("/jobLocation")
-    public List<CompanyWithJobLocationDTO> getAllCompaniesWithJobLocations() {
-        return companyService.getAllCompaniesWithJobLocations();
-    }
+
 //    @GetMapping("/by-job-locations-road/{road}")
 //    public List<Company> getCompaniesByJobLocationsRoad(@PathVariable String road) {
 //        return companyService.getCompaniesByJobLocationsRoad(road);

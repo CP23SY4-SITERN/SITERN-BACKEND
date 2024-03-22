@@ -66,6 +66,7 @@ public class SecurityConfig {
             "/api/jobs",
             "/api/companies",
             "/api/companies/jobLocation",
+            "/api/companies/withJobLocations",
             "/api/companies/**",
     };
     private static final String[] FREE_AREA_FOR_LOGIN = {
