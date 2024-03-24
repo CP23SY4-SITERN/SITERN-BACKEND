@@ -3,6 +3,7 @@ package com.example.siternbackend.user.controllers;
 import com.example.siternbackend.Exception.DemoGraphqlException;
 import com.example.siternbackend.user.DTOs.CreateUserDto;
 import com.example.siternbackend.user.DTOs.UserDto;
+import com.example.siternbackend.user.DTOs.UserUpdateRequest;
 import com.example.siternbackend.user.entities.Authorities;
 import com.example.siternbackend.user.entities.Roles;
 import com.example.siternbackend.user.entities.User;
@@ -48,6 +49,18 @@ public class UserController {
             List<UserResponse> userResponses = userService.getAllUsers();
             log.info("Retrieved {} Users", userResponses.size());
             return userResponses;
+        } catch (Exception e) {
+            log.error("Error while retrieving Users", e);
+            throw e; // Rethrow the exception or handle it appropriately
+        }
+    }
+    //getUserWithDetails
+    @GetMapping("/details")
+    public List<UserUpdateRequest> getUserWithDetails() {
+        try {
+            List<UserUpdateRequest> userUpdateRequest = userService.getUserWithDetails();
+            log.info("Retrieved {} Users", userUpdateRequest.size());
+            return userUpdateRequest;
         } catch (Exception e) {
             log.error("Error while retrieving Users", e);
             throw e; // Rethrow the exception or handle it appropriately
@@ -104,7 +117,11 @@ public class UserController {
         }
 
     }
-
+    @PutMapping("/profile/{userId}")
+    public ResponseEntity<User> updateUserDetails(@PathVariable Integer userId, @RequestBody UserUpdateRequest userUpdateRequest) {
+        User updatedUser = userService.updateUserDetails(userId, userUpdateRequest);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
 //    @PatchMapping("/{id}")
 //    public User update(@RequestBody @javax.validation.Valid User updateUser, @PathVariable Integer id){
 //        User user = userRepository.findById(id).map(o->userService.updateUser(o,updateUser))

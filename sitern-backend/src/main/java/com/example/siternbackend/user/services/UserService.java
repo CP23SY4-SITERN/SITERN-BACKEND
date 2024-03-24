@@ -3,6 +3,7 @@ package com.example.siternbackend.user.services;
 import com.example.siternbackend.Exception.DemoGraphqlException;
 import com.example.siternbackend.user.DTOs.CreateUserDto;
 import com.example.siternbackend.user.DTOs.UserDto;
+import com.example.siternbackend.user.DTOs.UserUpdateRequest;
 import com.example.siternbackend.user.controllers.UserResponse;
 import com.example.siternbackend.user.entities.Authorities;
 import com.example.siternbackend.user.entities.Roles;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserService {
+public abstract class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -54,6 +55,11 @@ public class UserService {
         List<User> user = userRepository.findAll();
         return mapListUserToListUserResponse(user);
     }
+    public List<UserUpdateRequest> getUserWithDetails() {
+        //ต้องเพิ่ม sortbycompanyID
+        List<User> user = userRepository.findAll();
+        return mapUserwithDetailsToListUserwithDetails(user);
+    }
     public List<UserDto> getAllDataFromUsers() {
         //ต้องเพิ่ม sortbycompanyID
         List<User> user = userRepository.findAll();
@@ -64,6 +70,9 @@ public class UserService {
     }
     public List<UserResponse> mapListUserToListUserResponse(List<User> users) {
         return users.stream().map(this::mapUserToUserResponse).collect(Collectors.toList());
+    }
+    public List<UserUpdateRequest> mapUserwithDetailsToListUserwithDetails(List<User> users) {
+        return users.stream().map(this::mapUserwithDetailsToListUserwithDetails).collect(Collectors.toList());
     }
     public Optional<User> findAllById(int id) {
         return userRepository.findById(id);
@@ -181,6 +190,26 @@ public class UserService {
             return UserResponse.builder().build();
         }
     }
+    //mapUserwithDetailsToListUserwithDetails
+    public UserUpdateRequest mapUserwithDetailsToListUserwithDetails(User user) {
+        try {
+            UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
+            userUpdateRequest.setFirstName(user.getFirstName());
+            userUpdateRequest.setLastName(user.getLastName());
+            userUpdateRequest.setMajor(user.getMajor());
+            userUpdateRequest.setDepartment(user.getDepartment());
+            userUpdateRequest.setGpax(user.getGpax());
+            userUpdateRequest.setStudentInterest(user.getStudentInterest());
+            userUpdateRequest.setResumeCv(user.getResumeCv());
+            userUpdateRequest.setPhoneNumber(user.getPhoneNumber());
+            userUpdateRequest.setAddress(user.getAddress());
+            userUpdateRequest.setLinkedInProfile(user.getLinkedInProfile());
+            return userUpdateRequest;
+        } catch (Exception e) {
+            log.error("Could not Map User to UserUpdateRequest: " + e.getMessage());
+            return UserUpdateRequest.builder().build();
+        }
+    }
     public UserDto mapListUserToListUserDtos(User user) {
         try {
             UserDto userDto = new UserDto();
@@ -196,5 +225,7 @@ public class UserService {
             return UserDto.builder().build();
         }
     }
-    }
+
+    public abstract User updateUserDetails(Integer userId, UserUpdateRequest userUpdateRequest);
+}
 

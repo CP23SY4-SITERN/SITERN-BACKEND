@@ -2,7 +2,9 @@ package com.example.siternbackend.user.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,6 +50,35 @@ public class User implements UserDetails, Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updated;
 
+    @Size(max = 255 , message = "Your Firstname must be between 1 to 255 characters")
+    private String firstName;
+
+    @Size(max = 255 , message = "Your Lastname must be between 1 to 255 characters")
+    private String lastName;
+
+    @Size(max = 255 , message = "Your Major must lower than 255 characters")
+    private String major;
+
+    @Size(max = 255 , message = "Your Department must lower than 255 characters")
+    private String department;
+
+    private Float gpax;
+
+    @Size(max = 255 , message = "Your Interests must lower than 255 characters")
+    private String studentInterest;
+
+    @Lob
+    private String skills;
+
+    private byte[] resumeCv;
+
+    @Pattern(regexp = "^\\+?[0-9.-]*$", message = "Invalid phone number format")
+    private String phoneNumber;
+    @Size(max = 255 , message = "Your Address must lower than 255 characters")
+    private String address;
+
+    private String linkedInProfile;
+
     @ManyToMany(fetch = FetchType.EAGER)
     List<Authorities> authorities;
 
@@ -85,4 +116,5 @@ public class User implements UserDetails, Serializable {
     public boolean isEnabled() {
         return enables;
     }
+
 }
