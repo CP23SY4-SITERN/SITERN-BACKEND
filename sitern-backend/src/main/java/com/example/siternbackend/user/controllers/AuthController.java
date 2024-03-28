@@ -1,13 +1,15 @@
 package com.example.siternbackend.user.controllers;
 
-import com.example.siternbackend.JWT.JwtTokenUtil;
 import com.example.siternbackend.authentication.JwtRequest;
 import com.example.siternbackend.authentication.JwtResponse;
 import com.example.siternbackend.authentication.LoginRequest;
 import com.example.siternbackend.user.entities.User;
+import com.example.siternbackend.user.services.AuthResponse;
+import com.example.siternbackend.user.services.AuthService;
 import com.example.siternbackend.user.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.broker.provider.AuthenticationRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,8 +33,10 @@ public class AuthController {
 
     final AuthenticationManager authenticationManager;
     final UserService userService;
+    final AuthService authService;
+//    final AuthResponse authResponse;
     final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    final JwtTokenUtil jwtTokenUtil;
+//    final JwtTokenUtil jwtTokenUtil;
 
     final Long ONE_WEEK = 604800L;
     final Long ONE_DAY = 86400L;
@@ -42,51 +46,75 @@ public class AuthController {
 //         User user = loginWithEmail(login.email(), login.password());
 //         return ResponseEntity.ok(new JwtResponse(createToken(user, ONE_DAY, true), createToken(user, ONE_WEEK, false)));
 //    }
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody LoginRequest login) {
+//        try {
+//            User user = loginWithEmail(login.email(), login.password());
+//            JwtResponse jwtResponse = new JwtResponse(createToken(user, ONE_DAY, true), createToken(user, ONE_WEEK, false));
+//                return ResponseEntity.ok(jwtResponse);
+//            } catch (UsernameNotFoundException e) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Email not found");
+//            } catch (BadCredentialsException e) {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password not matched for user " + login.email());
+//            } catch (AuthenticationException e) {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
+//        }
+//}
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest login) {
-        try {
-            User user = loginWithEmail(login.email(), login.password());
-            JwtResponse jwtResponse = new JwtResponse(createToken(user, ONE_DAY, true), createToken(user, ONE_WEEK, false));
-                return ResponseEntity.ok(jwtResponse);
-            } catch (UsernameNotFoundException e) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Email not found");
-            } catch (BadCredentialsException e) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password not matched for user " + login.email());
-            } catch (AuthenticationException e) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
-        }
-}
+    public ResponseEntity<AuthResponse> authenticate(@RequestBody LoginRequest request) {
+        String username = request.getUsername();
+        String password = request.getPassword();
 
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(@Validated @RequestBody JwtResponse token) throws Exception {
-        try {
-            jwtTokenUtil.revokeToken(token.token());
-            jwtTokenUtil.revokeToken(token.refreshToken());
-            return ResponseEntity.ok("token revoked,Logout Successfully");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("cannot revoke this token");
+        AuthResponse authResponse = authService.authenticate(username, password);
+
+        if (authResponse.isSuccess()) {
+            return ResponseEntity.ok(authResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authResponse);
         }
     }
+//    @PostMapping("/logout")
+//    public ResponseEntity<String> logout(@RequestBody LogoutRequest request) {
+//        // Assuming logout logic is implemented in AuthService
+//        boolean logoutSuccessful = authService.logout(request.getAccessToken());
+//
+//        if (logoutSuccessful) {
+//            return ResponseEntity.ok("Logout successful");
+//        } else {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout failed");
+//        }
+//    }
+//    @PostMapping("/logout")
+//    public ResponseEntity<String> logout(@Validated @RequestBody JwtResponse token) throws Exception {
+//        try {
+//            jwtTokenUtil.revokeToken(token.token());
+//            jwtTokenUtil.revokeToken(token.refreshToken());
+//            return ResponseEntity.ok("token revoked,Logout Successfully");
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body("cannot revoke this token");
+//        }
+//    }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<JwtResponse> refreshToken(@Validated @RequestBody JwtRequest token) throws Exception {
-        String username = jwtTokenUtil.getUsernameFromToken(token.token());
-        User user = userService.findUserByEmail(username);
-        if (jwtTokenUtil.isTokenValid(token.token(), user) && !jwtTokenUtil.isAccessToken(token.token())) {
-            return ResponseEntity.ok(new JwtResponse(createToken(user, ONE_DAY, true), token.token()));
-        }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot refresh token");
-    }
 
-    private String createToken(User user, Long expiration, boolean isAccess) {
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username or password is incorrect");
-        }
-        if (!user.isEnabled()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "this account is locked");
-        }
-        return jwtTokenUtil.generateJWT(user, expiration, isAccess);
-    }
+//    @PostMapping("/refresh")
+//    public ResponseEntity<JwtResponse> refreshToken(@Validated @RequestBody JwtRequest token) throws Exception {
+//        String username = jwtTokenUtil.getUsernameFromToken(token.token());
+//        User user = userService.findUserByEmail(username);
+//        if (jwtTokenUtil.isTokenValid(token.token(), user) && !jwtTokenUtil.isAccessToken(token.token())) {
+//            return ResponseEntity.ok(new JwtResponse(createToken(user, ONE_DAY, true), token.token()));
+//        }
+//        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot refresh token");
+//    }
+
+//    private String createToken(User user, Long expiration, boolean isAccess) {
+//        if (user == null) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username or password is incorrect");
+//        }
+//        if (!user.isEnabled()) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "this account is locked");
+//        }
+//        return jwtTokenUtil.generateJWT(user, expiration, isAccess);
+//    }
 
     private User loginWithEmail(String email, String password) {
         User user = userService.findUserByEmail(email);

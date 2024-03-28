@@ -25,10 +25,20 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       ddl-auto: update
-jwt:
-  secret: "mt9SzMnAbvffN4rWp/9XWHh9S8Di3xque3zBcfLJlbxPkAaiztunVfYETB2tV5grDGDc5w+0raj/
-skHalDme0g=="
-  refreshExpirationDateInMs: 600000
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: auth-cp23sy4
+            client-secret: RhkMsjJC7vYXA0uuOS2LxZLpyFfajY1J
+        provider:
+          keycloak:
+            issuer-uri: https://login.sit.kmutt.ac.th/
+#  secret: "mt9SzMnAbvffN4rWp/9XWHh9S8Di3xque3zBcfLJlbxPkAaiztunVfYETB2tV5grDGDc5w+0raj/
+#skHalDme0g=="
+#  refreshExpirationDateInMs: 600000
 #keycloak:
 #  realm: org
 #  auth-server-url: https://login.sit.kmutt.ac.th/

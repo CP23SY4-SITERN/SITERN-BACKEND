@@ -1,7 +1,7 @@
 package com.example.siternbackend.Config;
 
-import com.example.siternbackend.JWT.JwtEntryPoint;
-import com.example.siternbackend.JWT.JwtFilter;
+//import com.example.siternbackend.JWT.JwtEntryPoint;
+//import com.example.siternbackend.JWT.JwtFilter;
 import com.example.siternbackend.user.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -37,8 +37,8 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    final JwtEntryPoint jwtEntryPoint;
-    final JwtFilter jwtFilter;
+//    final JwtEntryPoint jwtEntryPoint;
+//    final JwtFilter jwtFilter;
     final UserService userService;
 
 //    @Bean
@@ -114,7 +114,7 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
+//                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(FREE_AREA_FOR_LOGIN).permitAll()
@@ -131,7 +131,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
         http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

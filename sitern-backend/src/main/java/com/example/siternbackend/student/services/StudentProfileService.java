@@ -1,7 +1,7 @@
 package com.example.siternbackend.student.services;
 
-
-import com.example.siternbackend.JWT.JwtTokenUtil;
+//
+//import com.example.siternbackend.JWT.JwtTokenUtil;
 import com.example.siternbackend.student.entities.StudentProfile;
 import com.example.siternbackend.student.exception.StudentProfileNotFoundException;
 import com.example.siternbackend.student.repositories.StudentProfileRepository;
@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.example.siternbackend.JWT.JwtTokenUtil;
+//import com.example.siternbackend.JWT.JwtTokenUtil;
 @Service
 public class StudentProfileService {
     @Autowired
@@ -50,8 +50,8 @@ public class StudentProfileService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+//    @Autowired
+//    private JwtTokenUtil jwtTokenUtil;
 
 //    public ResponseEntity<StudentProfile> createOrUpdateStudentProfile(@Valid StudentProfile studentProfile, HttpServletRequest request) throws MethodArgumentNotValidException {
 //        Long userId = extractUserIdFromRequest(request); // Method to extract userId from request, implement as per your authentication mechanism
@@ -90,24 +90,24 @@ public class StudentProfileService {
     private static final String CLAIM_KEY_ID = "id";
     //
 //    // Method to extract userId from HttpServletRequest, implement as per your authentication mechanism
-    public Integer extractUserIdFromRequest(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-            try {
-                Claims claims = jwtTokenUtil.getClaimsFromToken(token);
-                String userIdStr = claims.get(CLAIM_KEY_ID, String.class);
-                System.out.println(userIdStr);
-                if (userIdStr != null) {
-
-                    return Integer.parseInt(userIdStr);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException("Error extracting user ID from JWT token", e);
-            }
-        }
-        throw new RuntimeException("User ID not found in request");
-    }
+//    public Integer extractUserIdFromRequest(HttpServletRequest request) {
+//        String token = request.getHeader("Authorization");
+//        if (token != null && token.startsWith("Bearer ")) {
+//            token = token.substring(7);
+//            try {
+//                Claims claims = jwtTokenUtil.getClaimsFromToken(token);
+//                String userIdStr = claims.get(CLAIM_KEY_ID, String.class);
+//                System.out.println(userIdStr);
+//                if (userIdStr != null) {
+//
+//                    return Integer.parseInt(userIdStr);
+//                }
+//            } catch (Exception e) {
+//                throw new RuntimeException("Error extracting user ID from JWT token", e);
+//            }
+//        }
+//        throw new RuntimeException("User ID not found in request");
+//    }
     public List<StudentProfile> getAllStudentProfiles() {
         List<StudentProfile> studentProfiles = studentProfileRepository.findAll();
         if (studentProfiles.isEmpty()) {
