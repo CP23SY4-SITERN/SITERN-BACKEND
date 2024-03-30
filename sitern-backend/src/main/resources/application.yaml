@@ -18,8 +18,8 @@ spring:
 
 #    url: jdbc:mysql://localhost:3306/backup_SITern?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
     url: jdbc:mysql://10.4.85.44:3307/backup_SITern?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
-
-  #    url: jdbc:mysql://172.17.0.1:3307/New_SITern
+#    url: jdbc:mysql://10.4.85.44:3306/backup_SITern?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+#    url: jdbc:mysql://172.17.0.1:3307/New_SITern
   jpa:
     hibernate:
       naming:

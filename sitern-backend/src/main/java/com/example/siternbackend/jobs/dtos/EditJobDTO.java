@@ -39,6 +39,7 @@ public class EditJobDTO {
     private Integer salary;
     @Enumerated(EnumType.STRING)
     private WorkType workType;
+    private String contact;
     private Integer job_location_ID;
 
 }

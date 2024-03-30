@@ -56,6 +56,8 @@ public class CreatingJobDTO {
     @EnumValid(enumClass = WorkType.class, message = "Invalid workType value. Accepted values are: {enumValues}")
     @Enumerated(EnumType.STRING)
     private WorkType workType;
+    @Size(max = 5000 , message = "Contact must lower than 5000 characters")
+    private String contact;
     private Integer jobLocation_ID;
     private byte isActive;
 

@@ -53,6 +53,8 @@ public class JobPost {
 
     private Integer salary;
 
+    private String contact;
+
     private byte isActive = 1;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade =CascadeType.PERSIST)

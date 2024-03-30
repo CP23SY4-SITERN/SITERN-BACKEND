@@ -37,5 +37,6 @@ public class JobPostDTO {
     private Enum workType;
     private JobLocationDTO jobLocation;
     private String zip;
+    private String contact;
     private byte isActive;
 }
