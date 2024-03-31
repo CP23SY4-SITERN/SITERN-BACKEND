@@ -8,7 +8,7 @@ import lombok.Setter;
 public class DecodedToken {
     private String name;
     private String preferredUsername;
-    private String groupId;
+    private String role;
     private String email;
 
     // Getters and setters

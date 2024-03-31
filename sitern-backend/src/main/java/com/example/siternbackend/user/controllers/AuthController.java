@@ -144,10 +144,10 @@ public class AuthController {
             throw new UsernameNotFoundException("Email not found");
         }
 
-        if (!checkAuth(user, password)) {
-            log.error("Password not matched for user {}", email);
-            throw new BadCredentialsException("Bad credentials");
-        }
+//        if (!checkAuth(user, password)) {
+//            log.error("Password not matched for user {}", email);
+//            throw new BadCredentialsException("Bad credentials");
+//        }
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
@@ -160,9 +160,9 @@ public class AuthController {
         return user;
     }
 
-    private boolean checkAuth(User user, String password) {
-        return user != null && passwordEncoder.matches(password, user.getPassword());
-    }
+//    private boolean checkAuth(User user, String password) {
+//        return user != null && passwordEncoder.matches(password, user.getPassword());
+//    }
     public class ResponseError {
         private String errorMessage;
 

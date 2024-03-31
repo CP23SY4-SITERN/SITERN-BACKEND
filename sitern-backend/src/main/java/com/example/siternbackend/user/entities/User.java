@@ -117,4 +117,24 @@ public class User implements UserDetails, Serializable {
         return enables;
     }
 
+
+    public void setFromDecodedToken(String name, String preferredUsername, String role, String email) {
+        this.setUsername(preferredUsername);// กำหนดชื่อผู้ใช้
+        this.setEmail(email); // กำหนดอีเมล
+        this.setPassword("");
+        this.setFirstName(name); // กำหนดชื่อจริง
+        this.setLastName(""); // ไม่มีข้อมูลนามสกุลจาก decoded token
+        this.setMajor(""); // ไม่มีข้อมูลสาขา
+        this.setDepartment(""); // ไม่มีข้อมูลแผนก
+        this.setGpax(0.0f); // กำหนด GPAX เริ่มต้น
+        this.setStudentInterest(""); // ไม่มีข้อมูลความสนใจของนักศึกษา
+        this.setSkills(""); // ไม่มีข้อมูลทักษะ
+        this.setPhoneNumber(""); // ไม่มีข้อมูลหมายเลขโทรศัพท์
+        this.setAddress(""); // ไม่มีข้อมูลที่อยู่
+        this.setLinkedInProfile(""); // ไม่มีข้อมูลโปรไฟล์ LinkedIn
+//        this.setEnabled(true); // ตั้งค่าสถานะการใช้งานเป็น true
+        this.setCreated(LocalDateTime.now()); // ตั้งค่าวันที่สร้างเป็นปัจจุบัน
+        this.setUpdated(LocalDateTime.now()); // ตั้งค่าวันที่อัปเดตเป็นปัจจุบัน
+    }
+
 }

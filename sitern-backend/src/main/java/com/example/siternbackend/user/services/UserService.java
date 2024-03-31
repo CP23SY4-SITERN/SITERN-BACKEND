@@ -101,7 +101,7 @@ public abstract class UserService {
         Authorities authorities = getAuthorityByName(Roles.STUDENT);
         newUser.setAuthorities(List.of(authorities));
         // Encode the password
-        newUser.setPassword(passwordEncoder.encode(newUsers.getPassword()));
+//        newUser.setPassword(passwordEncoder.encode(newUsers.getPassword()));
         // Set other attributes
         newUser.setCreated(LocalDateTime.now());
         System.out.println("setCreateDatetime");
@@ -110,8 +110,14 @@ public abstract class UserService {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapUserToUserResponse(userRepository.save(newUser)));
 
     }
+
+    public User saveUser(User user) {
+
+        return userRepository.save(user);
+    }
 //    public User mapUser(User existingUser, User updateUser) {
-//        existingUser.setUsername(updateUser.getUsername());
+//        existingUse
+//        r.setUsername(updateUser.getUsername());
 //        existingUser.setUpdated(updateUser.getUpdated());
 //        existingUser.setEmail(updateUser.getEmail());
 //
@@ -136,15 +142,15 @@ public abstract class UserService {
         User userFromToken = userRepository.findByEmail(emailFromToken).orElseThrow(() -> new DemoGraphqlException("This user not found"));
         User userFromId = userRepository.findById(id).orElseThrow(() -> new DemoGraphqlException("This user not found"));
 
-        boolean isStaff = userFromToken.getAuthorities()
-                .stream()
-                .anyMatch(authority -> Roles.STAFF.toString().equalsIgnoreCase(authority.getAuthority()));
-        if (!isStaff) {
-            if (!userFromId.getUsername().equals(userFromToken.getUsername()) || authorities.contains(Roles.STAFF.toString())) {
-                log.info("Unauthorized: Cannot Update this User");
-                return UserResponse.builder().build();
-            }
-        }
+//        boolean isStaff = userFromToken.getAuthorities()
+//                .stream()
+//                .anyMatch(authority -> Roles.STAFF.toString().equalsIgnoreCase(authority.getAuthority()));
+//        if (!isStaff) {
+//            if (!userFromId.getUsername().equals(userFromToken.getUsername()) || authorities.contains(Roles.STAFF.toString())) {
+//                log.info("Unauthorized: Cannot Update this User");
+//                return UserResponse.builder().build();
+//            }
+//        }
 
         List<Authorities> authoritiesList = authoritiesRepository.findAll();
         List<String> roleList = Arrays.stream(authorities.split(","))
