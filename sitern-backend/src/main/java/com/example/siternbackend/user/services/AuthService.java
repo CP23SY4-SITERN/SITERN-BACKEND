@@ -143,9 +143,10 @@ public class AuthService {
 
         // Parse the decoded payload as JSON and extract the required fields
         JSONObject jsonPayload = new JSONObject(decodedPayload);
+        System.out.println(jsonPayload);
         String name = jsonPayload.getString("name");
         String preferredUsername = jsonPayload.getString("preferred_username");
-        String groupId = jsonPayload.getString("group_id");
+        String groupId = jsonPayload.getString("groupid");
         String email = jsonPayload.getString("email");
 
         // Create a new DecodedToken object and set its properties
@@ -158,7 +159,7 @@ public class AuthService {
 
         return decodedToken;
     }
-private static String secret = "RhkMsjJC7vYXA0uuOS2LxZLpyFfajY1J";
+
 //public static DecodedToken decodeToken(String accessToken) {
 //    try {
 //         // กำหนดค่าของความลับที่เหมาะสำหรับคีย์
