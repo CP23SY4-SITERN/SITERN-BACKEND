@@ -40,10 +40,26 @@ public class JobController {
         this.jobPostRepository=  jobPostRepository;
     }
 
+//    @GetMapping
+//    public List<JobPostDTO> getAllJobPosts() {
+//        try {
+//            List<JobPostDTO> jobPostDTOs = jobService.getAllJobs();
+//            log.info("Retrieved {} job posts", jobPostDTOs.size());
+//            return jobPostDTOs;
+//        } catch (Exception e) {
+//            log.error("Error while retrieving job posts", e);
+//            throw e; // Rethrow the exception or handle it appropriately
+//        }
+//    }
     @GetMapping
-    public List<JobPostDTO> getAllJobPosts() {
+    public List<JobPostDTO> getAllJobPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
         try {
-            List<JobPostDTO> jobPostDTOs = jobService.getAllJobs();
+            // Calculate the offset based on the page number and size
+            int offset = page * size;
+
+            // Retrieve job posts based on the calculated offset and size
+            List<JobPostDTO> jobPostDTOs = jobService.getAllJobsPaginated(offset, size);
+
             log.info("Retrieved {} job posts", jobPostDTOs.size());
             return jobPostDTOs;
         } catch (Exception e) {

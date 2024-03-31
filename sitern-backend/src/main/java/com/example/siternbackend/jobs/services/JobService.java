@@ -21,6 +21,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,29 +60,59 @@ public class JobService {
 //        return listMapper.mapList(jobPost,JobPostDTO.class,modelMapper);
 //    }
 
-    public List<JobPostDTO> getAllJobs() {
-        List<JobPost> jobPosts = jobPostRepository.findAll(Sort.by("createdDate").descending());
+//    public List<JobPostDTO> getAllJobs() {
+//        List<JobPost> jobPosts = jobPostRepository.findAll(Sort.by("createdDate").descending());
+//
+//        List<JobPostDTO> jobPostDTOs = listMapper.mapList(jobPosts, JobPostDTO.class, modelMapper);
+//
+//        // Populate the zip attribute from JobLocation
+//        for (JobPostDTO jobPostDTO : jobPostDTOs) {
+//            JobLocationDTO jobLocationDTO = jobPostDTO.getJobLocation();
+//            if (jobLocationDTO != null) {
+//                jobPostDTO.setZip(jobLocationDTO.getZip());
+//            }
+//
+//            // Set the company_id
+//            Integer companyId = jobPostDTO.getCompany_id();
+//            if (companyId == null) {
+//                // Extract company_id from the associated Company entity in JobPost
+//                Company company = jobPostRepository.getOne(jobPostDTO.getId()).getCompany();
+//                if (company != null) {
+//                    jobPostDTO.setCompany_id(company.getId());
+//                }
+//            }
+//        }return jobPostDTOs;
+//    }
+public List<JobPostDTO> getAllJobsPaginated(int page, int size) {
+    // Calculate the offset based on the page number and size
+    int offset = page * size;
 
-        List<JobPostDTO> jobPostDTOs = listMapper.mapList(jobPosts, JobPostDTO.class, modelMapper);
+    // Retrieve job posts based on the calculated offset and size, sorted by created date in descending order
+    List<JobPost> jobPosts = jobPostRepository.findAll(PageRequest.of(page, size, Sort.by("createdDate").descending())).getContent();
 
-        // Populate the zip attribute from JobLocation
-        for (JobPostDTO jobPostDTO : jobPostDTOs) {
-            JobLocationDTO jobLocationDTO = jobPostDTO.getJobLocation();
-            if (jobLocationDTO != null) {
-                jobPostDTO.setZip(jobLocationDTO.getZip());
+    // Map job posts to DTOs
+    List<JobPostDTO> jobPostDTOs = listMapper.mapList(jobPosts, JobPostDTO.class, modelMapper);
+
+    // Populate the zip attribute from JobLocation
+    for (JobPostDTO jobPostDTO : jobPostDTOs) {
+        JobLocationDTO jobLocationDTO = jobPostDTO.getJobLocation();
+        if (jobLocationDTO != null) {
+            jobPostDTO.setZip(jobLocationDTO.getZip());
+        }
+
+        // Set the company_id
+        Integer companyId = jobPostDTO.getCompany_id();
+        if (companyId == null) {
+            // Extract company_id from the associated Company entity in JobPost
+            Company company = jobPostRepository.getOne(jobPostDTO.getId()).getCompany();
+            if (company != null) {
+                jobPostDTO.setCompany_id(company.getId());
             }
-
-            // Set the company_id
-            Integer companyId = jobPostDTO.getCompany_id();
-            if (companyId == null) {
-                // Extract company_id from the associated Company entity in JobPost
-                Company company = jobPostRepository.getOne(jobPostDTO.getId()).getCompany();
-                if (company != null) {
-                    jobPostDTO.setCompany_id(company.getId());
-                }
-            }
-        }return jobPostDTOs;
+        }
     }
+
+    return jobPostDTOs;
+}
 
 
 
