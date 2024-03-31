@@ -79,7 +79,9 @@ public class SecurityConfig {
             "/api/users",
             "/api/users/**",
             "/users/{id}",
-
+            "/api/files",
+            "/api/files/**",
+            "/api/files/upload",
             "/api/jobs/**",
             "/api/jobs",
 //            "/api/companies",
@@ -109,7 +111,12 @@ public class SecurityConfig {
             "/api/companies/**",
             "/api/auth/**",
             "/api/student-profiles",
-            "/api/student-profiles/**"
+            "/api/student-profiles/**",
+            "/api/users",
+            "/api/users/**",
+            "/api/files",
+            "/api/files/**",
+            "/api/files/upload",
     };
 
     private static final String[] STAFF_WHITELIST = {
@@ -122,6 +129,7 @@ public class SecurityConfig {
             "/api/jobs/**",
             "/api/users/**",
             "/api/auth/logout",
+            "/api/auth/logout/**",
     };
 
     private static final String[] USER_WHITELIST = {
