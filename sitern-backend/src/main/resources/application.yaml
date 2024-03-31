@@ -1,0 +1,59 @@
+spring:
+#  ssh:
+#    tunnel:
+#      host: 10.4.85.44
+#      port: 22
+#      username: sysadmin
+#      password: sitern007
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: root
+#    password:
+#    url: jdbc:mysql://localhost:3306/sitern
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+#    password: Jubby4400
+    password: sitern007
+
+#    url: jdbc:mysql://localhost:3306/backup_SITern?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://10.4.85.44:3307/backup_SITern?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+#    url: jdbc:mysql://10.4.85.44:3306/backup_SITern?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+#    url: jdbc:mysql://172.17.0.1:3307/New_SITern
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: auth-cp23sy4
+            client-secret: RhkMsjJC7vYXA0uuOS2LxZLpyFfajY1J
+        provider:
+          keycloak:
+            issuer-uri: https://login.sit.kmutt.ac.th/.
+#  secret: "mt9SzMnAbvffN4rWp/9XWHh9S8Di3xque3zBcfLJlbxPkAaiztunVfYETB2tV5grDGDc5w+0raj/
+#skHalDme0g=="
+#  refreshExpirationDateInMs: 600000
+#keycloak:
+#  realm: org
+#  auth-server-url: https://login.sit.kmutt.ac.th/
+#  ssl-required: external
+#  resource: auth-cp23sy4
+#  credentials:
+#    secret: RhkMsjJC7vYXA0uuOS2LxZLpyFfajY1J
+#  public-client: true # If your client is confidential, set to false
+#  confidential-port: 0 # Port used for confidential clients, set to 0 for dynamic port assignment
+
+#ssh:
+#  username: sysadmin
+#  password: sitern007
+#  host: 10.4.85.44
+#  port: 22
+
+
+
