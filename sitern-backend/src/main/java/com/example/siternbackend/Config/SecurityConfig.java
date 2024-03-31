@@ -75,6 +75,7 @@ public class SecurityConfig {
             "/api/auth",
             "/api/auth/login",
             "/api/users",
+            "/api/auth/logout",
     };
     private static final String[] STUDENT_WHITELIST= {
             "/api/auth/details",

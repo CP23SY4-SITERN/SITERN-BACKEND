@@ -3,6 +3,7 @@ package com.example.siternbackend.user.controllers;
 import com.example.siternbackend.authentication.JwtRequest;
 import com.example.siternbackend.authentication.JwtResponse;
 import com.example.siternbackend.authentication.LoginRequest;
+import com.example.siternbackend.authentication.LogoutRequest;
 import com.example.siternbackend.user.entities.User;
 import com.example.siternbackend.user.services.AuthResponse;
 import com.example.siternbackend.user.services.AuthService;
@@ -20,9 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.AuthenticationException;
 @Slf4j
@@ -71,6 +70,19 @@ public class AuthController {
             return ResponseEntity.ok(authResponse);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authResponse);
+        }
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String bearerToken) {
+        // Extract the token from the Authorization header
+        String accessToken = bearerToken.replace("Bearer ", "");
+
+        boolean logoutSuccessful = authService.logout(accessToken);
+
+        if (logoutSuccessful) {
+            return ResponseEntity.ok("Logout successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout failed");
         }
     }
 //    @PostMapping("/logout")
