@@ -8,13 +8,14 @@ import lombok.Setter;
 public class AuthResponse {
     private boolean isSuccess;
     private String accessToken;
-//    private DecodedToken decodedToken;
+    private DecodedToken decodedToken;
     private String message;
     private String errorMessage;
 
-    public AuthResponse(boolean isSuccess, String accessToken, String message) {
+    public AuthResponse(boolean isSuccess, String accessToken,DecodedToken decodedToken, String message) {
         this.isSuccess = isSuccess;
         this.accessToken = accessToken;
+        this.decodedToken = decodedToken;
         this.message = message;
     }
 

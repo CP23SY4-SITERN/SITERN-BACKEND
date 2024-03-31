@@ -10,6 +10,7 @@ import com.example.siternbackend.user.services.AuthService;
 import com.example.siternbackend.user.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONException;
 import org.keycloak.broker.provider.AuthenticationRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +61,7 @@ public class AuthController {
 //        }
 //}
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> authenticate(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> authenticate(@RequestBody LoginRequest request) throws JSONException {
         String username = request.getUsername();
         String password = request.getPassword();
 
