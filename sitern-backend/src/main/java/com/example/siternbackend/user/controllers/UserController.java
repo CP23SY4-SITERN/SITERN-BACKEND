@@ -9,11 +9,13 @@ import com.example.siternbackend.user.entities.Roles;
 import com.example.siternbackend.user.entities.User;
 import com.example.siternbackend.user.repositories.AuthoritiesRepository;
 import com.example.siternbackend.user.repositories.UserRepository;
+import com.example.siternbackend.user.services.DecodedTokenService;
 import com.example.siternbackend.user.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.Data;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +37,14 @@ public class UserController {
     private final UserRepository userRepository;
     @Autowired
     private final AuthoritiesRepository authoritiesRepository;
+    @Autowired
+    private DecodedTokenService decodedTokenService;
 
-    public UserController(UserService userService, UserRepository userRepository, AuthoritiesRepository authoritiesRepository) {
+    public UserController(UserService userService, UserRepository userRepository, AuthoritiesRepository authoritiesRepository,DecodedTokenService decodedTokenService) {
         this.userService = userService;
         this.userRepository =  userRepository;
         this.authoritiesRepository = authoritiesRepository;
+        this.decodedTokenService = decodedTokenService;
 
     }
 
@@ -117,10 +122,22 @@ public class UserController {
         }
 
     }
-    @PatchMapping("/profile/{userId}")
-    public ResponseEntity<User> updateUserDetails(@PathVariable Integer userId, @RequestBody UserUpdateRequest userUpdateRequest) {
-        User updatedUser = userService.updateUserDetails(userId, userUpdateRequest);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    @PatchMapping("/profile")
+    public ResponseEntity<User> updateUserDetails(@RequestHeader("Authorization") String accessToken, @RequestBody UserUpdateRequest userUpdateRequest) {
+        // Extract user ID from token+
+        System.out.println("sdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsddddddddddddddddddddddddddddddddd");
+        try {
+            // Get user from token
+            User user = decodedTokenService.getUserFromToken(accessToken);
+            System.out.println("ffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+            // Update user details
+            User updatedUser = userService.updateUserDetails(user.getId(), userUpdateRequest);
+
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (JSONException e) {
+            // Handle JSON exception
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 //    @PatchMapping("/{id}")
 //    public User update(@RequestBody @javax.validation.Valid User updateUser, @PathVariable Integer id){

@@ -52,20 +52,17 @@ public class JobController {
 //        }
 //    }
     @GetMapping
-    public List<JobPostDTO> getAllJobPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
-        try {
-            // Calculate the offset based on the page number and size
-            int offset = page * size;
+    public List<JobPostDTO> getAllJobPosts() {
+    try {
+        // Retrieve all job posts without pagination
+        List<JobPostDTO> jobPostDTOs = jobService.getAllJobs();
 
-            // Retrieve job posts based on the calculated offset and size
-            List<JobPostDTO> jobPostDTOs = jobService.getAllJobsPaginated(offset, size);
-
-            log.info("Retrieved {} job posts", jobPostDTOs.size());
-            return jobPostDTOs;
-        } catch (Exception e) {
-            log.error("Error while retrieving job posts", e);
-            throw e; // Rethrow the exception or handle it appropriately
-        }
+        log.info("Retrieved {} job posts", jobPostDTOs.size());
+        return jobPostDTOs;
+    } catch (Exception e) {
+        log.error("Error while retrieving job posts", e);
+        throw e; // Rethrow the exception or handle it appropriately
+    }
     }
 
     private static final Logger log = LoggerFactory.getLogger(JobController.class);
