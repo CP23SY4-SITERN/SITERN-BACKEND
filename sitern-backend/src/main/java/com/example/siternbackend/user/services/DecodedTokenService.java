@@ -102,6 +102,19 @@ public class DecodedTokenService {
         }
         return user;
     }
+    public User getUserFromToken(String accessToken) throws JSONException {
+        // Decode token data
+        DecodedToken decodedToken = decodeTokenData(accessToken);
 
+        // Check if user already exists
+        User existingUser = userRepository.findByEmail(decodedToken.getEmail()).orElse(null);
+
+        if (existingUser != null) {
+            return existingUser;
+        }
+
+        // If user doesn't exist, create a new user from decoded token
+        return createUserFromDecodedToken(decodedToken);
+    }
 
 }
