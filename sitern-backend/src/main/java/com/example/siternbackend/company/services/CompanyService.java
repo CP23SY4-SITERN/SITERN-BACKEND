@@ -182,7 +182,7 @@ public class CompanyService {
         dto.setCompanyWebsite(company.getCompanyWebsite());
         dto.setCompanyLocation(company.getCompanyLocation());
         dto.setCompanyEmployee(company.getCompanyEmployee());
-        dto.setJobLocations(mapToJobLocationDTOs(company.getJobLocations()));
+        dto.setJobLocations(mapToJobLocationDTOList(company.getJobLocations()));
 
         return dto;
     }
@@ -196,7 +196,11 @@ public class CompanyService {
         dto.setZip(jobLocation.getZip());
         return dto;
     }
-
+    private List<JobLocationDTO> mapToJobLocationDTOList(List<JobLocation> jobLocations) {
+        return jobLocations.stream()
+                .map(this::mapToJobLocationDTO)
+                .collect(Collectors.toList());
+    }
 
 
 //    public Company getCompanyWithJobLocations(Integer companyId) {
