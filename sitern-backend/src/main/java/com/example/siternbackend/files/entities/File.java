@@ -8,8 +8,10 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Date;
 
-
+@Getter
+@Setter
 @Entity
 @Data
 @NoArgsConstructor
@@ -25,5 +27,11 @@ public class File {
 
     @NotNull
     private String filePath;
+
+    // Add uploadedDate field with timestamp
+    private Date uploadedDate;
+
+    // Add status field to indicate the status of the file
+    private String status;
 
 }

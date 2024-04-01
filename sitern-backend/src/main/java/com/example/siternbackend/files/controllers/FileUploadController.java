@@ -1,5 +1,6 @@
 package com.example.siternbackend.files.controllers;
 
+import com.example.siternbackend.files.entities.File;
 import com.example.siternbackend.files.services.FileStorageService;
 
 import org.springframework.http.HttpHeaders;
@@ -9,9 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/files")
@@ -60,12 +63,27 @@ public class FileUploadController {
     @PostMapping("/upload/tr-document")
     public ResponseEntity<UploadResponse> uploadTrDocument(
             @RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
         String fileName = fileStorageService.storeTrDocument(file);
 
         if (fileName == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        // Set uploadedDate to current timestamp
+        Date uploadedDate = new Date();
 
+        // Set status to "waiting for approve"
+        String status = "waiting for approve";
+        // Save the file information to the database
+        // Create a new File object and set its properties
+        File uploadedFile = new File();
+        uploadedFile.setFileName(fileName);
+        uploadedFile.setFilePath("/api/files/tr-document/" + fileName);
+        uploadedFile.setUploadedDate(uploadedDate);
+        uploadedFile.setStatus(status);
+        fileStorageService.saveFile(uploadedFile);
         UploadResponse uploadResponse = new UploadResponse(fileName);
         return ResponseEntity.ok(uploadResponse);
     }
@@ -73,12 +91,27 @@ public class FileUploadController {
     @PostMapping("/upload/resume")
     public ResponseEntity<UploadResponse> uploadResume(
             @RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
         String fileName = fileStorageService.storeResume(file);
 
         if (fileName == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        // Set uploadedDate to current timestamp
+        Date uploadedDate = new Date();
 
+        // Set status to "waiting for approve"
+        String status = "waiting for approve";
+        // Save the file information to the database
+        // Create a new File object and set its properties
+        File uploadedFile = new File();
+        uploadedFile.setFileName(fileName);
+        uploadedFile.setFilePath("/api/files/resume/" + fileName);
+        uploadedFile.setUploadedDate(uploadedDate);
+        uploadedFile.setStatus(status);
+        fileStorageService.saveFile(uploadedFile);
         UploadResponse uploadResponse = new UploadResponse(fileName);
         return ResponseEntity.ok(uploadResponse);
     }
