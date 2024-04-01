@@ -117,6 +117,10 @@ public class SecurityConfig {
             "/api/files",
             "/api/files/**",
             "/api/files/upload",
+            "/upload/resume",
+            "/upload/resume/**",
+            "/upload/tr-document",
+            "/upload/tr-document/**"
     };
 
     private static final String[] STAFF_WHITELIST = {

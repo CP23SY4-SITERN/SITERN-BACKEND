@@ -17,14 +17,20 @@ import org.springframework.core.io.UrlResource;
 public class FileStorageService {
 
     private final Path fileStorageLocation;
-
+    private final Path trDocumentStorageLocation;
+    private final Path resumeStorageLocation;
     @Autowired
     public FileStorageService(Environment env) {
         this.fileStorageLocation = Paths.get(env.getProperty("app.file.upload-dir", "./uploads/files"))
                 .toAbsolutePath().normalize();
-
+        this.trDocumentStorageLocation = Paths.get(env.getProperty("app.file.tr-document-dir", "./files/TR_Document"))
+                .toAbsolutePath().normalize();
+        this.resumeStorageLocation = Paths.get(env.getProperty("app.file.resume-dir", "./files/resume"))
+                .toAbsolutePath().normalize();
         try {
             Files.createDirectories(this.fileStorageLocation);
+            Files.createDirectories(this.trDocumentStorageLocation);
+            Files.createDirectories(this.resumeStorageLocation);
         } catch (Exception ex) {
             throw new RuntimeException(
                     "Could not create the directory where the uploaded files will be stored.", ex);
@@ -60,9 +66,77 @@ public class FileStorageService {
             throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
+    public String storeTrDocument(MultipartFile file) {
+        // Normalize file name
+        String fileName =
+                new Date().getTime() + "-file." + getFileExtension(file.getOriginalFilename());
+
+        try {
+            // Check if the filename contains invalid characters
+            if (fileName.contains("..")) {
+                throw new RuntimeException(
+                        "Sorry! Filename contains invalid path sequence " + fileName);
+            }
+
+            Path targetLocation = this.trDocumentStorageLocation.resolve(fileName);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            return fileName;
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
+        }
+    }
+
+    public String storeResume(MultipartFile file) {
+        // Normalize file name
+        String fileName =
+                new Date().getTime() + "-file." + getFileExtension(file.getOriginalFilename());
+
+        try {
+            // Check if the filename contains invalid characters
+            if (fileName.contains("..")) {
+                throw new RuntimeException(
+                        "Sorry! Filename contains invalid path sequence " + fileName);
+            }
+
+            Path targetLocation = this.trDocumentStorageLocation.resolve(fileName);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            return fileName;
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
+        }
+    }
     public Resource loadFileAsResource(String fileName) {
         try {
             Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists()) {
+                return resource;
+            } else {
+                throw new RuntimeException("File not found: " + fileName);
+            }
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
+        }
+    }
+    public Resource loadTrDocumentAsResource(String fileName) {
+        try {
+            Path filePath = this.trDocumentStorageLocation.resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists()) {
+                return resource;
+            } else {
+                throw new RuntimeException("File not found: " + fileName);
+            }
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
+        }
+    }
+
+    public Resource loadResumeAsResource(String fileName) {
+        try {
+            Path filePath = this.resumeStorageLocation.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists()) {
                 return resource;

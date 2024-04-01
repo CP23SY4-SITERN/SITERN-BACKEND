@@ -49,15 +49,79 @@ public class FileUploadController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
+
     // You can add more details to the response, like download URL or file metadata
     UploadResponse uploadResponse = new UploadResponse(fileName);
 
     return ResponseEntity.ok(uploadResponse);
     }
+
+
+    @PostMapping("/upload/tr-document")
+    public ResponseEntity<UploadResponse> uploadTrDocument(
+            @RequestParam("file") MultipartFile file) {
+        String fileName = fileStorageService.storeTrDocument(file);
+
+        if (fileName == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        UploadResponse uploadResponse = new UploadResponse(fileName);
+        return ResponseEntity.ok(uploadResponse);
+    }
+
+    @PostMapping("/upload/resume")
+    public ResponseEntity<UploadResponse> uploadResume(
+            @RequestParam("file") MultipartFile file) {
+        String fileName = fileStorageService.storeResume(file);
+
+        if (fileName == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        UploadResponse uploadResponse = new UploadResponse(fileName);
+        return ResponseEntity.ok(uploadResponse);
+    }
     @GetMapping("/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
         // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
+
+        if (resource == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Try to determine file's content type
+        String contentType;
+        try {
+            contentType = Files.probeContentType(Path.of(resource.getFile().getAbsolutePath()));
+        } catch (IOException e) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        // Fallback to octet-stream if content type could not be determined
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+
+    @GetMapping("/{directory}/{fileName:.+}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String directory, @PathVariable String fileName) {
+        // Load file as Resource based on the directory
+        Resource resource;
+        if ("TR_Document".equals(directory)) {
+            resource = fileStorageService.loadTrDocumentAsResource(fileName);
+        } else if ("resume".equals(directory)) {
+            resource = fileStorageService.loadResumeAsResource(fileName);
+        } else {
+            // Invalid directory
+            return ResponseEntity.notFound().build();
+        }
 
         if (resource == null) {
             return ResponseEntity.notFound().build();
