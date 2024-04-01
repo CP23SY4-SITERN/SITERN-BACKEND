@@ -140,6 +140,8 @@ public class User implements UserDetails, Serializable {
         this.setAddress(""); // ไม่มีข้อมูลที่อยู่
         this.setLinkedInProfile(""); // ไม่มีข้อมูลโปรไฟล์ LinkedIn
 //        this.setEnabled(true); // ตั้งค่าสถานะการใช้งานเป็น true
+        this.setStatusTR01("incomplete");
+        this.setStatusTR02("incomplete");
         this.setCreated(LocalDateTime.now()); // ตั้งค่าวันที่สร้างเป็นปัจจุบัน
         this.setUpdated(LocalDateTime.now()); // ตั้งค่าวันที่อัปเดตเป็นปัจจุบัน
     }
