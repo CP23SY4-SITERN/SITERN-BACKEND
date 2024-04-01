@@ -87,7 +87,60 @@ public class FileUploadController {
         UploadResponse uploadResponse = new UploadResponse(fileName);
         return ResponseEntity.ok(uploadResponse);
     }
+    @PostMapping("/upload/tr-document/TR01")
+    public ResponseEntity<UploadResponse> uploadTr01Document(
+            @RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        String fileName = fileStorageService.storeTrDocument(file);
 
+        if (fileName == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        // Set uploadedDate to current timestamp
+        Date uploadedDate = new Date();
+
+        // Set status to "waiting for approve"
+        String status = "waiting for approve";
+        // Save the file information to the database
+        // Create a new File object and set its properties
+        File uploadedFile = new File();
+        uploadedFile.setFileName(fileName);
+        uploadedFile.setFilePath("/api/files/tr-document/TR01/" + fileName);
+        uploadedFile.setUploadedDate(uploadedDate);
+        uploadedFile.setStatus(status);
+        fileStorageService.saveFile(uploadedFile);
+        UploadResponse uploadResponse = new UploadResponse(fileName);
+        return ResponseEntity.ok(uploadResponse);
+    }
+    @PostMapping("/upload/tr-document/TR02")
+    public ResponseEntity<UploadResponse> uploadTr02Document(
+            @RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        String fileName = fileStorageService.storeTrDocument(file);
+
+        if (fileName == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        // Set uploadedDate to current timestamp
+        Date uploadedDate = new Date();
+
+        // Set status to "waiting for approve"
+        String status = "waiting for approve";
+        // Save the file information to the database
+        // Create a new File object and set its properties
+        File uploadedFile = new File();
+        uploadedFile.setFileName(fileName);
+        uploadedFile.setFilePath("/api/files/tr-document/TR02/" + fileName);
+        uploadedFile.setUploadedDate(uploadedDate);
+        uploadedFile.setStatus(status);
+        fileStorageService.saveFile(uploadedFile);
+        UploadResponse uploadResponse = new UploadResponse(fileName);
+        return ResponseEntity.ok(uploadResponse);
+    }
     @PostMapping("/upload/resume")
     public ResponseEntity<UploadResponse> uploadResume(
             @RequestParam("file") MultipartFile file) {

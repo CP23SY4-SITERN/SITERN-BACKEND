@@ -67,7 +67,7 @@ public class User implements UserDetails, Serializable {
     @Size(max = 255 , message = "Your Interests must lower than 255 characters")
     private String studentInterest;
 
-    @Lob
+
     private String skills;
 
     private byte[] resumeCv;
