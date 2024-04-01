@@ -93,7 +93,7 @@ public class FileUploadController {
         if (file == null || file.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        String fileName = fileStorageService.storeTrDocument(file);
+        String fileName = fileStorageService.storeTr01Document(file);
 
         if (fileName == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -120,7 +120,7 @@ public class FileUploadController {
         if (file == null || file.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        String fileName = fileStorageService.storeTrDocument(file);
+        String fileName = fileStorageService.storeTr02Document(file);
 
         if (fileName == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
