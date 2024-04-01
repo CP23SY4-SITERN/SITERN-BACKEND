@@ -10,6 +10,7 @@ import com.example.siternbackend.user.services.AuthResponse;
 import com.example.siternbackend.user.services.AuthService;
 import com.example.siternbackend.user.services.DecodedTokenService;
 import com.example.siternbackend.user.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
@@ -64,7 +65,7 @@ public class AuthController {
 //        }
 //}
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> authenticate(@RequestBody LoginRequest request) throws JSONException {
+    public ResponseEntity<AuthResponse> authenticate(@Valid @RequestBody LoginRequest request) throws JSONException {
         String username = request.getUsername();
         String password = request.getPassword();
 
