@@ -3,6 +3,10 @@ package com.example.siternbackend.files.controllers;
 import com.example.siternbackend.files.entities.File;
 import com.example.siternbackend.files.services.FileStorageService;
 
+import com.example.siternbackend.user.entities.User;
+import com.example.siternbackend.user.services.DecodedTokenService;
+import com.example.siternbackend.user.services.UserService;
+import org.json.JSONException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,9 +25,12 @@ import java.util.Date;
 public class FileUploadController {
 
     private final FileStorageService fileStorageService;
-
-    public FileUploadController(FileStorageService fileStorageService) {
+    private final DecodedTokenService decodedTokenService;
+    private final UserService userService;
+    public FileUploadController(FileStorageService fileStorageService, DecodedTokenService decodedTokenService, UserService userService) {
         this.fileStorageService = fileStorageService;
+        this.decodedTokenService = decodedTokenService;
+        this.userService = userService;
     }
 
 //    @PostMapping("/upload")
@@ -89,7 +96,7 @@ public class FileUploadController {
     }
     @PostMapping("/upload/tr-document/TR01")
     public ResponseEntity<UploadResponse> uploadTr01Document(
-            @RequestParam("file") MultipartFile file) {
+            @RequestHeader("Authorization") String bearerToken,@RequestParam("file") MultipartFile file) throws JSONException {
         if (file == null || file.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
@@ -111,6 +118,10 @@ public class FileUploadController {
         uploadedFile.setUploadedDate(uploadedDate);
         uploadedFile.setStatus(status);
         fileStorageService.saveFile(uploadedFile);
+
+        User user = decodedTokenService.getUserFromToken(bearerToken); // Assuming such method exists
+        user.setStatusTR01("inprogress");// Set statusTR01 to "inprogress"
+        userService.saveUser(user);
         UploadResponse uploadResponse = new UploadResponse(fileName);
         return ResponseEntity.ok(uploadResponse);
     }
