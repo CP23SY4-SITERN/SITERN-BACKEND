@@ -117,7 +117,7 @@ public class UserController {
         }
 
     }
-    @PutMapping("/profile/{userId}")
+    @PatchMapping("/profile/{userId}")
     public ResponseEntity<User> updateUserDetails(@PathVariable Integer userId, @RequestBody UserUpdateRequest userUpdateRequest) {
         User updatedUser = userService.updateUserDetails(userId, userUpdateRequest);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
