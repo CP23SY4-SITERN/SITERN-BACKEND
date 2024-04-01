@@ -139,6 +139,8 @@ public class User implements UserDetails, Serializable {
         this.setPhoneNumber(""); // ไม่มีข้อมูลหมายเลขโทรศัพท์
         this.setAddress(""); // ไม่มีข้อมูลที่อยู่
         this.setLinkedInProfile(""); // ไม่มีข้อมูลโปรไฟล์ LinkedIn
+        this.setStatusTR01("incomplete");
+        this.setStatusTR02("incomplete");
 //        this.setEnabled(true); // ตั้งค่าสถานะการใช้งานเป็น true
         this.setStatusTR01("incomplete");
         this.setStatusTR02("incomplete");
