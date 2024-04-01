@@ -72,7 +72,7 @@ public class JobService {
                 jobPostDTO.setZip(jobLocationDTO.getZip());
             }
 
-            // Set the company_id
+            // Set the company_id...
             Integer companyId = jobPostDTO.getCompany_id();
             if (companyId == null) {
                 // Extract company_id from the associated Company entity in JobPost

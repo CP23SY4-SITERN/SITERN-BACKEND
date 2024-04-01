@@ -244,7 +244,6 @@ public abstract class UserService {
     }
 
     public User updateUserDetails(Integer userId, UserUpdateRequest userUpdateRequest) {
-        System.out.println("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
         if (userUpdateRequest.getFirstName() != null) {
@@ -278,7 +277,6 @@ public abstract class UserService {
         }if (userUpdateRequest.getLinkedInProfile() != null){
             existingUser.setLinkedInProfile(userUpdateRequest.getLinkedInProfile());
         }
-        System.out.println("usssdsdsdsdsdsddsdsddds"+userUpdateRequest.getFirstName());
         // Update updated time
         existingUser.setUpdated(LocalDateTime.now());
 

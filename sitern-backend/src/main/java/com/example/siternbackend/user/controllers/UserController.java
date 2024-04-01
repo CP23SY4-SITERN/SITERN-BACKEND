@@ -123,19 +123,20 @@ public class UserController {
 
     }
     @PatchMapping("/profile")
-    public ResponseEntity<User> updateUserDetails(@RequestHeader("Authorization") String accessToken, @RequestBody UserUpdateRequest userUpdateRequest) {
+    public ResponseEntity<User> updateUserDetails(@RequestHeader("Authorization") String accessToken,@Valid @RequestBody UserUpdateRequest userUpdateRequest) {
         // Extract user ID from token+
-        System.out.println("sdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsddddddddddddddddddddddddddddddddd");
         try {
+
             // Get user from token
             User user = decodedTokenService.getUserFromToken(accessToken);
-            System.out.println("ffffffffffffffffffffffffffffffffffffffffffffffffffffff");
             // Update user details
+
             User updatedUser = userService.updateUserDetails(user.getId(), userUpdateRequest);
 
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } catch (JSONException e) {
-            // Handle JSON exception
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
