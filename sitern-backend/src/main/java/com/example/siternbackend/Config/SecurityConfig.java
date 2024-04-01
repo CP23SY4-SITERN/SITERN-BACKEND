@@ -74,6 +74,8 @@ public class SecurityConfig {
             "/api/graphql",
             "/api/auth/**",
             "/api/auth",
+            "/api/users/me",
+            "/api/users/me/**",
             "/api/auth/login",
             "/api/details",
             "/api/users",
