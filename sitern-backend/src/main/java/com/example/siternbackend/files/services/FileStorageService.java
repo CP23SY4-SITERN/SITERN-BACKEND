@@ -106,7 +106,7 @@ public class FileStorageService {
 
 
         String fileName =
-                username + "-" + new Date().getTime() + "-TR01-File." + getFileExtension(file.getOriginalFilename());
+                username + "-TR01-File." + getFileExtension(file.getOriginalFilename());
 
         try {
             // Check if the filename contains invalid characters
