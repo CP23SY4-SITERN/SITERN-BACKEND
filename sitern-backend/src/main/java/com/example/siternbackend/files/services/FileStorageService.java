@@ -2,6 +2,8 @@ package com.example.siternbackend.files.services;
 
 import com.example.siternbackend.files.entities.File;
 import com.example.siternbackend.files.repositories.FileRepositories;
+import com.example.siternbackend.user.entities.User;
+import com.example.siternbackend.user.services.DecodedTokenService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +27,9 @@ public class FileStorageService {
     private final Path tr02DocumentStorageLocation;
     private final Path resumeStorageLocation;
     private final FileRepositories fileRepositories;
+    private final DecodedTokenService decodedTokenService;
     @Autowired
-    public FileStorageService(Environment env, FileRepositories fileRepositories) {
+    public FileStorageService(Environment env, FileRepositories fileRepositories, DecodedTokenService decodedTokenService) {
         this.fileStorageLocation = Paths.get(env.getProperty("app.file.upload-dir", "./uploads/files"))
                 .toAbsolutePath().normalize();
         this.trDocumentStorageLocation = Paths.get(env.getProperty("app.file.tr-document-dir", "./files/TR_Document"))
@@ -38,6 +41,7 @@ public class FileStorageService {
         this.resumeStorageLocation = Paths.get(env.getProperty("app.file.resume-dir", "./files/resume"))
                 .toAbsolutePath().normalize();
         this.fileRepositories = fileRepositories;
+        this.decodedTokenService = decodedTokenService;
         try {
             Files.createDirectories(this.fileStorageLocation);
             Files.createDirectories(this.trDocumentStorageLocation);
@@ -97,10 +101,12 @@ public class FileStorageService {
             throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
-    public String storeTr01Document(MultipartFile file) {
+    public String storeTr01Document(String username,MultipartFile file) {
         // Normalize file name
+
+
         String fileName =
-                new Date().getTime() + "-TR01-File." + getFileExtension(file.getOriginalFilename());
+                username + "-" + new Date().getTime() + "-TR01-File." + getFileExtension(file.getOriginalFilename());
 
         try {
             // Check if the filename contains invalid characters
