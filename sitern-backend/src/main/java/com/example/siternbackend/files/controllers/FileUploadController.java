@@ -1,6 +1,7 @@
 package com.example.siternbackend.files.controllers;
 
 import com.example.siternbackend.files.entities.File;
+import com.example.siternbackend.files.repositories.FileRepositories;
 import com.example.siternbackend.files.services.FileStorageService;
 
 import com.example.siternbackend.user.entities.User;
@@ -31,11 +32,13 @@ public class FileUploadController {
     private final FileStorageService fileStorageService;
     private final DecodedTokenService decodedTokenService;
     private final UserService userService;
+    private final FileRepositories fileRepositories;
     @Autowired
-    public FileUploadController(FileStorageService fileStorageService, DecodedTokenService decodedTokenService, UserService userService) {
+    public FileUploadController(FileStorageService fileStorageService, DecodedTokenService decodedTokenService, UserService userService,FileRepositories fileRepositories) {
         this.fileStorageService = fileStorageService;
         this.decodedTokenService = decodedTokenService;
         this.userService = userService;
+        this.fileRepositories = fileRepositories;
     }
 
 //    @PostMapping("/upload")
@@ -303,5 +306,19 @@ public class FileUploadController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<String> updateStatus(@PathVariable("id") Long id, @RequestParam String status) {
+        File file = fileRepositories.findById(id).orElse(null);
+        if (file == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found with id: " + id);
+        }
+
+        // Update the status
+        file.setStatus(status);
+        fileRepositories.save(file);
+
+        return ResponseEntity.ok("Status updated successfully");
     }
 }
