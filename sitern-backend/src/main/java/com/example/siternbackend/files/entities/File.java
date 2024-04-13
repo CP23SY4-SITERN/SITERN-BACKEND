@@ -1,14 +1,17 @@
 package com.example.siternbackend.files.entities;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.siternbackend.company.entities.Company;
+import com.example.siternbackend.jobs.entities.JobLocation;
+import com.example.siternbackend.user.entities.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,4 +37,7 @@ public class File {
     // Add status field to indicate the status of the file
     private String status;
 
+    @JsonBackReference
+    @ManyToOne
+    private User user;
 }

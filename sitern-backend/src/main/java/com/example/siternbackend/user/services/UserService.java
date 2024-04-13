@@ -1,6 +1,9 @@
 package com.example.siternbackend.user.services;
 
 import com.example.siternbackend.Exception.DemoGraphqlException;
+import com.example.siternbackend.files.entities.File;
+import com.example.siternbackend.jobs.dtos.JobLocationDTO;
+import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.user.DTOs.CreateUserDto;
 import com.example.siternbackend.user.DTOs.UserDto;
 import com.example.siternbackend.user.DTOs.UserUpdateRequest;
@@ -199,11 +202,24 @@ public abstract class UserService {
             userResponse.setUsername(user.getUsername());
             userResponse.setEmail(user.getEmail());
             userResponse.setAuthorities(user.getSimpleAuthorities());
+            userResponse.setFiles(mapToFileList(user.getFiles()));
             return userResponse;
         } catch (Exception e) {
             log.error("Could not Map User to UserResponse: " + e.getMessage());
             return UserResponse.builder().build();
         }
+    }
+    private List<File> mapToFileList(List<File> files) {
+        return files.stream()
+                .map(this::mapToFile)
+                .collect(Collectors.toList());
+    }
+    private File mapToFile(File file) {
+        File file1 = new File();
+        file1.setId(file.getId());
+        file1.setFilePath(file.getFilePath());
+        file1.setUser(file.getUser());
+        return file1;
     }
 
     //mapUserwithDetailsToListUserwithDetails

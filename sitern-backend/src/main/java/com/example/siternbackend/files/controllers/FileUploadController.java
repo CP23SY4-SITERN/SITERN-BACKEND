@@ -134,62 +134,7 @@ public class FileUploadController {
         UploadResponse uploadResponse = new UploadResponse(fileName);
         return ResponseEntity.ok(uploadResponse);
     }
-//    @PostMapping("/upload/tr-document/TR01")
-//    public ResponseEntity<UploadResponse> uploadTr01Document(
-//        @RequestHeader("Authorization") String bearerToken, @RequestParam("file") MultipartFile file) throws JSONException {
-//    if (file == null || file.isEmpty()) {
-//        return ResponseEntity.badRequest().build();
-//    }
-//
-//    User user = decodedTokenService.getUserFromToken(bearerToken); // Assuming such method exists
-//    if (user == null) {
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Unauthorized request
-//    }
-//
-//    String username = user.getUsername(); // Assuming getUsername() method exists in User entity
-//
-//    String fileName = username + "-" + new Date().getTime() + "-TR-File." + getFileExtension(file.getOriginalFilename());
-//        System.out.println(getFileExtension(""));
-//    try {
-//        if (fileName.contains("..")) {
-//            throw new RuntimeException(
-//                    "Sorry! Filename contains invalid path sequence " + fileName);
-//        }
-//        System.out.println("Dddddddddddddddddddddddddddddddddd");
-//        Path targetLocation = this.tr01DocumentStorageLocation.resolve(fileName);
-//        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-//        System.out.println("ssssssssssssssssssssssssssssssssssssssssssssssssssss");
-//        // Set uploadedDate to current timestamp
-//        Date uploadedDate = new Date();
-//
-//        // Set status to "waiting for approve"
-//        String status = "waiting for approve";
-//
-//        // Save the file information to the database
-//        File uploadedFile = new File();
-//        uploadedFile.setFileName(fileName);
-//        uploadedFile.setFilePath("/api/files/tr-document/TR01/" + fileName);
-//        uploadedFile.setUploadedDate(uploadedDate);
-//        uploadedFile.setStatus(status);
-//        fileStorageService.saveFile(uploadedFile);
-//
-//        user.setStatusTR01("inprogress");// Set statusTR01 to "inprogress"
-//        userService.saveUser(user);
-//
-//        UploadResponse uploadResponse = new UploadResponse(fileName);
-//        return ResponseEntity.ok(uploadResponse);
-//    } catch (IOException ex) {
-//        throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
-//    }
-//}
-//    private String getFileExtension(String fileName) {
-//        if (fileName == null) {
-//            return null;
-//        }
-//        String[] fileNameParts = fileName.split("\\.");
-//
-//        return fileNameParts[fileNameParts.length - 1];
-//    }
+
     @PostMapping("/upload/tr-document/TR02")
     public ResponseEntity<UploadResponse> uploadTr02Document(
             @RequestParam("file") MultipartFile file) {

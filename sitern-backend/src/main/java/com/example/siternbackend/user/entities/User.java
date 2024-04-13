@@ -1,6 +1,9 @@
 package com.example.siternbackend.user.entities;
 
+import com.example.siternbackend.files.entities.File;
+import com.example.siternbackend.jobs.entities.JobLocation;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -124,6 +127,9 @@ public class User implements UserDetails, Serializable {
         return enables;
     }
 
+    @JsonManagedReference
+    @OneToMany
+    private List<File> files;
 
     public void setFromDecodedToken(String name, String preferredUsername, String role, String email) {
         this.setUsername(preferredUsername);// กำหนดชื่อผู้ใช้
