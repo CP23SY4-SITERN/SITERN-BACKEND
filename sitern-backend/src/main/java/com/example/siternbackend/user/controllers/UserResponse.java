@@ -1,6 +1,7 @@
 package com.example.siternbackend.user.controllers;
 
 import com.example.siternbackend.files.entities.File;
+import com.example.siternbackend.files.entities.FileDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,6 @@ public class UserResponse {
     private String username;
     private String email;
     private List<String> authorities;
-    private List<File> files;
+    private List<FileDto> files;
 
 }

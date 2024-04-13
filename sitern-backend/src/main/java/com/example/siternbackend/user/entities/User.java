@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -128,9 +129,18 @@ public class User implements UserDetails, Serializable {
     }
 
     @JsonManagedReference
-    @OneToMany
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> files;
 
+    public void addFile(File file) {
+        files.add(file);
+        file.setUser(this);
+    }
+
+    public void removeFile(File file) {
+        files.remove(file);
+        file.setUser(null);
+    }
     public void setFromDecodedToken(String name, String preferredUsername, String role, String email) {
         this.setUsername(preferredUsername);// กำหนดชื่อผู้ใช้
         this.setEmail(email); // กำหนดอีเมล
@@ -151,7 +161,8 @@ public class User implements UserDetails, Serializable {
         this.setStatusTR01("incomplete");
         this.setStatusTR02("incomplete");
         this.setCreated(LocalDateTime.now()); // ตั้งค่าวันที่สร้างเป็นปัจจุบัน
-        this.setUpdated(LocalDateTime.now()); // ตั้งค่าวันที่อัปเดตเป็นปัจจุบัน
+        this.setUpdated(LocalDateTime.now());
+        this.files = new ArrayList<>();// ตั้งค่าวันที่อัปเดตเป็นปัจจุบัน
     }
 
 }

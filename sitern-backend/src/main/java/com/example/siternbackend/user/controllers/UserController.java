@@ -1,6 +1,8 @@
 package com.example.siternbackend.user.controllers;
 
 import com.example.siternbackend.Exception.DemoGraphqlException;
+import com.example.siternbackend.files.entities.File;
+import com.example.siternbackend.files.entities.FileDto;
 import com.example.siternbackend.user.DTOs.CreateUserDto;
 import com.example.siternbackend.user.DTOs.UserDto;
 import com.example.siternbackend.user.DTOs.UserUpdateRequest;
@@ -49,9 +51,22 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserResponse> getAllUsers() {
+    public List<UserResponse> getAllUsersWithFiles() {
         try {
             List<UserResponse> userResponses = userService.getAllUsers();
+
+            // Iterate through each user response
+            for (UserResponse userResponse : userResponses) {
+                // Get user ID
+                Integer userId = userResponse.getId();
+
+                // Get files related to the user
+                List<FileDto> filesDto = userService.getFilesByUserId(userId);
+
+                // Set files information to the user response
+                userResponse.setFiles(filesDto);
+            }
+
             log.info("Retrieved {} Users", userResponses.size());
             return userResponses;
         } catch (Exception e) {
@@ -203,4 +218,5 @@ public class UserController {
         private String userName;
         private String email;
     }
+
 }

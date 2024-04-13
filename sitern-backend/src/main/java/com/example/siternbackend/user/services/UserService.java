@@ -2,6 +2,8 @@ package com.example.siternbackend.user.services;
 
 import com.example.siternbackend.Exception.DemoGraphqlException;
 import com.example.siternbackend.files.entities.File;
+import com.example.siternbackend.files.entities.FileDto;
+import com.example.siternbackend.files.services.FileService;
 import com.example.siternbackend.jobs.dtos.JobLocationDTO;
 import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.user.DTOs.CreateUserDto;
@@ -52,7 +54,8 @@ public abstract class UserService {
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private AuthoritiesRepository authoritiesRepository;
-
+    @Autowired
+    private FileService fileService;
     public List<UserResponse> getAllUsers() {
         //ต้องเพิ่ม sortbycompanyID
         List<User> user = userRepository.findAll();
@@ -202,18 +205,14 @@ public abstract class UserService {
             userResponse.setUsername(user.getUsername());
             userResponse.setEmail(user.getEmail());
             userResponse.setAuthorities(user.getSimpleAuthorities());
-            userResponse.setFiles(mapToFileList(user.getFiles()));
+//            userResponse.setFiles(mapToFileList(user.getFiles()));
             return userResponse;
         } catch (Exception e) {
             log.error("Could not Map User to UserResponse: " + e.getMessage());
             return UserResponse.builder().build();
         }
     }
-    private List<File> mapToFileList(List<File> files) {
-        return files.stream()
-                .map(this::mapToFile)
-                .collect(Collectors.toList());
-    }
+
     private File mapToFile(File file) {
         File file1 = new File();
         file1.setId(file.getId());
@@ -297,6 +296,9 @@ public abstract class UserService {
         existingUser.setUpdated(LocalDateTime.now());
 
         return userRepository.save(existingUser);
+    }
+    public List<FileDto> getFilesByUserId(Integer userId) {
+        return fileService.getFilesByUserId(userId);
     }
 }
 
