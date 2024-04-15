@@ -126,6 +126,7 @@ public class FileUploadController {
         uploadedFile.setFilePath("/api/files/tr-document/TR-01/" + fileName);
         uploadedFile.setUploadedDate(uploadedDate);
         uploadedFile.setStatus(status);
+        uploadedFile.setUser(user);
         fileStorageService.saveFile(uploadedFile);
 
 //        User user = decodedTokenService.getUserFromToken(bearerToken); // Assuming such method exists
