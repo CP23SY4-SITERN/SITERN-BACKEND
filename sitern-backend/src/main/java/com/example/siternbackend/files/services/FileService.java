@@ -1,11 +1,13 @@
 package com.example.siternbackend.files.services;
 
+import com.example.siternbackend.files.controllers.FileResponse;
 import com.example.siternbackend.files.entities.File;
 import com.example.siternbackend.files.entities.FileDto;
 import com.example.siternbackend.files.repositories.FileRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,15 @@ public class FileService {
     public List<File> getAllFiles() {
         return fileRepository.findAll();
     }
+//    public List<FileResponse> getAllFilesWithUserId() {
+//        List<File> files = fileRepository.findAll();
+//        List<FileResponse> fileResponses = new ArrayList<>();
+//        for (File file : files) {
+//            Integer userId = file.getUser() != null ? file.getUser().getId() : null;
+//            fileResponses.add(new FileResponse(file.getId(), file.getFileName(), file.getFilePath(), file.getUploadedDate(), file.getStatus(), userId));
+//        }
+//        return fileResponses;
+//    }
 
     public List<FileDto> getFilesByUserId(Integer userId) {
         // ดึงข้อมูลไฟล์ของผู้ใช้ตาม userId โดยใช้ FileRepositories
@@ -40,5 +51,24 @@ public class FileService {
                 .uploadedDate(file.getUploadedDate())
                 .status(file.getStatus())
                 .build();
+    }
+    public List<FileResponse> getAllFilesWithStdName() {
+        List<File> files = fileRepository.findAll();
+        List<FileResponse> fileResponses = new ArrayList<>();
+        for (File file : files) {
+            String stdName = extractStdName(file.getFileName());
+            fileResponses.add(new FileResponse(file.getId(), file.getFileName(), file.getFilePath(), file.getUploadedDate(), file.getStatus(), stdName));
+        }
+        return fileResponses;
+    }
+
+    private String extractStdName(String fileName) {
+        // Assuming filename format is "stdXX-TRXX-File.pdf"
+        String[] parts = fileName.split("-");
+        if (parts.length >= 1) {
+            return parts[0];
+        } else {
+            return "";
+        }
     }
 }

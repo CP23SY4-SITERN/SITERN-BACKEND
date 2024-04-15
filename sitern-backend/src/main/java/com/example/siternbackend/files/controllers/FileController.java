@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,11 +30,48 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<File>> getAllFiles() {
-        List<File> files = fileService.getAllFiles();
-        return new ResponseEntity<>(files, HttpStatus.OK);
+//    @GetMapping
+//    public ResponseEntity<List<File>> getAllFiles() {
+//        List<File> files = fileService.getAllFiles();
+//        return new ResponseEntity<>(files, HttpStatus.OK);
+//    }
+//    @GetMapping("/with")
+//    public ResponseEntity<List<FileResponse>> getAllFilesWithUserId() {
+//        List<FileResponse> fileResponses = fileService.getAllFilesWithUserId();
+//        return new ResponseEntity<>(fileResponses, HttpStatus.OK);
+//    }
+    @GetMapping("/name")
+    public ResponseEntity<List<FileResponse>> getAllFilesWithStdName() {
+        List<FileResponse> fileResponses = fileService.getAllFilesWithStdName();
+        return new ResponseEntity<>(fileResponses, HttpStatus.OK);
     }
+    @GetMapping
+    public ResponseEntity<List<FileResponse>> getAllFiles() {
+        List<File> files = fileService.getAllFiles();
+        List<FileResponse> fileResponses = files.stream()
+                .map(file -> {
+                    String stdName = extractStdName(file.getFileName()); // Assuming you have a method to extract std name from file name
+                    return new FileResponse(file.getId(), file.getFileName(), file.getFilePath(), file.getUploadedDate(), file.getStatus(), stdName);
+                })
+                .collect(Collectors.toList());
+
+        // Sort the list of FileResponse objects by std name
+        fileResponses.sort(Comparator.comparing(FileResponse::getStdName));
+
+        return new ResponseEntity<>(fileResponses, HttpStatus.OK);
+    }
+
+    // Method to extract std name from file name
+    private String extractStdName(String fileName) {
+        // Your logic to extract std name from file name, e.g., using regular expressions
+        // For example, assuming std name is after "-" character
+        int indexOfDash = fileName.indexOf("-");
+        if (indexOfDash != -1 && indexOfDash + 1 < fileName.length()) {
+            return fileName.substring(0, indexOfDash);
+        }
+        return "";
+    }
+
 //    @GetMapping("/")
 //    public String listUploadedFiles(Model model) throws IOException {
 //
