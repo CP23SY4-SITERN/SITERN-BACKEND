@@ -123,7 +123,7 @@ public class FileUploadController {
         // Create a new File object and set its properties
         File uploadedFile = new File();
         uploadedFile.setFileName(fileName);
-        uploadedFile.setFilePath("/api/files/tr-document/TR01/" + fileName);
+        uploadedFile.setFilePath("/api/files/tr-document/TR-01/" + fileName);
         uploadedFile.setUploadedDate(uploadedDate);
         uploadedFile.setStatus(status);
         fileStorageService.saveFile(uploadedFile);
@@ -225,6 +225,10 @@ public class FileUploadController {
             resource = fileStorageService.loadTrDocumentAsResource(fileName);
         } else if ("resume".equals(directory)) {
             resource = fileStorageService.loadResumeAsResource(fileName);
+        } else if ("Profile-Picture".equals(directory)) {
+            resource = fileStorageService.loadProfilePictureAsResource(fileName);
+        }    else if ("tr-document".equals(directory)) {
+                resource = fileStorageService.loadTr01DocumentAsResource(fileName);
         } else {
             // Invalid directory
             return ResponseEntity.notFound().build();
@@ -253,6 +257,52 @@ public class FileUploadController {
                 .body(resource);
     }
 
+    @GetMapping("/{directory}/{tr01}/{fileName:.+}")
+    public ResponseEntity<Resource> GetFile(@PathVariable String directory,@PathVariable String tr01, @PathVariable String fileName) {
+        // Load file as Resource based on the directory
+        Resource resource;
+        if ("TR_Document".equals(directory)) {
+            resource = fileStorageService.loadTrDocumentAsResource(fileName);
+        } else if ("resume".equals(directory)) {
+            resource = fileStorageService.loadResumeAsResource(fileName);
+        } else if ("Profile-Picture".equals(directory)) {
+            resource = fileStorageService.loadProfilePictureAsResource(fileName);
+        }   else if ("tr-document".equals(directory)) {
+                resource = fileStorageService.loadTr01DocumentAsResource(fileName);
+        } else {
+            // Invalid directory
+            return ResponseEntity.notFound().build();
+        }
+        if ("TR_Document".equals(tr01)) {
+            resource = fileStorageService.loadTr01DocumentAsResource(fileName);
+        }   else if ("TR-01".equals(tr01)) {
+            resource = fileStorageService.loadTr01DocumentAsResource(fileName);
+        } else {
+            // Invalid directory
+            return ResponseEntity.notFound().build();
+        }
+        if (resource == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Try to determine file's content type
+        String contentType;
+        try {
+            contentType = Files.probeContentType(Path.of(resource.getFile().getAbsolutePath()));
+        } catch (IOException e) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        // Fallback to octet-stream if content type could not be determined
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
     @PatchMapping("/{id}/status")
     public ResponseEntity<String> updateStatus(@PathVariable("id") Long id, @RequestParam String status) {
         File file = fileRepositories.findById(id).orElse(null);

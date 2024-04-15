@@ -22,9 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -218,5 +220,55 @@ public class UserController {
         private String userName;
         private String email;
     }
+    @GetMapping("/profile-picture")
+    public ResponseEntity<byte[]> getProfilePicture(@RequestHeader("Authorization") String accessToken) {
+        try {
+            // Get user from token
+            User user = decodedTokenService.getUserFromToken(accessToken);
+
+            // Check if user exists
+            if (user == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Check if user has a profile picture
+            byte[] profilePicture = user.getProfilePicture();
+            if (profilePicture == null || profilePicture.length == 0) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Return the profile picture bytes
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG) // Set the content type based on the image type
+                    .body(profilePicture);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @PostMapping("/upload/profile-picture")
+    public ResponseEntity<String> uploadProfilePicture(
+            @RequestHeader("Authorization") String accessToken,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            // Get user from token
+            User user = decodedTokenService.getUserFromToken(accessToken);
+
+            // Check if file is empty
+            if (file.isEmpty()) {
+                return ResponseEntity.badRequest().body("Please upload a file");
+            }
+
+            // Set profile picture
+            user.setProfilePicture(file.getBytes());
+
+            // Save user
+            userService.saveUser(user);
+
+            return ResponseEntity.ok("Profile picture uploaded successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload profile picture");
+        }
+    }
+
 
 }

@@ -127,7 +127,12 @@ public class SecurityConfig {
             "/upload/tr-document",
             "/upload/tr-document/**",
             "/api/users/me",
-            "/api/users/me/**"
+            "/api/users/me/**",
+            "/api/files/{directory}/{tr01}/{fileName:.+}",
+            "/api/files/{directory}/{tr01}/{fileName:.+}/**",
+            "/api/files/{directory}/{fileName:.+}",
+            "/api/files/{directory}/{fileName:.+}/**"
+
     };
 
     private static final String[] STAFF_WHITELIST = {

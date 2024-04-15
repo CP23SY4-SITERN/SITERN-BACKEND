@@ -131,6 +131,8 @@ public class User implements UserDetails, Serializable {
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> files;
+    @Lob
+    private byte[] profilePicture;
 
     public void addFile(File file) {
         files.add(file);
@@ -163,6 +165,8 @@ public class User implements UserDetails, Serializable {
         this.setCreated(LocalDateTime.now()); // ตั้งค่าวันที่สร้างเป็นปัจจุบัน
         this.setUpdated(LocalDateTime.now());
         this.files = new ArrayList<>();// ตั้งค่าวันที่อัปเดตเป็นปัจจุบัน
+
     }
+
 
 }

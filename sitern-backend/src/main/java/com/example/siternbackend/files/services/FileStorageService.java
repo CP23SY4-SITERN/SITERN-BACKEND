@@ -26,6 +26,7 @@ public class FileStorageService {
     private final Path tr01DocumentStorageLocation;
     private final Path tr02DocumentStorageLocation;
     private final Path resumeStorageLocation;
+    private final Path profilePictureLocation;
     private final FileRepositories fileRepositories;
     private final DecodedTokenService decodedTokenService;
     @Autowired
@@ -34,11 +35,13 @@ public class FileStorageService {
                 .toAbsolutePath().normalize();
         this.trDocumentStorageLocation = Paths.get(env.getProperty("app.file.tr-document-dir", "./files/TR_Document"))
                 .toAbsolutePath().normalize();
-        this.tr01DocumentStorageLocation = Paths.get(env.getProperty("app.file.tr01-document-dir", "./files/TR_Document/TR01"))
+        this.tr01DocumentStorageLocation = Paths.get(env.getProperty("app.file.tr01-document-dir", "./files/tr_document/TR-01"))
                 .toAbsolutePath().normalize();
         this.tr02DocumentStorageLocation = Paths.get(env.getProperty("app.file.tr02-document-dir", "./files/TR_Document/TR02"))
                 .toAbsolutePath().normalize();
         this.resumeStorageLocation = Paths.get(env.getProperty("app.file.resume-dir", "./files/resume"))
+                .toAbsolutePath().normalize();
+        this.profilePictureLocation = Paths.get(env.getProperty("app.file.resume-dir", "./files/profile-picture"))
                 .toAbsolutePath().normalize();
         this.fileRepositories = fileRepositories;
         this.decodedTokenService = decodedTokenService;
@@ -46,6 +49,7 @@ public class FileStorageService {
             Files.createDirectories(this.fileStorageLocation);
             Files.createDirectories(this.trDocumentStorageLocation);
             Files.createDirectories(this.resumeStorageLocation);
+            Files.createDirectories(this.tr01DocumentStorageLocation);
         } catch (Exception ex) {
             throw new RuntimeException(
                     "Could not create the directory where the uploaded files will be stored.", ex);
@@ -115,7 +119,7 @@ public class FileStorageService {
                         "Sorry! Filename contains invalid path sequence " + fileName);
             }
 
-            Path targetLocation = this.trDocumentStorageLocation.resolve(fileName);
+            Path targetLocation = this.tr01DocumentStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             return fileName;
@@ -127,6 +131,28 @@ public class FileStorageService {
         // Normalize file name
         String fileName =
                 new Date().getTime() + "-TR01-File." + getFileExtension(file.getOriginalFilename());
+
+        try {
+            // Check if the filename contains invalid characters
+            if (fileName.contains("..")) {
+                throw new RuntimeException(
+                        "Sorry! Filename contains invalid path sequence " + fileName);
+            }
+
+            Path targetLocation = this.trDocumentStorageLocation.resolve(fileName);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            return fileName;
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
+        }
+    }
+    public String storeProfilePicture(String username,MultipartFile file) {
+        // Normalize file name
+
+
+        String fileName =
+                username + "-Profile-Picture." + getFileExtension(file.getOriginalFilename());
 
         try {
             // Check if the filename contains invalid characters
@@ -224,6 +250,19 @@ public class FileStorageService {
                 return resource;
             } else {
                 throw new RuntimeException("File not found: " + fileName);
+            }
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
+        }
+    }
+    public Resource loadProfilePictureAsResource(String fileName) {
+        try {
+            Path filePath = this.profilePictureLocation.resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists()) {
+                return resource;
+            } else {
+                throw new RuntimeException("Profile-Picture not found: " + fileName);
             }
         } catch (MalformedURLException ex) {
             throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
