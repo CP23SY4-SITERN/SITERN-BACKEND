@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -103,17 +104,20 @@ public class FileUploadController {
         return ResponseEntity.ok(uploadResponse);
     }
     @PostMapping("/upload/tr-document/TR01")
-    public ResponseEntity<UploadResponse> uploadTr01Document(
+    public ResponseEntity<?> uploadTr01Document(
             @RequestHeader("Authorization") String bearerToken,@RequestParam("file") MultipartFile file) throws JSONException {
-        if (file == null || file.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
+        try {
+            if (file == null || file.isEmpty()) {
+                return ResponseEntity.badRequest().body("File is empty");
+            }
         User user = decodedTokenService.getUserFromToken(bearerToken);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+            }
         String fileName = fileStorageService.storeTr01Document(user.getUsername(),file);
-
-        if (fileName == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+            if (fileName == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to store file");
+            }
         // Set uploadedDate to current timestamp
         Date uploadedDate = new Date();
 
@@ -134,6 +138,9 @@ public class FileUploadController {
         userService.saveUser(user);
         UploadResponse uploadResponse = new UploadResponse(fileName);
         return ResponseEntity.ok(uploadResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
+        }
     }
 
     @PostMapping("/upload/tr-document/TR02")
@@ -259,20 +266,16 @@ public class FileUploadController {
     }
 
     @GetMapping("/{directory}/{tr01}/{fileName:.+}")
-    public ResponseEntity<Resource> GetFile(@PathVariable String directory,@PathVariable String tr01, @PathVariable String fileName) {
+    public ResponseEntity<?> GetFile(@PathVariable String directory,@PathVariable String tr01, @PathVariable String fileName) {
         // Load file as Resource based on the directory
         Resource resource;
         if ("TR_Document".equals(directory)) {
             resource = fileStorageService.loadTrDocumentAsResource(fileName);
-        } else if ("resume".equals(directory)) {
-            resource = fileStorageService.loadResumeAsResource(fileName);
-        } else if ("Profile-Picture".equals(directory)) {
-            resource = fileStorageService.loadProfilePictureAsResource(fileName);
-        }   else if ("tr-document".equals(directory)) {
+        } else if ("tr-document".equals(directory)) {
                 resource = fileStorageService.loadTr01DocumentAsResource(fileName);
         } else {
             // Invalid directory
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid Directory");
         }
         if ("TR_Document".equals(tr01)) {
             resource = fileStorageService.loadTr01DocumentAsResource(fileName);
@@ -280,22 +283,34 @@ public class FileUploadController {
             resource = fileStorageService.loadTr01DocumentAsResource(fileName);
         } else {
             // Invalid directory
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid Directory");
         }
         if (resource == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
         }
+
 
         // Try to determine file's content type
         String contentType;
+//        try {
+//            contentType = Files.probeContentType(Path.of(resource.getFile().getAbsolutePath()));
+//        } catch (IOException e) {
+//            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+//        }
+//
+//        // Fallback to octet-stream if content type could not be determined
+//        if (contentType == null) {
+//            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+//        }
         try {
-            contentType = Files.probeContentType(Path.of(resource.getFile().getAbsolutePath()));
-        } catch (IOException e) {
+            if (resource.exists()) {
+                contentType = Files.probeContentType(Path.of(resource.getFile().getAbsolutePath()));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found" + fileName);
+            }
+        } catch (FileNotFoundException e) {
             contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-        }
-
-        // Fallback to octet-stream if content type could not be determined
-        if (contentType == null) {
+        } catch (IOException e) {
             contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
 
