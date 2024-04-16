@@ -6,18 +6,18 @@ import com.example.siternbackend.user.entities.User;
 import com.example.siternbackend.user.services.DecodedTokenService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.Date;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.web.server.ResponseStatusException;
+
 @Service
 public class FileStorageService {
 
@@ -196,7 +196,7 @@ public class FileStorageService {
             if (resource.exists()) {
                 return resource;
             } else {
-                throw new RuntimeException("File not found: " + fileName);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found: " + fileName);
             }
         } catch (MalformedURLException ex) {
             throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
@@ -209,7 +209,7 @@ public class FileStorageService {
             if (resource.exists()) {
                 return resource;
             } else {
-                throw new RuntimeException("File not found: " + fileName);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found: " + fileName);
             }
         } catch (MalformedURLException ex) {
             throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
@@ -222,7 +222,7 @@ public class FileStorageService {
             if (resource.exists()) {
                 return resource;
             } else {
-                throw new RuntimeException("File not found: " + fileName);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found: " + fileName);
             }
         } catch (MalformedURLException ex) {
             throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
@@ -235,7 +235,7 @@ public class FileStorageService {
             if (resource.exists()) {
                 return resource;
             } else {
-                throw new RuntimeException("File not found: " + fileName);
+                throw new FileSystemNotFoundException("File not found: " + fileName);
             }
         } catch (MalformedURLException ex) {
             throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
