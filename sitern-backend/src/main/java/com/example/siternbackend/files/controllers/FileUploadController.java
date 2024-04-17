@@ -319,6 +319,61 @@ public class FileUploadController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
+
+    @GetMapping("/{SITERN-BACKEND}/{directory}/{tr01}/{fileName:.+}")
+    public ResponseEntity<?> GetFileWSitern(@PathVariable String directory,@PathVariable String tr01, @PathVariable String fileName) {
+        // Load file as Resource based on the directory
+        Resource resource;
+        if ("TR_Document".equals(directory)) {
+            resource = fileStorageService.loadTrDocumentAsResource(fileName);
+        } else if ("tr-document".equals(directory)) {
+            resource = fileStorageService.loadTr01DocumentAsResource(fileName);
+        } else {
+            // Invalid directory
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid Directory");
+        }
+        if ("TR_Document".equals(tr01)) {
+            resource = fileStorageService.loadTr01DocumentAsResource(fileName);
+        }   else if ("TR-01".equals(tr01)) {
+            resource = fileStorageService.loadTr01DocumentAsResource(fileName);
+        } else {
+            // Invalid directory
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid Directory");
+        }
+        if (resource == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
+        }
+
+
+        // Try to determine file's content type
+        String contentType;
+//        try {
+//            contentType = Files.probeContentType(Path.of(resource.getFile().getAbsolutePath()));
+//        } catch (IOException e) {
+//            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+//        }
+//
+//        // Fallback to octet-stream if content type could not be determined
+//        if (contentType == null) {
+//            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+//        }
+        try {
+            if (resource.exists()) {
+                contentType = Files.probeContentType(Path.of(resource.getFile().getAbsolutePath()));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found" + fileName);
+            }
+        } catch (FileNotFoundException e) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        } catch (IOException e) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
     @PatchMapping("/{id}/status")
     public ResponseEntity<String> updateStatus(@PathVariable("id") Long id, @RequestParam String status) {
         File file = fileRepositories.findById(id).orElse(null);
@@ -331,5 +386,24 @@ public class FileUploadController {
         fileRepositories.save(file);
 
         return ResponseEntity.ok("Status updated successfully");
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteFile(@PathVariable Long id) {
+        // Check if the file exists
+        File file = fileRepositories.findById(id).orElse(null);
+        if (file == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found with id: " + id);
+        }
+
+        // Delete the file from the storage
+        boolean deleted = fileStorageService.deleteFile(file.getFileName());
+        if (!deleted) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete file: " + file.getFileName());
+        }
+
+        // Delete the file record from the database
+        fileRepositories.delete(file);
+
+        return ResponseEntity.ok("File deleted successfully");
     }
 }

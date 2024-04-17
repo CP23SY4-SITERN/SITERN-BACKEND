@@ -29,13 +29,14 @@ public class FileStorageService {
     private final Path profilePictureLocation;
     private final FileRepositories fileRepositories;
     private final DecodedTokenService decodedTokenService;
+
     @Autowired
     public FileStorageService(Environment env, FileRepositories fileRepositories, DecodedTokenService decodedTokenService) {
         this.fileStorageLocation = Paths.get(env.getProperty("app.file.upload-dir", "./uploads/files"))
                 .toAbsolutePath().normalize();
         this.trDocumentStorageLocation = Paths.get(env.getProperty("app.file.tr-document-dir", "./files/TR_Document"))
                 .toAbsolutePath().normalize();
-        this.tr01DocumentStorageLocation = Paths.get(env.getProperty("app.file.tr01-document-dir", "./files/tr_document/TR-01"))
+        this.tr01DocumentStorageLocation = Paths.get(env.getProperty("app.file.tr01-document-dir", ".././files/tr_document/TR-01"))
                 .toAbsolutePath().normalize();
         this.tr02DocumentStorageLocation = Paths.get(env.getProperty("app.file.tr02-document-dir", "./files/TR_Document/TR02"))
                 .toAbsolutePath().normalize();
@@ -85,6 +86,7 @@ public class FileStorageService {
             throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
+
     public String storeTrDocument(MultipartFile file) {
         // Normalize file name
         String fileName =
@@ -105,7 +107,8 @@ public class FileStorageService {
             throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
-    public String storeTr01Document(String username,MultipartFile file) {
+
+    public String storeTr01Document(String username, MultipartFile file) {
         // Normalize file name
 
 
@@ -127,6 +130,7 @@ public class FileStorageService {
             throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
+
     public String storeTr02Document(MultipartFile file) {
         // Normalize file name
         String fileName =
@@ -147,7 +151,8 @@ public class FileStorageService {
             throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
-    public String storeProfilePicture(String username,MultipartFile file) {
+
+    public String storeProfilePicture(String username, MultipartFile file) {
         // Normalize file name
 
 
@@ -169,6 +174,7 @@ public class FileStorageService {
             throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
+
     public String storeResume(MultipartFile file) {
         // Normalize file name
         String fileName =
@@ -189,6 +195,7 @@ public class FileStorageService {
             throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
+
     public Resource loadFileAsResource(String fileName) {
         try {
             Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
@@ -202,6 +209,7 @@ public class FileStorageService {
             throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
         }
     }
+
     public Resource loadTrDocumentAsResource(String fileName) {
         try {
             Path filePath = this.trDocumentStorageLocation.resolve(fileName).normalize();
@@ -215,6 +223,7 @@ public class FileStorageService {
             throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
         }
     }
+
     public Resource loadTr01DocumentAsResource(String fileName) {
         try {
             Path filePath = this.tr01DocumentStorageLocation.resolve(fileName).normalize();
@@ -228,6 +237,7 @@ public class FileStorageService {
             throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
         }
     }
+
     public Resource loadTr02DocumentAsResource(String fileName) {
         try {
             Path filePath = this.tr02DocumentStorageLocation.resolve(fileName).normalize();
@@ -255,6 +265,7 @@ public class FileStorageService {
             throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
         }
     }
+
     public Resource loadProfilePictureAsResource(String fileName) {
         try {
             Path filePath = this.profilePictureLocation.resolve(fileName).normalize();
@@ -268,6 +279,7 @@ public class FileStorageService {
             throw new RuntimeException("Malformed URL exception occurred while loading file: " + fileName, ex);
         }
     }
+
     @Transactional
     public void saveFile(File file) {
         // ทำการบันทึกข้อมูลไฟล์ลงในฐานข้อมูลโดยใช้ repository
@@ -275,5 +287,19 @@ public class FileStorageService {
             throw new IllegalArgumentException("File path must not be null");
         }
         fileRepositories.save(file);
+    }
+
+    public boolean deleteFile(String fileName) {
+        try {
+            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+            if (!Files.exists(filePath)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found: " + fileName);
+            }
+            Files.deleteIfExists(filePath);
+            return true;
+        } catch (IOException e) {
+            // Handle the exception, log or return false based on your requirements
+            return false;
+        }
     }
 }
