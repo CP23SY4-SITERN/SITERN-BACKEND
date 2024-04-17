@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.util.Date;
@@ -123,7 +124,14 @@ public class FileStorageService {
             }
 
             Path targetLocation = this.tr01DocumentStorageLocation.resolve(fileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            // Check if the file already exists
+            if (Files.exists(targetLocation)) {
+                // If the file exists, delete it
+                Files.delete(targetLocation);
+            }
+
+            // Save the new file
+            Files.copy(file.getInputStream(), targetLocation);
 
             return fileName;
         } catch (IOException ex) {
@@ -315,4 +323,36 @@ public class FileStorageService {
             return false;
         }
     }
+
+    public File getTr01File(String username) {
+        // Construct the file name based on the username and TR01 document
+        String fileName = username + "-TR01-File";
+
+        // Check if the file exists in the directory
+        Path filePath = this.tr01DocumentStorageLocation.resolve(fileName).normalize();
+        if (Files.exists(filePath)) {
+            // Create a new File entity and set its properties
+            File file = new File();
+            file.setFileName(fileName);
+            file.setFilePath(filePath.toString());
+            // You might want to set other properties of the file here if needed
+            return file;
+        } else {
+            // If the file does not exist, return null
+            return null;
+        }
+    }
+    public void replaceFile(String filePath, InputStream newFileContent) throws IOException {
+        // Check if the file path is valid
+        if (filePath == null || filePath.isEmpty()) {
+            throw new IllegalArgumentException("File path must not be null or empty");
+        }
+
+        // Resolve the file path
+        Path targetLocation = Paths.get(filePath).normalize();
+
+        // Replace the existing file with the new file content
+        Files.copy(newFileContent, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+    }
+
 }

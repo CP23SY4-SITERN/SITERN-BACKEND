@@ -105,39 +105,56 @@ public class FileUploadController {
     }
     @PostMapping("/upload/tr-document/TR01")
     public ResponseEntity<?> uploadTr01Document(
-            @RequestHeader("Authorization") String bearerToken,@RequestParam("file") MultipartFile file) throws JSONException {
+            @RequestHeader("Authorization") String bearerToken,
+            @RequestParam("file") MultipartFile file) throws JSONException {
         try {
             if (file == null || file.isEmpty()) {
                 return ResponseEntity.badRequest().body("File is empty");
             }
-        User user = decodedTokenService.getUserFromToken(bearerToken);
+            User user = decodedTokenService.getUserFromToken(bearerToken);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
             }
-        String fileName = fileStorageService.storeTr01Document(user.getUsername(),file);
+
+            // Fetch existing file associated with the user and TR01 document
+            File existingFile = fileStorageService.getTr01File(user.getUsername());
+
+            // Store the new file
+            String fileName = fileStorageService.storeTr01Document(user.getUsername(), file);
             if (fileName == null) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to store file");
             }
-        // Set uploadedDate to current timestamp
-        Date uploadedDate = new Date();
 
-        // Set status to "waiting for approve"
-        String status = "waiting for approve";
-        // Save the file information to the database
-        // Create a new File object and set its properties
-        File uploadedFile = new File();
-        uploadedFile.setFileName(fileName);
-        uploadedFile.setFilePath("/api/files/tr-document/TR-01/" + fileName);
-        uploadedFile.setUploadedDate(uploadedDate);
-        uploadedFile.setStatus(status);
-        uploadedFile.setUser(user);
-        fileStorageService.saveFile(uploadedFile);
+            // Update the existing file record with the new file information
+            if (existingFile != null) {
+                // Replace the file content
+                String filePath = existingFile.getFilePath();
+                fileStorageService.replaceFile(filePath, file.getInputStream());
 
-//        User user = decodedTokenService.getUserFromToken(bearerToken); // Assuming such method exists
-        user.setStatusTR01("inprogress");// Set statusTR01 to "inprogress"
-        userService.saveUser(user);
-        UploadResponse uploadResponse = new UploadResponse(fileName);
-        return ResponseEntity.ok(uploadResponse);
+                // Update file metadata
+                existingFile.setFileName(fileName);
+                existingFile.setUploadedDate(new Date());
+                existingFile.setStatus("waiting for approve");
+                existingFile.setComment("");
+                fileStorageService.saveFile(existingFile);
+            } else {
+                // Create a new file record if it doesn't exist
+                File uploadedFile = new File();
+                uploadedFile.setFileName(fileName);
+                uploadedFile.setFilePath("/api/files/tr-document/TR-01/" + fileName);
+                uploadedFile.setUploadedDate(new Date());
+                uploadedFile.setStatus("waiting for approve");
+                uploadedFile.setUser(user);
+                uploadedFile.setComment("");
+                fileStorageService.saveFile(uploadedFile);
+            }
+
+            // Update user status
+            user.setStatusTR01("inprogress");
+            userService.saveUser(user);
+
+            UploadResponse uploadResponse = new UploadResponse(fileName);
+            return ResponseEntity.ok(uploadResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
         }
@@ -159,6 +176,7 @@ public class FileUploadController {
 
         // Set status to "waiting for approve"
         String status = "waiting for approve";
+        String comment = "";
         // Save the file information to the database
         // Create a new File object and set its properties
         File uploadedFile = new File();
@@ -166,6 +184,7 @@ public class FileUploadController {
         uploadedFile.setFilePath("/api/files/tr-document/TR02/" + fileName);
         uploadedFile.setUploadedDate(uploadedDate);
         uploadedFile.setStatus(status);
+        uploadedFile.setComment(comment);
         fileStorageService.saveFile(uploadedFile);
         UploadResponse uploadResponse = new UploadResponse(fileName);
         return ResponseEntity.ok(uploadResponse);

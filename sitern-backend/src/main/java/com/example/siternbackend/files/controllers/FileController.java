@@ -15,7 +15,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -45,22 +47,46 @@ public class FileController {
         List<FileResponse> fileResponses = fileService.getAllFilesWithStdName();
         return new ResponseEntity<>(fileResponses, HttpStatus.OK);
     }
-    @GetMapping
-    public ResponseEntity<List<FileResponse>> getAllFiles() {
-        List<File> files = fileService.getAllFiles();
-        List<FileResponse> fileResponses = files.stream()
-                .map(file -> {
-                    String stdName = extractStdName(file.getFileName()); // Assuming you have a method to extract std name from file name
-                    return new FileResponse(file.getId(), file.getFileName(), file.getFilePath(), file.getUploadedDate(), file.getStatus(), stdName);
-                })
-                .collect(Collectors.toList());
+//    @GetMapping
+//    public ResponseEntity<List<FileResponse>> getAllFiles() {
+//        List<File> files = fileService.getAllFiles();
+//        List<FileResponse> fileResponses = files.stream()
+//                .map(file -> {
+//                    String stdName = extractStdName(file.getFileName()); // Assuming you have a method to extract std name from file name
+//                    return new FileResponse(file.getId(), file.getFileName(), file.getFilePath(), file.getUploadedDate(), file.getStatus(), stdName,file.getComment());
+//                })
+//                .collect(Collectors.toList());
+//
+//        // Sort the list of FileResponse objects by std name
+//        fileResponses.sort(Comparator.comparing(FileResponse::getStdName));
+//
+//        return new ResponseEntity<>(fileResponses, HttpStatus.OK);
+//    }
+@GetMapping
+public ResponseEntity<List<FileResponse>> getAllFiles() {
+    List<File> files = fileService.getAllFiles();
 
-        // Sort the list of FileResponse objects by std name
-        fileResponses.sort(Comparator.comparing(FileResponse::getStdName));
+    // Create a map to store the latest file for each stdName
+    Map<String, File> latestFilesMap = new HashMap<>();
 
-        return new ResponseEntity<>(fileResponses, HttpStatus.OK);
+    // Iterate through each file and update the latest file for each stdName
+    for (File file : files) {
+        String stdName = extractStdName(file.getFileName());
+        if (!latestFilesMap.containsKey(stdName) || file.getUploadedDate().after(latestFilesMap.get(stdName).getUploadedDate())) {
+            latestFilesMap.put(stdName, file);
+        }
     }
 
+    // Convert the latest files map to a list of FileResponse objects
+    List<FileResponse> fileResponses = latestFilesMap.values().stream()
+            .map(file -> new FileResponse(file.getId(), file.getFileName(), file.getFilePath(), file.getUploadedDate(), file.getStatus(), extractStdName(file.getFileName()), file.getComment()))
+            .collect(Collectors.toList());
+
+    // Sort the list of FileResponse objects by stdName
+    fileResponses.sort(Comparator.comparing(FileResponse::getStdName));
+
+    return new ResponseEntity<>(fileResponses, HttpStatus.OK);
+}
     // Method to extract std name from file name
     private String extractStdName(String fileName) {
         // Your logic to extract std name from file name, e.g., using regular expressions

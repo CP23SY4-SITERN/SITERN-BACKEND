@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,7 +40,10 @@ public class EditJobDTO {
     private Integer salary;
     @Enumerated(EnumType.STRING)
     private WorkType workType;
+    @Size(max = 5000 , message = "Contacts must lower than 5000 characters")
     private String contact;
+    @Pattern(regexp = "^\\+?[0-9.-]*$", message = "Invalid phone number format")
+    private String phoneNumber;
     private Integer job_location_ID;
 
 }

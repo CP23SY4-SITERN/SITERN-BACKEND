@@ -38,5 +38,6 @@ public class JobPostDTO {
     private JobLocationDTO jobLocation;
     private String zip;
     private String contact;
+    private String phoneNumber;
     private byte isActive;
 }
