@@ -291,7 +291,20 @@ public class FileStorageService {
 
     public boolean deleteFile(String fileName) {
         try {
-            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+            Path filePath = this.tr01DocumentStorageLocation.resolve(fileName).normalize();
+            if (!Files.exists(filePath)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found: " + fileName);
+            }
+            Files.deleteIfExists(filePath);
+            return true;
+        } catch (IOException e) {
+            // Handle the exception, log or return false based on your requirements
+            return false;
+        }
+    }
+    public boolean deleteTr01Document(String fileName) {
+        try {
+            Path filePath = this.tr01DocumentStorageLocation.resolve(fileName).normalize();
             if (!Files.exists(filePath)) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found: " + fileName);
             }
