@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Data
@@ -143,6 +145,27 @@ public class User implements UserDetails, Serializable {
         files.remove(file);
         file.setUser(null);
     }
+
+    private String extractStdName(String fileName) {
+        // Your logic to extract std name from file name, e.g., using regular expressions
+        // For example, assuming std name is after "-" character
+        int indexOfDash = fileName.indexOf("-");
+        if (indexOfDash != -1 && indexOfDash + 1 < fileName.length()) {
+            return fileName.substring(0, indexOfDash);
+        }
+        return "";
+    }
+    public List<File> getLatestFiles() {
+        Map<String, File> latestFilesMap = new HashMap<>();
+        for (File file : files) {
+            String stdName = extractStdName(file.getFileName());
+            if (!latestFilesMap.containsKey(stdName) || file.getUploadedDate().after(latestFilesMap.get(stdName).getUploadedDate())) {
+                latestFilesMap.put(stdName, file);
+            }
+        }
+        return new ArrayList<>(latestFilesMap.values());
+    }
+
     public void setFromDecodedToken(String name, String preferredUsername, String role, String email) {
         this.setUsername(preferredUsername);// กำหนดชื่อผู้ใช้
         this.setEmail(email); // กำหนดอีเมล
@@ -167,6 +190,7 @@ public class User implements UserDetails, Serializable {
         this.files = new ArrayList<>();// ตั้งค่าวันที่อัปเดตเป็นปัจจุบัน
 
     }
+
 
 
 }

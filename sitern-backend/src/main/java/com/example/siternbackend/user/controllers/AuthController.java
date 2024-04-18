@@ -4,6 +4,7 @@ import com.example.siternbackend.authentication.JwtRequest;
 import com.example.siternbackend.authentication.JwtResponse;
 import com.example.siternbackend.authentication.LoginRequest;
 import com.example.siternbackend.authentication.LogoutRequest;
+import com.example.siternbackend.files.entities.File;
 import com.example.siternbackend.user.DTOs.UserDto;
 import com.example.siternbackend.user.entities.User;
 import com.example.siternbackend.user.services.AuthResponse;
@@ -28,6 +29,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.AuthenticationException;
+
+import java.util.List;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -89,6 +93,8 @@ public class AuthController {
 
             if (user != null) {
                 // Return the user information in the response
+                List<File> latestFiles = user.getLatestFiles();
+                user.setFiles(latestFiles);
                 return ResponseEntity.ok(user);
             } else {
                 // Handle error if user information cannot be retrieved

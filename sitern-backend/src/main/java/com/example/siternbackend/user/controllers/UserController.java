@@ -76,6 +76,7 @@ public class UserController {
             throw e; // Rethrow the exception or handle it appropriately
         }
     }
+
     //getUserWithDetails
     @GetMapping("/details")
     public List<UserUpdateRequest> getUserWithDetails() {
