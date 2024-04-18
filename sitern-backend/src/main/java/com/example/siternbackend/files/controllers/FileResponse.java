@@ -19,7 +19,8 @@ public class FileResponse {
     private String status;
 //    private Integer user_id;
     private String stdName;
-    private String comment;
+    private String comments;
+    private String reason;
 
 
 }

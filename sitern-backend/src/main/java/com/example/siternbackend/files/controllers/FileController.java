@@ -79,7 +79,7 @@ public ResponseEntity<List<FileResponse>> getAllFiles() {
 
     // Convert the latest files map to a list of FileResponse objects
     List<FileResponse> fileResponses = latestFilesMap.values().stream()
-            .map(file -> new FileResponse(file.getId(), file.getFileName(), file.getFilePath(), file.getUploadedDate(), file.getStatus(), extractStdName(file.getFileName()), file.getComment()))
+            .map(file -> new FileResponse(file.getId(), file.getFileName(), file.getFilePath(), file.getUploadedDate(), file.getStatus(), extractStdName(file.getFileName()), file.getComments(), file.getReason()))
             .collect(Collectors.toList());
 
     // Sort the list of FileResponse objects by stdName

@@ -17,6 +17,7 @@ public class FileDto {
     private String filePath;
     private Date uploadedDate;
     private String status;
-    private String comment;
+    private String comments;
+    private String reason;
 //      // เพิ่มฟิลด์ userId เพื่ออ้างอิงไปยังผู้ใช้
 }

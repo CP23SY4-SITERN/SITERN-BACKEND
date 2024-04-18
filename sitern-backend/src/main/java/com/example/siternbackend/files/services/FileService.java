@@ -57,7 +57,7 @@ public class FileService {
         List<FileResponse> fileResponses = new ArrayList<>();
         for (File file : files) {
             String stdName = extractStdName(file.getFileName());
-            fileResponses.add(new FileResponse(file.getId(), file.getFileName(), file.getFilePath(), file.getUploadedDate(), file.getStatus(), stdName, file.getComment()));
+            fileResponses.add(new FileResponse(file.getId(), file.getFileName(), file.getFilePath(), file.getUploadedDate(), file.getStatus(), stdName, file.getComments(), file.getReason()));
         }
         return fileResponses;
     }

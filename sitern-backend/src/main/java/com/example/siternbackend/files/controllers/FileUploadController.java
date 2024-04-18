@@ -135,7 +135,7 @@ public class FileUploadController {
                 existingFile.setFileName(fileName);
                 existingFile.setUploadedDate(new Date());
                 existingFile.setStatus("waiting for approve");
-                existingFile.setComment("");
+                existingFile.setComments("");
                 fileStorageService.saveFile(existingFile);
             } else {
                 // Create a new file record if it doesn't exist
@@ -145,7 +145,7 @@ public class FileUploadController {
                 uploadedFile.setUploadedDate(new Date());
                 uploadedFile.setStatus("waiting for approve");
                 uploadedFile.setUser(user);
-                uploadedFile.setComment("");
+                uploadedFile.setComments("");
                 fileStorageService.saveFile(uploadedFile);
             }
 
@@ -184,7 +184,7 @@ public class FileUploadController {
         uploadedFile.setFilePath("/api/files/tr-document/TR02/" + fileName);
         uploadedFile.setUploadedDate(uploadedDate);
         uploadedFile.setStatus(status);
-        uploadedFile.setComment(comment);
+        uploadedFile.setComments(comment);
         fileStorageService.saveFile(uploadedFile);
         UploadResponse uploadResponse = new UploadResponse(fileName);
         return ResponseEntity.ok(uploadResponse);
@@ -418,7 +418,9 @@ public class FileUploadController {
 
 
     // Update the comment
-    file.setComment(updateFileRequest.getComment());
+    file.setComments(updateFileRequest.getComments());
+
+    file.setReason(updateFileRequest.getReason());
 
     fileRepositories.save(file);
 

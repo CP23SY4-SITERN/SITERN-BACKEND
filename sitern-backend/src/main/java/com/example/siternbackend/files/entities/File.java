@@ -37,7 +37,8 @@ public class File {
     // Add status field to indicate the status of the file
     private String status;
 
-    private String comment;
+    private String comments;
+    private String reason;
 
     @JsonBackReference
     @ManyToOne

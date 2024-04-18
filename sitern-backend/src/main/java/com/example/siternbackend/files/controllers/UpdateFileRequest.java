@@ -7,5 +7,6 @@ import lombok.*;
 @Setter
 public class UpdateFileRequest {
     private String status;
-    private String comment;
+    private String comments;
+    private String reason;
 }
