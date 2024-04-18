@@ -393,18 +393,36 @@ public class FileUploadController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
+//    @PatchMapping("/{id}/status")
+//    public ResponseEntity<String> updateStatus(@PathVariable("id") Long id, @RequestParam String status) {
+//        File file = fileRepositories.findById(id).orElse(null);
+//        if (file == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found with id: " + id);
+//        }
+//
+//        // Update the status
+//        file.setStatus(status);
+//        fileRepositories.save(file);
+//
+//        return ResponseEntity.ok("Status updated successfully");
+//    }
     @PatchMapping("/{id}/status")
-    public ResponseEntity<String> updateStatus(@PathVariable("id") Long id, @RequestParam String status) {
-        File file = fileRepositories.findById(id).orElse(null);
-        if (file == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found with id: " + id);
-        }
+    public ResponseEntity<String> updateStatusAndComment(@PathVariable("id") Long id, @RequestBody UpdateFileRequest updateFileRequest) {
+    File file = fileRepositories.findById(id).orElse(null);
+    if (file == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found with id: " + id);
+    }
 
-        // Update the status
-        file.setStatus(status);
-        fileRepositories.save(file);
+    // Update the status
+    file.setStatus(updateFileRequest.getStatus());
 
-        return ResponseEntity.ok("Status updated successfully");
+
+    // Update the comment
+    file.setComment(updateFileRequest.getComment());
+
+    fileRepositories.save(file);
+
+    return ResponseEntity.ok("Status and comment updated successfully");
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteFile(@PathVariable Long id) {
