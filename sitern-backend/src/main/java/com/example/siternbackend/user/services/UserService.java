@@ -1,6 +1,11 @@
 package com.example.siternbackend.user.services;
 
 import com.example.siternbackend.Exception.DemoGraphqlException;
+import com.example.siternbackend.files.entities.File;
+import com.example.siternbackend.files.entities.FileDto;
+import com.example.siternbackend.files.services.FileService;
+import com.example.siternbackend.jobs.dtos.JobLocationDTO;
+import com.example.siternbackend.jobs.entities.JobLocation;
 import com.example.siternbackend.user.DTOs.CreateUserDto;
 import com.example.siternbackend.user.DTOs.UserDto;
 import com.example.siternbackend.user.DTOs.UserUpdateRequest;
@@ -27,10 +32,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,31 +51,38 @@ public abstract class UserService {
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private AuthoritiesRepository authoritiesRepository;
-
+    @Autowired
+    private FileService fileService;
     public List<UserResponse> getAllUsers() {
         //ต้องเพิ่ม sortbycompanyID
         List<User> user = userRepository.findAll();
         return mapListUserToListUserResponse(user);
     }
+
     public List<UserUpdateRequest> getUserWithDetails() {
         //ต้องเพิ่ม sortbycompanyID
         List<User> user = userRepository.findAll();
         return mapUserwithDetailsToListUserwithDetails(user);
     }
+
     public List<UserDto> getAllDataFromUsers() {
         //ต้องเพิ่ม sortbycompanyID
         List<User> user = userRepository.findAll();
         return mapListUserToListUserDtos(user);
     }
+
     public List<UserDto> mapListUserToListUserDtos(List<User> users) {
         return users.stream().map(this::mapListUserToListUserDtos).collect(Collectors.toList());
     }
+
     public List<UserResponse> mapListUserToListUserResponse(List<User> users) {
         return users.stream().map(this::mapUserToUserResponse).collect(Collectors.toList());
     }
+
     public List<UserUpdateRequest> mapUserwithDetailsToListUserwithDetails(List<User> users) {
         return users.stream().map(this::mapUserwithDetailsToListUserwithDetails).collect(Collectors.toList());
     }
+
     public Optional<User> findAllById(int id) {
         return userRepository.findById(id);
     }
@@ -90,11 +99,12 @@ public abstract class UserService {
     }
 
     // ... existing code ...
-    public ResponseEntity<UserResponse> addUser(CreateUserDto newUsers, HttpServletRequest request) throws MessagingException, IOException{
+    public ResponseEntity<UserResponse> addUser(CreateUserDto newUsers, HttpServletRequest request) throws MessagingException, IOException {
         // Check if the email is already registered
         if (userRepository.existsByEmail(newUsers.getEmail())) {
             throw new IllegalArgumentException("Email is already registered");
-        } if (userRepository.existsByUsername(newUsers.getUsername())){
+        }
+        if (userRepository.existsByUsername(newUsers.getUsername())) {
             throw new IllegalArgumentException("Username is already exists");
         }
         User newUser = modelMapper.map(newUsers, User.class);
@@ -115,7 +125,8 @@ public abstract class UserService {
 
         return userRepository.save(user);
     }
-//    public User mapUser(User existingUser, User updateUser) {
+
+    //    public User mapUser(User existingUser, User updateUser) {
 //        existingUse
 //        r.setUsername(updateUser.getUsername());
 //        existingUser.setUpdated(updateUser.getUpdated());
@@ -124,7 +135,8 @@ public abstract class UserService {
 //        return existingUser;
 //    }
     private final PasswordEncoder encoder = new BCryptPasswordEncoder();
-//    public UserResponse addUser(String userName, String email, String password) {
+
+    //    public UserResponse addUser(String userName, String email, String password) {
 //        if (!userRepository.findByEmail(email).isEmpty()) {
 //            throw new DemoGraphqlException("This email have already registered");
 //        }
@@ -190,12 +202,22 @@ public abstract class UserService {
             userResponse.setUsername(user.getUsername());
             userResponse.setEmail(user.getEmail());
             userResponse.setAuthorities(user.getSimpleAuthorities());
+//            userResponse.setFiles(mapToFileList(user.getFiles()));
             return userResponse;
         } catch (Exception e) {
             log.error("Could not Map User to UserResponse: " + e.getMessage());
             return UserResponse.builder().build();
         }
     }
+
+    private File mapToFile(File file) {
+        File file1 = new File();
+        file1.setId(file.getId());
+        file1.setFilePath(file.getFilePath());
+        file1.setUser(file.getUser());
+        return file1;
+    }
+
     //mapUserwithDetailsToListUserwithDetails
     public UserUpdateRequest mapUserwithDetailsToListUserwithDetails(User user) {
         try {
@@ -216,6 +238,7 @@ public abstract class UserService {
             return UserUpdateRequest.builder().build();
         }
     }
+
     public UserDto mapListUserToListUserDtos(User user) {
         try {
             UserDto userDto = new UserDto();
@@ -232,6 +255,47 @@ public abstract class UserService {
         }
     }
 
-    public abstract User updateUserDetails(Integer userId, UserUpdateRequest userUpdateRequest);
+    public User updateUserDetails(Integer userId, UserUpdateRequest userUpdateRequest) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
+        if (userUpdateRequest.getFirstName() != null) {
+            existingUser.setFirstName(userUpdateRequest.getFirstName());
+        }
+        if (userUpdateRequest.getLastName() != null) {
+            existingUser.setLastName(userUpdateRequest.getLastName());
+        }
+        if (userUpdateRequest.getMajor() != null) {
+            existingUser.setMajor(userUpdateRequest.getMajor());
+        }
+        if (userUpdateRequest.getDepartment() != null) {
+            existingUser.setDepartment(userUpdateRequest.getDepartment());
+        }
+        // Similarly, check and update other fields...
+        // Update user details
+        if (userUpdateRequest.getGpax() != null){
+            existingUser.setGpax(userUpdateRequest.getGpax());
+        }
+        if (userUpdateRequest.getStudentInterest() != null){
+            existingUser.setStudentInterest(userUpdateRequest.getStudentInterest());
+        }
+        if (userUpdateRequest.getSkills() != null){
+            existingUser.setSkills(String.join(",", userUpdateRequest.getSkills()));
+        } if (userUpdateRequest.getResumeCv() != null){
+            existingUser.setResumeCv(userUpdateRequest.getResumeCv());
+        } if (userUpdateRequest.getPhoneNumber() != null){
+            existingUser.setPhoneNumber(userUpdateRequest.getPhoneNumber());
+        }if (userUpdateRequest.getAddress() != null){
+            existingUser.setAddress(userUpdateRequest.getAddress());
+        }if (userUpdateRequest.getLinkedInProfile() != null){
+            existingUser.setLinkedInProfile(userUpdateRequest.getLinkedInProfile());
+        }
+        // Update updated time
+        existingUser.setUpdated(LocalDateTime.now());
+
+        return userRepository.save(existingUser);
+    }
+    public List<FileDto> getFilesByUserId(Integer userId) {
+        return fileService.getFilesByUserId(userId);
+    }
 }
 

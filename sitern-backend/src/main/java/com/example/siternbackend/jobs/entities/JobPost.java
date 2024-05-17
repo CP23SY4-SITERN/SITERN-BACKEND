@@ -55,6 +55,8 @@ public class JobPost {
 
     private String contact;
 
+    private String phoneNumber;
+
     private byte isActive = 1;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade =CascadeType.PERSIST)

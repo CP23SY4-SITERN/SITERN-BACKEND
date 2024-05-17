@@ -4,10 +4,14 @@ import com.example.siternbackend.authentication.JwtRequest;
 import com.example.siternbackend.authentication.JwtResponse;
 import com.example.siternbackend.authentication.LoginRequest;
 import com.example.siternbackend.authentication.LogoutRequest;
+import com.example.siternbackend.files.entities.File;
+import com.example.siternbackend.user.DTOs.UserDto;
 import com.example.siternbackend.user.entities.User;
 import com.example.siternbackend.user.services.AuthResponse;
 import com.example.siternbackend.user.services.AuthService;
+import com.example.siternbackend.user.services.DecodedTokenService;
 import com.example.siternbackend.user.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
@@ -25,6 +29,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.AuthenticationException;
+
+import java.util.List;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -34,6 +41,7 @@ public class AuthController {
     final AuthenticationManager authenticationManager;
     final UserService userService;
     final AuthService authService;
+    final DecodedTokenService decodedTokenService;
 //    final AuthResponse authResponse;
     final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 //    final JwtTokenUtil jwtTokenUtil;
@@ -61,7 +69,7 @@ public class AuthController {
 //        }
 //}
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> authenticate(@RequestBody LoginRequest request) throws JSONException {
+    public ResponseEntity<AuthResponse> authenticate(@Valid @RequestBody LoginRequest request) throws JSONException {
         String username = request.getUsername();
         String password = request.getPassword();
 
@@ -72,6 +80,39 @@ public class AuthController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authResponse);
         }
+    }
+    @GetMapping("/users/me")
+    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String bearerToken) {
+        // Extract the token from the Authorization header
+        try {
+            // Extract the token from the Authorization header
+            String token = extractToken(bearerToken);
+
+            // Decode the token and retrieve user information
+            User user = decodedTokenService.getUserFromToken(token);
+
+            if (user != null) {
+                // Return the user information in the response
+                List<File> latestFiles = user.getLatestFiles();
+                user.setFiles(latestFiles);
+                return ResponseEntity.ok(user);
+            } else {
+                // Handle error if user information cannot be retrieved
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve user information");
+            }
+        } catch (Exception e) {
+            // Handle any exception that might occur during the process
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+        }
+    }
+
+
+    private String extractToken(String authorizationHeader) {
+        // Extract the token from the Authorization header
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7);
+        }
+        return null;
     }
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String bearerToken) {

@@ -48,17 +48,17 @@ public class SecurityConfig {
     final JwtFilter jwtFilter;
     final UserService userService;
 
-//    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedOriginPattern("*");
-//        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-//        configuration.setAllowedHeaders(List.of("*")); // Allow all headers
-//        configuration.setAllowCredentials(true);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOriginPattern("*");
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*")); // Allow all headers
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
 //    @Bean
 //    public AuthenticationProvider authenticationProvider() {
@@ -74,6 +74,8 @@ public class SecurityConfig {
             "/api/graphql",
             "/api/auth/**",
             "/api/auth",
+            "/api/users/me",
+            "/api/users/me/**",
             "/api/auth/login",
             "/api/details",
             "/api/users",
@@ -82,6 +84,9 @@ public class SecurityConfig {
             "/api/files",
             "/api/files/**",
             "/api/files/upload",
+            "/api/files/upload/**",
+            "/api/files/upload/tr-document",
+            "/api/files/upload/tr-document/**",
             "/api/jobs/**",
             "/api/jobs",
 //            "/api/companies",
@@ -117,6 +122,17 @@ public class SecurityConfig {
             "/api/files",
             "/api/files/**",
             "/api/files/upload",
+            "/upload/resume",
+            "/upload/resume/**",
+            "/upload/tr-document",
+            "/upload/tr-document/**",
+            "/api/users/me",
+            "/api/users/me/**",
+            "/api/files/{directory}/{tr01}/{fileName:.+}",
+            "/api/files/{directory}/{tr01}/{fileName:.+}/**",
+            "/api/files/{directory}/{fileName:.+}",
+            "/api/files/{directory}/{fileName:.+}/**"
+
     };
 
     private static final String[] STAFF_WHITELIST = {
@@ -140,6 +156,7 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

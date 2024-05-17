@@ -1,6 +1,8 @@
 package com.example.siternbackend.user.controllers;
 
 import com.example.siternbackend.Exception.DemoGraphqlException;
+import com.example.siternbackend.files.entities.File;
+import com.example.siternbackend.files.entities.FileDto;
 import com.example.siternbackend.user.DTOs.CreateUserDto;
 import com.example.siternbackend.user.DTOs.UserDto;
 import com.example.siternbackend.user.DTOs.UserUpdateRequest;
@@ -9,18 +11,22 @@ import com.example.siternbackend.user.entities.Roles;
 import com.example.siternbackend.user.entities.User;
 import com.example.siternbackend.user.repositories.AuthoritiesRepository;
 import com.example.siternbackend.user.repositories.UserRepository;
+import com.example.siternbackend.user.services.DecodedTokenService;
 import com.example.siternbackend.user.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.Data;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -35,18 +41,34 @@ public class UserController {
     private final UserRepository userRepository;
     @Autowired
     private final AuthoritiesRepository authoritiesRepository;
+    @Autowired
+    private DecodedTokenService decodedTokenService;
 
-    public UserController(UserService userService, UserRepository userRepository, AuthoritiesRepository authoritiesRepository) {
+    public UserController(UserService userService, UserRepository userRepository, AuthoritiesRepository authoritiesRepository,DecodedTokenService decodedTokenService) {
         this.userService = userService;
         this.userRepository =  userRepository;
         this.authoritiesRepository = authoritiesRepository;
+        this.decodedTokenService = decodedTokenService;
 
     }
 
     @GetMapping
-    public List<UserResponse> getAllUsers() {
+    public List<UserResponse> getAllUsersWithFiles() {
         try {
             List<UserResponse> userResponses = userService.getAllUsers();
+
+            // Iterate through each user response
+            for (UserResponse userResponse : userResponses) {
+                // Get user ID
+                Integer userId = userResponse.getId();
+
+                // Get files related to the user
+                List<FileDto> filesDto = userService.getFilesByUserId(userId);
+
+                // Set files information to the user response
+                userResponse.setFiles(filesDto);
+            }
+
             log.info("Retrieved {} Users", userResponses.size());
             return userResponses;
         } catch (Exception e) {
@@ -54,6 +76,7 @@ public class UserController {
             throw e; // Rethrow the exception or handle it appropriately
         }
     }
+
     //getUserWithDetails
     @GetMapping("/details")
     public List<UserUpdateRequest> getUserWithDetails() {
@@ -117,10 +140,23 @@ public class UserController {
         }
 
     }
-    @PutMapping("/profile/{userId}")
-    public ResponseEntity<User> updateUserDetails(@PathVariable Integer userId, @RequestBody UserUpdateRequest userUpdateRequest) {
-        User updatedUser = userService.updateUserDetails(userId, userUpdateRequest);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    @PatchMapping("/profile")
+    public ResponseEntity<User> updateUserDetails(@RequestHeader("Authorization") String accessToken,@Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+        // Extract user ID from token+
+        try {
+
+            // Get user from token
+            User user = decodedTokenService.getUserFromToken(accessToken);
+            // Update user details
+
+            User updatedUser = userService.updateUserDetails(user.getId(), userUpdateRequest);
+
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 //    @PatchMapping("/{id}")
 //    public User update(@RequestBody @javax.validation.Valid User updateUser, @PathVariable Integer id){
@@ -185,4 +221,55 @@ public class UserController {
         private String userName;
         private String email;
     }
+    @GetMapping("/profile-picture")
+    public ResponseEntity<byte[]> getProfilePicture(@RequestHeader("Authorization") String accessToken) {
+        try {
+            // Get user from token
+            User user = decodedTokenService.getUserFromToken(accessToken);
+
+            // Check if user exists
+            if (user == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Check if user has a profile picture
+            byte[] profilePicture = user.getProfilePicture();
+            if (profilePicture == null || profilePicture.length == 0) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Return the profile picture bytes
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG) // Set the content type based on the image type
+                    .body(profilePicture);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @PostMapping("/upload/profile-picture")
+    public ResponseEntity<String> uploadProfilePicture(
+            @RequestHeader("Authorization") String accessToken,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            // Get user from token
+            User user = decodedTokenService.getUserFromToken(accessToken);
+
+            // Check if file is empty
+            if (file.isEmpty()) {
+                return ResponseEntity.badRequest().body("Please upload a file");
+            }
+
+            // Set profile picture
+            user.setProfilePicture(file.getBytes());
+
+            // Save user
+            userService.saveUser(user);
+
+            return ResponseEntity.ok("Profile picture uploaded successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload profile picture");
+        }
+    }
+
+
 }

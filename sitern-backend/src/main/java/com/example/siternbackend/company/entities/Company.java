@@ -49,7 +49,7 @@ public class Company {
 //    private JobLocation jobLocation;
     @JsonManagedReference
     @OneToMany(mappedBy = "company")
-    private Set<JobLocation> jobLocations = new HashSet<>();
+    private List<JobLocation> jobLocations;
 
     @ManyToOne
     private JobLocation jobLocation;

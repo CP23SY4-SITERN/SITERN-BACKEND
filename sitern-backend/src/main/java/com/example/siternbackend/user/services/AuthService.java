@@ -1,5 +1,6 @@
 package com.example.siternbackend.user.services;
 
+import com.example.siternbackend.user.DTOs.UserDto;
 import com.example.siternbackend.user.entities.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
@@ -217,6 +218,29 @@ public AuthResponse authenticate(String username, String password) throws JSONEx
         // Check if the access token is in the blacklist
         return revokedTokens.contains(accessToken);
     }
-
+//    public UserDto getUserFromToken(String token) {
+//        try {
+//            // Decode the access token
+//            // Extract user information from the decoded token
+//            // Example: Assuming the token contains user details in a JSON format
+//            JSONObject tokenJson = new JSONObject(decodedToken);
+//            Long userId = tokenJson.getLong("userId");
+//            String username = tokenJson.getString("username");
+//            String email = tokenJson.getString("email");
+//            // Extract other user attributes as needed
+//
+//            // Create a UserDTO object to hold the user information
+//            UserDTO user = new UserDTO();
+//            user.setUserId(userId);
+//            user.setUsername(username);
+//            user.setEmail(email);
+//            // Set other attributes in the UserDTO object
+//
+//            return user;
+//        } catch (Exception e) {
+//            // Handle token decoding errors
+//            throw new InvalidTokenException("Invalid token or failed to retrieve user information from token");
+//        }
+//    }
 }
 

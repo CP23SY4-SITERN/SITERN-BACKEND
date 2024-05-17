@@ -1,6 +1,9 @@
 package com.example.siternbackend.user.entities;
 
+import com.example.siternbackend.files.entities.File;
+import com.example.siternbackend.jobs.entities.JobLocation;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -15,9 +18,12 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Data
@@ -35,7 +41,6 @@ public class User implements UserDetails, Serializable {
     private String email;
 
     @Size(max = 255)
-    @NotNull
     private String password;
 
     @Size(max = 45)
@@ -67,7 +72,7 @@ public class User implements UserDetails, Serializable {
     @Size(max = 255 , message = "Your Interests must lower than 255 characters")
     private String studentInterest;
 
-    @Lob
+    @Size(max = 255 , message = "Your Skills must lower than 255 characters")
     private String skills;
 
     private byte[] resumeCv;
@@ -78,6 +83,14 @@ public class User implements UserDetails, Serializable {
     private String address;
 
     private String linkedInProfile;
+
+    private String statusTR01 = "incomplete";
+    private String statusTR02 = "incomplete";
+//
+//    @Builder.Default
+//    String TR01Status = "Incomplete";
+//    @Builder.Default
+//    String TR02Status = "Incomplete";
 
     @ManyToMany(fetch = FetchType.EAGER)
     List<Authorities> authorities;
@@ -117,6 +130,41 @@ public class User implements UserDetails, Serializable {
         return enables;
     }
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<File> files;
+    @Lob
+    private byte[] profilePicture;
+
+    public void addFile(File file) {
+        files.add(file);
+        file.setUser(this);
+    }
+
+    public void removeFile(File file) {
+        files.remove(file);
+        file.setUser(null);
+    }
+
+    private String extractStdName(String fileName) {
+        // Your logic to extract std name from file name, e.g., using regular expressions
+        // For example, assuming std name is after "-" character
+        int indexOfDash = fileName.indexOf("-");
+        if (indexOfDash != -1 && indexOfDash + 1 < fileName.length()) {
+            return fileName.substring(0, indexOfDash);
+        }
+        return "";
+    }
+    public List<File> getLatestFiles() {
+        Map<String, File> latestFilesMap = new HashMap<>();
+        for (File file : files) {
+            String stdName = extractStdName(file.getFileName());
+            if (!latestFilesMap.containsKey(stdName) || file.getUploadedDate().after(latestFilesMap.get(stdName).getUploadedDate())) {
+                latestFilesMap.put(stdName, file);
+            }
+        }
+        return new ArrayList<>(latestFilesMap.values());
+    }
 
     public void setFromDecodedToken(String name, String preferredUsername, String role, String email) {
         this.setUsername(preferredUsername);// กำหนดชื่อผู้ใช้
@@ -132,9 +180,17 @@ public class User implements UserDetails, Serializable {
         this.setPhoneNumber(""); // ไม่มีข้อมูลหมายเลขโทรศัพท์
         this.setAddress(""); // ไม่มีข้อมูลที่อยู่
         this.setLinkedInProfile(""); // ไม่มีข้อมูลโปรไฟล์ LinkedIn
+        this.setStatusTR01("incomplete");
+        this.setStatusTR02("incomplete");
 //        this.setEnabled(true); // ตั้งค่าสถานะการใช้งานเป็น true
+        this.setStatusTR01("incomplete");
+        this.setStatusTR02("incomplete");
         this.setCreated(LocalDateTime.now()); // ตั้งค่าวันที่สร้างเป็นปัจจุบัน
-        this.setUpdated(LocalDateTime.now()); // ตั้งค่าวันที่อัปเดตเป็นปัจจุบัน
+        this.setUpdated(LocalDateTime.now());
+        this.files = new ArrayList<>();// ตั้งค่าวันที่อัปเดตเป็นปัจจุบัน
+
     }
+
+
 
 }

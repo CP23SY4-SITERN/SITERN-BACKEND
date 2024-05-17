@@ -9,6 +9,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,6 +59,8 @@ public class CreatingJobDTO {
     private WorkType workType;
     @Size(max = 5000 , message = "Contact must lower than 5000 characters")
     private String contact;
+    @Pattern(regexp = "^\\+?[0-9.-]*$", message = "Invalid phone number format")
+    private String phoneNumber;
     private Integer jobLocation_ID;
     private byte isActive;
 
